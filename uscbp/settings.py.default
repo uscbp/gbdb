@@ -173,3 +173,10 @@ LOGGING = {
             },
         }
 }
+
+LOGIN_REDIRECT_URL= '/gbdb/'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'uscbrainproject@gmail.com'
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_TLS = 'true'

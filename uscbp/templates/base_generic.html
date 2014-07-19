@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+{% load staticfiles %}
+<head>
+    {% block extrahead %}{% endblock %}
+</head>
+<body>
+    <table style="width:100%" cellpadding=0 cellspacing=0>
+        <tr>
+            <td><h1><a href="/gbdb/">GBDB</a></h1></td>
+            <td align=left>
+                <div id="user_info">
+                    {% if user.is_authenticated and not user.is_anonymous  %}
+                        Hi, {{ user.username }} [<a href="/accounts/logout">Logout</a>]&nbsp;
+                    {% else %}
+                        <a href="/accounts/login">Login</a> or <a href="/accounts/register">Register</a>
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+    </table>
+    <div id="content">
+        {% block content%}{%endblock%}
+    </div>
+</body>
+</html>

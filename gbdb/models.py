@@ -1,4 +1,5 @@
 from django.db import models
+from registration.models import User
 
 
 class Species(models.Model):
@@ -90,4 +91,3 @@ class Gesture(models.Model):
     
     class Meta:
         app_label='gbdb'
-        
