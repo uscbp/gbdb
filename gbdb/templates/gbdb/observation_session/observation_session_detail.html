@@ -2,6 +2,19 @@
 {% load staticfiles %}
 {% block extrahead %}
     <title>GBDB - {% if form.instance.id%}Edit{% else %}Add{% endif %} Observation Session</title>
+    <script type="text/javascript">
+        function addBehavioralEventForm()
+        {
+            var count = $('#behavioral_events').children().length;
+            var tmplMarkup = $('#behavioral_event-template').html();
+            var compiledTmpl = _.template(tmplMarkup, { idx : count });
+            $('#behavioral_events').append(compiledTmpl);
+            // update form count
+            $('#id_behavioral_event-TOTAL_FORMS').attr('value', count+1);
+
+            return false;
+        }
+    </script>
 {% endblock %}
 {% block content %}
     <div id="detail">
@@ -38,6 +51,62 @@
                 </tr>
             </table>
             <br>
+            <h3>Behavioral Events <a href="#" onclick="return addBehavioralEventForm();">Add new</a></h3>
+
+            <div id="behavioralEventData">
+                <table class="tab_panel">
+                    <tr>
+                        <td>
+                            {{ behavioral_event_formset.management_form }}
+                            <div class="myerrors">
+                                {{ behavioral_event_formset.management_form.errors }}
+                            </div>
+                            <div id="behavioral_events">
+                                {% for behavioral_event_form in behavioral_event_formset.forms %}
+                                    <div id="behavioral_event-{{ forloop.counter0 }}" name="behavioral_event">
+                                        <input type=hidden id="id_behavioral_event-{{ forloop.counter0 }}-DELETE" name="behavioral_event-{{ forloop.counter0 }}-DELETE"/>
+                                        {{ behavioral_event_form.id }}
+                                        {{ behavioral_event_form.observation_session }}
+                                        <table class="tab_panel">
+                                            <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                                <td style="width:60px">
+                                                    <a href="" onclick="return deleteInlineForm('behavioral_event', {{ forloop.counter0 }});">Delete</a>
+                                                </td>
+                                                <td style="width:120px">Start time</td>
+                                                <td style="width:200px">
+                                                    {{ behavioral_event_form.start_time }}
+                                                </td>
+                                                <td style="width:120px">Duration</td>
+                                                <td style="width:200px">
+                                                    {{ behavioral_event_form.duration }}
+                                                </td>
+                                                <td>&nbsp;</td>
+                                            </tr>
+                                            <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                                <td width=60px>&nbsp;</td>
+                                                <td style="width:120px;">Video</td>
+                                                <td colspan="4">
+                                                    {{ behavioral_event_form.video }}
+                                                </td>
+                                            </tr>
+                                            <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                                <td width=60px>&nbsp;</td>
+                                                <td>Notes</td>
+                                                <td colspan="4">
+                                                    {{ behavioral_event_form.notes }}
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <div class="myerrors">
+                                            {{ behavioral_event_form.errors }}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
             {{ form.collator }}
             <input type="submit" value="Save" />&nbsp;
             {% if form.instance.id %}
@@ -45,4 +114,45 @@
             {% endif %}
         </form>
     </div>
+    <script type="text/html" id="behavioral_event-template">
+        <div id="behavioral_event-<%= idx %>" name="behavioral_event">
+            <input type=hidden id="id_behavioral_event-<%= idx %>-DELETE" name="behavioral_event-<%= idx %>-DELETE"/>
+            <input id="id_behavioral_event-<%= idx %>-id" name="behavioral_event-<%= idx %>-id" type="hidden" />
+            <input id="id_behavioral_event-<%= idx %>-observation_session" name="behavioral_event-<%= idx %>-observation_session" type="hidden" />
+            <table class="tab_panel">
+                <tr class="even_row" valign=top>
+                    <td style="width:60px">
+                        <a href="" onclick="return deleteInlineForm('behavioral_event', <%= idx %>);">Delete</a>
+                    </td>
+                    <td style="width:120px">Start time</td>
+                    <td style="width:200px">
+                        <input id="id_behavioral_event-<%= idx %>-start_time" name="behavioral_event-<%= idx %>-start_time" type="text" />
+                    </td>
+                    <td style="width:120px">Duration</td>
+                    <td style="width:200px">
+                        <input id="id_behavioral_event-<%= idx %>-duration" name="behavioral_event-<%= idx %>-duration" size="20" type="text" />
+                    </td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr class="even_row" valign=top>
+                    <td width=60px>&nbsp;</td>
+                    <td style="width:120px;">Video</td>
+                    <td colspan="4">
+                        <input id="id_behavioral_event-<%= idx %>-video" name="behavioral_event-<%= idx %>-video" type="file" />
+                    </td>
+                </tr>
+                <tr class="even_row" valign=top>
+                    <td width=60px>&nbsp;</td>
+                    <td>Notes</td>
+                    <td colspan="4">
+                        <textarea cols="57" id="id_behavioral_event-<%= idx %>-notes" name="behavioral_event-<%= idx %>-notes" rows="5">
+                        </textarea>
+                    </td>
+                </tr>
+            </table>
+            <div class="myerrors">
+
+            </div>
+        </div>
+    </script>
 {% endblock %}

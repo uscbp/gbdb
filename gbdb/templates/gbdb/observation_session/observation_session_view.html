@@ -23,34 +23,54 @@
 {% endblock %}
 {% block content %}
     <div id="detail">
-    <h2>Observation Session</h2>
-    <table class="tab_panel">
-        <tr valign="top">
-            <td colspan="2"><strong>Collator:</strong> {{ object.get_collator_str }}</td>
-        </tr>
-        <tr valign="top">
-            <td colspan="2"><strong>Created:</strong> {{ object.get_created_str }}</td>
-        </tr>
-        <tr valign="top">
-            <td colspan="2"><strong>Last modified by:</strong> {{ object.get_modified_by_str }}</td>
-        </tr>
-        <tr valign="top">
-            <td colspan="2"><strong>Last modified:</strong> {{ object.get_modified_str }}</td>
-        </tr>
-        <tr valign="top">
-            <td colspan="2"><strong>Video:</strong> {{ object.video }}</td>
-        </tr>
-        <tr valign="top">
-            <td colspan="2"><strong>Date:</strong> {{ object.date }}</td>
-        </tr>
-        <tr valign="top">
-            <td colspan="2"><strong>Location:</strong> {{ object.location }}</td>
-        </tr>
-        <tr valign="top">
-            <td colspan="2"><strong>Notes:</strong> {{ object.notes }}</td>
-        </tr>
-    </table>
-    <input type="button" value="Edit" onclick="document.location.href='/gbdb/observation_session/{{object.id}}/edit/';"/>&nbsp;
-    <input type="button" value="Delete" onclick="deleteObservationSession()"/>&nbsp;
+        <h2>Observation Session</h2>
+        <table class="tab_panel">
+            <tr valign="top">
+                <td colspan="2"><strong>Collator:</strong> {{ object.get_collator_str }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Created:</strong> {{ object.get_created_str }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Last modified by:</strong> {{ object.get_modified_by_str }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Last modified:</strong> {{ object.get_modified_str }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Video:</strong> {{ object.video }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Date:</strong> {{ object.date }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Location:</strong> {{ object.location }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Notes:</strong> {{ object.notes }}</td>
+            </tr>
+        </table>
+
+        <br>
+        <h3>Behavioral Events</h3>
+        <table class="tab_panel">
+            {% for behavioral_event in behavioral_events %}
+                <tr>
+                    <td><strong>Start time:</strong> {{ behavioral_event.start_time }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Duration:</strong> {{ behavioral_event.duration }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Video:</strong> {{ behavioral_event.video }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Notes:</strong> {{ behavioral_event.notes }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        <input type="button" value="Edit" onclick="document.location.href='/gbdb/observation_session/{{object.id}}/edit/';"/>&nbsp;
+        <input type="button" value="Delete" onclick="deleteObservationSession()"/>&nbsp;
     </div>
 {% endblock %}
