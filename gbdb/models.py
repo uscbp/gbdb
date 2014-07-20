@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse
 from django.db import models
 from registration.models import User
 
@@ -40,6 +41,11 @@ class Ethogram(models.Model):
     
     
 class ObservationSession(models.Model):
+    collator = models.ForeignKey(User,null=True)
+    creation_time = models.DateTimeField(auto_now_add=True,blank=True)
+    last_modified_time = models.DateTimeField(auto_now=True,blank=True)
+    last_modified_by = models.ForeignKey(User,null=True,blank=True,related_name='last_modified_by')
+
     video = models.FileField(upload_to='videos/observation_session/%Y/%m/%d')
     date = models.DateField()
     location = models.CharField(max_length=100) #this should be some kind of geo model
@@ -47,6 +53,27 @@ class ObservationSession(models.Model):
     
     class Meta:
         app_label='gbdb'
+
+    def get_absolute_url(self):
+        return reverse('observation_session_view', kwargs={'pk': self.pk})
+
+    def get_collator_str(self):
+        if self.collator.last_name:
+            return '%s %s' % (self.collator.first_name, self.collator.last_name)
+        else:
+            return self.collator.username
+
+    def get_modified_by_str(self):
+        if self.last_modified_by.last_name:
+            return '%s %s' % (self.last_modified_by.first_name, self.last_modified_by.last_name)
+        else:
+            return self.last_modified_by.username
+
+    def get_created_str(self):
+        return self.creation_time.strftime('%B %d, %Y')
+
+    def get_modified_str(self):
+        return self.last_modified_time.strftime('%B %d, %Y')
         
         
 class BehavioralEvent(models.Model):

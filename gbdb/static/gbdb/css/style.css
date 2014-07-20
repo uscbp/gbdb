@@ -1,0 +1,30 @@
+body {
+    font-family: verdana, sans-serif;
+    padding: 0px 20px;
+}
+
+/* Content
+---------------------------------------------------*/
+#content {
+    margin-left: 255px;
+    padding: 0px 20px 0 10px;
+}
+
+/* Detail
+---------------------------------------------------------*/
+#detail { font-size: 75%; }
+#detail table {
+    width: 80%;
+    padding: 5px;
+    border-collapse: collapse;
+}
+
+/* Errors
+---------------------------------------------------------*/
+.myerrors {
+    color: #ff0000;
+}
+
+.errorlist {
+    color: #ff0000;
+}
