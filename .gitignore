@@ -3,3 +3,4 @@
 .project
 .pydevproject
 uscbp/settings.py
+uscbp/media/
