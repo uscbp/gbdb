@@ -123,3 +123,6 @@ class Gesture(models.Model):
     signaller_body_parts = models.ManyToManyField(BodyPart, related_name='signaller_body_part')
     recipient_body_parts = models.ManyToManyField(BodyPart, related_name='recipient_body_part')
     audible = models.CharField(max_length=100, choices=CHOICES, default='no')
+
+    class Meta:
+        app_label='gbdb'
