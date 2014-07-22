@@ -120,6 +120,8 @@ class Gesture(models.Model):
         ('yes', 'Yes'),
         ('no', 'No'),
         )
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
     goal = models.TextField(blank=True)
     signaller_body_parts = models.ManyToManyField(BodyPart, related_name='signaller_body_part')
     recipient_body_parts = models.ManyToManyField(BodyPart, related_name='recipient_body_part')
