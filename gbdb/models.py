@@ -1,5 +1,6 @@
 from django.core.urlresolvers import reverse
 from django.db import models
+from mptt.fields import TreeForeignKey
 from registration.models import User
 
 
@@ -78,6 +79,7 @@ class ObservationSession(models.Model):
         
 class BehavioralEvent(models.Model):
     observation_session=models.ForeignKey(ObservationSession)
+    parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
     start_time = models.TimeField()
     duration = models.IntegerField()
     video = models.FileField(upload_to='videos/behavioral_event/%Y/%m/%d')
@@ -97,24 +99,27 @@ class BodyPart(models.Model):
         app_label='gbdb'
         
         
+class GesturalEvent(BehavioralEvent):
+    CHOICES = (
+        ('yes', 'Yes'),
+        ('no', 'No'),
+        )
+    signaller = models.ForeignKey('Primate', related_name='signaller')
+    recipient = models.ForeignKey('Primate', related_name='recipient')
+    gesture = models.ForeignKey('Gesture', related_name='gesture')
+    recipient_response = models.TextField()
+    goal_met = models.CharField(max_length=100, choices=CHOICES, default='no')
+    
+    class Meta:
+        app_label='gbdb'
+
+
 class Gesture(models.Model):
     CHOICES = (
         ('yes', 'Yes'),
         ('no', 'No'),
         )
-
-    behavioral_event=models.ForeignKey(BehavioralEvent)
-    start_time = models.TimeField()
-    duration = models.IntegerField()
     goal = models.TextField(blank=True)
-    signaller = models.ForeignKey('Primate', related_name='signaller')
-    recipient = models.ForeignKey('Primate', related_name='recipient')
     signaller_body_parts = models.ManyToManyField(BodyPart, related_name='signaller_body_part')
     recipient_body_parts = models.ManyToManyField(BodyPart, related_name='recipient_body_part')
     audible = models.CharField(max_length=100, choices=CHOICES, default='no')
-    recipient_response = models.TextField()
-    goal_met = models.CharField(max_length=100, choices=CHOICES, default='no')
-    notes = models.TextField()
-    
-    class Meta:
-        app_label='gbdb'
