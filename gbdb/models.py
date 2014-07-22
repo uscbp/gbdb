@@ -1,6 +1,7 @@
 from django.core.urlresolvers import reverse
 from django.db import models
 from mptt.fields import TreeForeignKey
+from mptt.models import MPTTModel
 from registration.models import User
 
 
@@ -77,7 +78,7 @@ class ObservationSession(models.Model):
         return self.last_modified_time.strftime('%B %d, %Y')
         
         
-class BehavioralEvent(models.Model):
+class BehavioralEvent(MPTTModel):
     observation_session=models.ForeignKey(ObservationSession)
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
     start_time = models.TimeField()
