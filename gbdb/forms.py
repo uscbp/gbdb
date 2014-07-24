@@ -3,7 +3,7 @@ from django.forms import TimeInput
 from django.forms.models import inlineformset_factory
 from django.forms.extras import SelectDateWidget
 from django import forms
-from gbdb.models import ObservationSession, BehavioralEvent, Primate, Context, Ethogram
+from gbdb.models import ObservationSession, BehavioralEvent, Primate, Context, Ethogram, Species
 from registration.forms import RegistrationForm
 from registration.models import User
 
@@ -37,7 +37,7 @@ class ObservationSessionForm(forms.ModelForm):
 
     video = forms.FileField(required=False)
     date = forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=True)
-    location = forms.CharField(widget=forms.TextInput(attrs={'size':'100'}),required=True)
+    location = forms.CharField(widget=forms.TextInput(attrs={'size':'30'}),required=True)
     notes = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=False)
 
     class Meta:
@@ -63,3 +63,15 @@ class BehavioralEventForm(forms.ModelForm):
 
 BehavioralEventFormSet = inlineformset_factory(ObservationSession, BehavioralEvent, form=BehavioralEventForm,
     fk_name='observation_session', extra=0, can_delete=True, can_order=True)
+
+class PrimateForm(forms.ModelForm):
+    
+    name = forms.CharField(widget=forms.TextInput(attrs={'size':'30'}),required=True)
+    species = forms.ModelChoiceField(queryset=Species.objects.all(), required=True)
+    birth_date = forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=True)
+    location = forms.CharField(widget=forms.TextInput(attrs={'size':'30'}),required=True)
+    habitat = forms.ChoiceField(choices=Primate.HABITAT_CHOICES, widget=forms.Select(), required=True)
+    
+
+    class Meta:
+        model=Primate

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from gbdb.models import ObservationSession, BehavioralEvent, GesturalEvent, Gesture, Primate, Context, Ethogram, BodyPart
+from gbdb.models import ObservationSession, BehavioralEvent, GesturalEvent, Gesture, Primate, Context, Ethogram, BodyPart, Species
 
 class BehavioralEventInline(admin.StackedInline):
     model = BehavioralEvent
@@ -21,3 +21,4 @@ admin.site.register(Primate)
 admin.site.register(Context)
 admin.site.register(Ethogram)
 admin.site.register(BodyPart)
+admin.site.register(Species)

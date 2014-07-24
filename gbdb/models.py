@@ -12,6 +12,9 @@ class Species(models.Model):
     
     class Meta:
         app_label='gbdb'
+        
+    def __unicode__(self):
+        return self.common_name
 
 
 class Primate(models.Model):
@@ -27,6 +30,9 @@ class Primate(models.Model):
     class Meta:
         app_label='gbdb'
         
+    def __unicode__(self):
+        return self.name
+        
         
 class Context(models.Model):
     name = models.CharField(max_length=100)
@@ -34,12 +40,18 @@ class Context(models.Model):
     class Meta:
         app_label='gbdb'
         
+    def __unicode__(self):
+        return self.name
+        
         
 class Ethogram(models.Model):
     name = models.CharField(max_length=100)
     
     class Meta:
         app_label='gbdb'
+        
+    def __unicode__(self):
+        return self.name
     
     
 class ObservationSession(models.Model):
@@ -48,7 +60,7 @@ class ObservationSession(models.Model):
     last_modified_time = models.DateTimeField(auto_now=True,blank=True)
     last_modified_by = models.ForeignKey(User,null=True,blank=True,related_name='last_modified_by')
 
-    video = models.FileField(upload_to='videos/observation_session/%Y/%m/%d')
+    video = models.FileField(upload_to='videos/observation_session/%Y/%m/%d',  blank=True, null=True)
     date = models.DateField()
     location = models.CharField(max_length=100) #this should be some kind of geo model
     notes = models.TextField()
@@ -79,11 +91,12 @@ class ObservationSession(models.Model):
         
         
 class BehavioralEvent(MPTTModel):
+#class BehavioralEvent(models.Model):
     observation_session=models.ForeignKey(ObservationSession)
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
     start_time = models.TimeField()
     duration = models.IntegerField()
-    video = models.FileField(upload_to='videos/behavioral_event/%Y/%m/%d')
+    video = models.FileField(upload_to='videos/behavioral_event/%Y/%m/%d',  blank=True, null=True)
     primates = models.ManyToManyField(Primate)
     contexts = models.ManyToManyField(Context)
     ethograms = models.ManyToManyField(Ethogram)
@@ -98,6 +111,9 @@ class BodyPart(models.Model):
     
     class Meta:
         app_label='gbdb'
+        
+    def __unicode__(self):
+        return self.name
         
         
 class GesturalEvent(BehavioralEvent):
@@ -129,3 +145,6 @@ class Gesture(models.Model):
 
     class Meta:
         app_label='gbdb'
+        
+    def __unicode__(self):
+        return self.name

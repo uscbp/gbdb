@@ -1,0 +1,56 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+{% block extrahead %}
+    <title>GBDB - {% if form.instance.id%}Edit{% else %}Add{% endif %} Primate</title>
+    <script type="text/javascript">
+    
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="detail">
+        <h2>{% if form.instance.id %}Edit{% else %}Add{% endif %} Primate</h2>
+        <form id="primateForm" method="post" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            <table class="tab_panel">
+                <tr valign=top>
+                    <td width=20%>{{ form.name.label_tag }}</td>
+                    <td>{{ form.name }}</td>
+                    <td class="myerrors" width=10%>{{ form.name.errors }}</td>
+                </tr>
+                <tr valign=top>
+                    <td width=20%>{{ form.species.label_tag }}</td>
+                    <td>{{ form.species }}</td>
+                    <td class="myerrors" width=10%>{{ form.species.errors }}</td>
+                </tr>
+                <tr valign=top>
+                    <td>{{ form.birth_date.label_tag }}</td>
+                    <td>{{ form.birth_date }}</td>
+                    <td class="myerrors">{{ form.birth_date.errors }}</td>
+                </tr>
+                <tr valign=top>
+                    <td valign=top>{{ form.location.label_tag }}</td>
+                    <td>{{ form.location }}</td>
+                    <td class="myerrors">{{ form.location.errors }}</td>
+                </tr>
+                <tr valign=top>
+                    <td valign=top>{{ form.habitat.label_tag }}</td>
+                    <td>{{ form.habitat }}</td>
+                    <td class="myerrors">{{ form.habitat.errors }}</td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <div class="myerrors">
+                            {{ form.non_field_errors }}
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            
+            <input type="submit" value="Save" />&nbsp;
+            {% if form.instance.id %}
+                <input type="button" value="Cancel" onclick="document.location.href='/gbdb/observation_session/{{ form.instance.id }}/';"/>&nbsp;
+            {% endif %}
+        </form>
+    </div>
+    
+{% endblock %}
