@@ -2,7 +2,6 @@
 {% load staticfiles %}
 {% block extrahead %}
     <title>GBDB - View Observation Session</title>
-    <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
     <script type="text/javascript">
         function deleteObservationSession()
         {
@@ -19,6 +18,13 @@
             document.location.href='/gbdb/';
         }
 
+        function addBehavioralEvent(id, start_time, duration, video, notes)
+        {
+            var count = $('#behavioral_events').children().length;
+            var tmplMarkup = $('#behavioral_event-template').html();
+            var compiledTmpl = _.template(tmplMarkup, { idx : count+1, id: id, start_time: start_time, duration: duration, video: video, notes: notes});
+            $('#behavioral_events').append(compiledTmpl);
+        }
     </script>
 {% endblock %}
 {% block content %}
@@ -52,25 +58,52 @@
         </table>
 
         <br>
-        <h3>Behavioral Events</h3>
-        <table class="tab_panel">
+        <h3>Behavioral Events <a href="#" onclick="return showPopup('Add Behavioral Event',600,500,'/gbdb/behavioral_event/new/?observation_session={{ object.id }}');">Add new</a></h3>
+        <div id="behavioral_events">
             {% for behavioral_event in behavioral_events %}
-                <tr>
-                    <td><strong>Start time:</strong> {{ behavioral_event.start_time }}</td>
-                </tr>
-                <tr>
-                    <td><strong>Duration:</strong> {{ behavioral_event.duration }}</td>
-                </tr>
-                <tr>
-                    <td><strong>Video:</strong> {{ behavioral_event.video }}</td>
-                </tr>
-                <tr>
-                    <td><strong>Notes:</strong> {{ behavioral_event.notes }}</td>
-                </tr>
+                <div id="behavioral_event-{{ forloop.counter }}" name="behavioral_event">
+                    <table class="tab_panel">
+                        <tr>
+                            <td><strong><a href="/gbdb/behavioral_event/{{ behavioral_event.id }}/">Event {{ forloop.counter }}</a></strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Start time:</strong> {{ behavioral_event.start_time }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Duration:</strong> {{ behavioral_event.duration }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Video:</strong> {{ behavioral_event.video }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Notes:</strong> {{ behavioral_event.notes }}</td>
+                        </tr>
+                    </table>
+                </div>
             {% endfor %}
-        </table>
-
+        </div>
         <input type="button" value="Edit" onclick="document.location.href='/gbdb/observation_session/{{object.id}}/edit/';"/>&nbsp;
         <input type="button" value="Delete" onclick="deleteObservationSession()"/>&nbsp;
     </div>
+    <script type="text/html" id="behavioral_event-template">
+        <div id="behavioral_event-<%= idx %>" name="behavioral_event">
+            <table class="tab_panel">
+                <tr>
+                    <td><strong><a href="/gbdb/behavioral_event/<%= id %>/">Event <%= idx %></a></strong></td>
+                </tr>
+                <tr>
+                    <td><strong>Start time:</strong> <%= start_time %></td>
+                </tr>
+                <tr>
+                    <td><strong>Duration:</strong> <%= duration %></td>
+                </tr>
+                <tr>
+                    <td><strong>Video:</strong> <%= video %></td>
+                </tr>
+                <tr>
+                    <td><strong>Notes:</strong> <%= notes %></td>
+                </tr>
+            </table>
+        </div>
+    </script>
 {% endblock %}

@@ -91,7 +91,6 @@ class ObservationSession(models.Model):
         
         
 class BehavioralEvent(MPTTModel):
-#class BehavioralEvent(models.Model):
     observation_session=models.ForeignKey(ObservationSession)
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
     start_time = models.TimeField()
@@ -104,7 +103,10 @@ class BehavioralEvent(MPTTModel):
     
     class Meta:
         app_label='gbdb'
-        
+
+    def get_absolute_url(self):
+        return reverse('behavioral_event_view', kwargs={'pk': self.pk})
+
         
 class BodyPart(models.Model):
     name = models.CharField(max_length=100)
