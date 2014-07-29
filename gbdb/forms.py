@@ -3,7 +3,7 @@ from django.forms import TimeInput
 from django.forms.models import inlineformset_factory
 from django.forms.extras import SelectDateWidget
 from django import forms
-from gbdb.models import ObservationSession, BehavioralEvent, Primate, Context, Ethogram, Species
+from gbdb.models import ObservationSession, BehavioralEvent, Primate, Context, Ethogram, Species, Gesture, BodyPart
 from registration.forms import RegistrationForm
 from registration.models import User
 
@@ -75,3 +75,19 @@ class PrimateForm(forms.ModelForm):
 
     class Meta:
         model=Primate
+        
+        
+class GestureForm(forms.ModelForm):
+    
+    name = forms.CharField(widget=forms.TextInput(attrs={'size':'30'}),required=True)
+    description = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=False)
+    goal = forms.CharField(widget=forms.TextInput(attrs={'size':'30'}),required=True)
+    signaller_body_parts = forms.ModelMultipleChoiceField(queryset=BodyPart.objects.all(), required=False)
+    recipient_body_parts = forms.ModelMultipleChoiceField(queryset=BodyPart.objects.all(), required=False)
+    audible = forms.ChoiceField(choices=Gesture.CHOICES, widget=forms.Select(), required=True)
+    
+
+    class Meta:
+        model=Gesture
+        
+        

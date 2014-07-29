@@ -1,0 +1,48 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+{% block extrahead %}
+    <title>GBDB - View Primate</title>
+    <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
+    <script type="text/javascript">
+        function deletePrimate()
+        {
+            if(confirm('This will delete this Primate as well as all links to it from other entries. Do you really want to delete the current Primate?'))
+            {
+                var data={'csrfmiddlewaretoken': '{{ csrf_token }}'};
+                var args={type:"POST", url:"/gbdb/primate/{{ object.id }}/delete/", data: data, complete: doneDelete };
+                $.ajax(args);
+            }
+        }
+
+        function doneDelete()
+        {
+            document.location.href='/gbdb/';
+        }
+
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="detail">
+        <h2>Primate</h2>
+        <table class="tab_panel">
+            <tr valign="top">
+                <td colspan="2"><strong>Name:</strong> {{ object.name }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Species:</strong> {{ object.species }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Birth Date:</strong> {{ object.birth_date }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Location:</strong> {{ object.location }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Habitat:</strong> {{ object.habitat }}</td>
+            </tr>
+        </table>
+
+        <input type="button" value="Edit" onclick="document.location.href='/gbdb/primate/{{object.id}}/edit/';"/>&nbsp;
+        <input type="button" value="Delete" onclick="deletePrimate()"/>&nbsp;
+    </div>
+{% endblock %}

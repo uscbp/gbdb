@@ -1,0 +1,51 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+{% block extrahead %}
+    <title>GBDB - View Gesture</title>
+    <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
+    <script type="text/javascript">
+        function deletePrimate()
+        {
+            if(confirm('This will delete this Gesture as well as all links to it from other entries. Do you really want to delete the current Gesture?'))
+            {
+                var data={'csrfmiddlewaretoken': '{{ csrf_token }}'};
+                var args={type:"POST", url:"/gbdb/primate/{{ object.id }}/delete/", data: data, complete: doneDelete };
+                $.ajax(args);
+            }
+        }
+
+        function doneDelete()
+        {
+            document.location.href='/gbdb/';
+        }
+
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="detail">
+        <h2>Gesture</h2>
+        <table class="tab_panel">
+            <tr valign="top">
+                <td colspan="2"><strong>Name:</strong> {{ object.name }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Desciption:</strong> {{ object.description }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Goal:</strong> {{ object.goal }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Signaller Body Parts:</strong> {{ object.signaller_body_parts }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Recipient Body Parts:</strong> {{ object.recipient_body_parts }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Audible:</strong> {{ object.audible }}</td>
+            </tr>
+        </table>
+
+        <input type="button" value="Edit" onclick="document.location.href='/gbdb/gesture/{{object.id}}/edit/';"/>&nbsp;
+        <input type="button" value="Delete" onclick="gesturePrimate()"/>&nbsp;
+    </div>
+{% endblock %}

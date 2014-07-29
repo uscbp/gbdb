@@ -33,6 +33,9 @@ class Primate(models.Model):
     def __unicode__(self):
         return self.name
         
+    def get_absolute_url(self):
+        return reverse('primate_view', kwargs={'pk': self.pk})
+        
         
 class Context(models.Model):
     name = models.CharField(max_length=100)
@@ -148,3 +151,6 @@ class Gesture(models.Model):
         
     def __unicode__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('gesture_view', kwargs={'pk': self.pk})
