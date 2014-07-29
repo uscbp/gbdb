@@ -1,28 +1,28 @@
 {% extends "base_generic.html" %}
 {% load staticfiles %}
 {% block extrahead %}
-    <title>GBDB - {% if form.instance.id%}Edit{% else %}Add{% endif %} Observation Session</title>
+    <title>GBDB - {% if form.instance.id%}Edit{% else %}Add{% endif %} Behavioral Event</title>
 {% endblock %}
 {% block content %}
     <div id="detail">
-        <h2>{% if form.instance.id %}Edit{% else %}Add{% endif %} Observation Session</h2>
-        <form id="observationSessionForm" method="post" action="" enctype="multipart/form-data">
+        <h2>{% if form.instance.id %}Edit{% else %}Add{% endif %} Behavioral Event</h2>
+        <form id="behavioralEventForm" method="post" action="" enctype="multipart/form-data">
             {% csrf_token %}
             <table class="tab_panel">
                 <tr valign=top>
-                    <td width=20%>{{ form.video.label_tag }}</td>
+                    <td width=20%>{{ form.start_time.label_tag }}*</td>
+                    <td>{{ form.start_time }}</td>
+                    <td class="myerrors" width=10%>{{ form.start_time.errors }}</td>
+                </tr>
+                <tr valign=top>
+                    <td>{{ form.duration.label_tag }}*</td>
+                    <td>{{ form.duration }}</td>
+                    <td class="myerrors">{{ form.duration.errors }}</td>
+                </tr>
+                <tr valign=top>
+                    <td valign=top>{{ form.video.label_tag }}*</td>
                     <td>{{ form.video }}</td>
-                    <td class="myerrors" width=10%>{{ form.video.errors }}</td>
-                </tr>
-                <tr valign=top>
-                    <td>{{ form.date.label_tag }}*</td>
-                    <td>{{ form.date }}</td>
-                    <td class="myerrors">{{ form.date.errors }}</td>
-                </tr>
-                <tr valign=top>
-                    <td valign=top>{{ form.location.label_tag }}*</td>
-                    <td>{{ form.location }}</td>
-                    <td class="myerrors">{{ form.location.errors }}</td>
+                    <td class="myerrors">{{ form.video.errors }}</td>
                 </tr>
                 <tr valign=top>
                     <td valign=top>{{ form.notes.label_tag }}</td>
@@ -38,10 +38,11 @@
                 </tr>
             </table>
             <br>
+            {{ form.observation_session }}
             {{ form.collator }}
             <input type="submit" value="Save" />&nbsp;
             {% if form.instance.id %}
-                <input type="button" value="Cancel" onclick="document.location.href='/gbdb/observation_session/{{ form.instance.id }}/';"/>&nbsp;
+                <input type="button" value="Cancel" onclick="document.location.href='/gbdb/behavioral_event/{{ form.instance.id }}/';"/>&nbsp;
             {% endif %}
         </form>
     </div>

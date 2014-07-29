@@ -1,0 +1,48 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+{% block extrahead %}
+    <title>GBDB - View Behavioral Event</title>
+    <script type="text/javascript">
+
+        {% if ispopup %}
+            opener.addBehavioralEvent({{ object.id }}, '{{ object.start_time.hour }}:{{ object.start_time.minute }}:{{ object.start_time.second }}', {{ object.duration }}, '{{ object.video }}', '{{ object.notes }}');
+            self.close()
+        {% endif %}
+        function deleteBehavioralEvent()
+        {
+            if(confirm('This will delete this Behavioral Event as well as all links to it from other entries. Do you really want to delete the current Behavioral Event?'))
+            {
+                var data={'csrfmiddlewaretoken': '{{ csrf_token }}'};
+                var args={type:"POST", url:"/gbdb/behavioral_event/{{ object.id }}/delete/", data: data, complete: doneDelete };
+                $.ajax(args);
+            }
+        }
+
+        function doneDelete()
+        {
+            document.location.href='/gbdb/';
+        }
+
+    </script>
+{% endblock %}
+{% block content %}
+<div id="detail">
+    <h2>Behavioral Event</h2>
+    <table class="tab_panel">
+        <tr valign="top">
+            <td colspan="2"><strong>Video:</strong> {{ object.video }}</td>
+        </tr>
+        <tr valign="top">
+            <td colspan="2"><strong>Start time:</strong> {{ object.start_time.hour }}:{{ object.start_time.minute }}:{{ object.start_time.second }}</td>
+        </tr>
+        <tr valign="top">
+            <td colspan="2"><strong>Duration:</strong> {{ object.duration }}</td>
+        </tr>
+        <tr valign="top">
+            <td colspan="2"><strong>Notes:</strong> {{ object.notes }}</td>
+        </tr>
+    </table>
+    <input type="button" value="Edit" onclick="document.location.href='/gbdb/behavioral_event/{{object.id}}/edit/';"/>&nbsp;
+    <input type="button" value="Delete" onclick="deleteBehavioralEvent()"/>&nbsp;
+</div>
+{% endblock %}
