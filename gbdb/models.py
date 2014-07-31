@@ -94,7 +94,7 @@ class ObservationSession(models.Model):
         
         
 class BehavioralEvent(MPTTModel):
-    observation_session=models.ForeignKey(ObservationSession)
+    observation_session=models.ForeignKey(ObservationSession, null=True, blank=True)
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
     start_time = models.TimeField()
     duration = models.IntegerField()
@@ -126,9 +126,9 @@ class GesturalEvent(BehavioralEvent):
         ('yes', 'Yes'),
         ('no', 'No'),
         )
-    signaller = models.ForeignKey('Primate', related_name='signaller')
-    recipient = models.ForeignKey('Primate', related_name='recipient')
-    gesture = models.ForeignKey('Gesture', related_name='gesture')
+    signaller = models.ForeignKey('Primate', related_name='signaller', null=True)
+    recipient = models.ForeignKey('Primate', related_name='recipient', null=True)
+    gesture = models.ForeignKey('Gesture', related_name='gesture', null=True)
     recipient_response = models.TextField()
     goal_met = models.CharField(max_length=100, choices=CHOICES, default='no')
     

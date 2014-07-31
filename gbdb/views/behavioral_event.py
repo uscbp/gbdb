@@ -1,7 +1,7 @@
 from django.shortcuts import redirect
 from django.views.generic import CreateView, UpdateView, DetailView, DeleteView
-from gbdb.forms import BehavioralEventForm
-from gbdb.models import BehavioralEvent, ObservationSession
+from gbdb.forms import BehavioralEventForm, SubBehavioralEventFormSet, GesturalEventFormSet
+from gbdb.models import BehavioralEvent, ObservationSession, GesturalEvent
 
 class EditBehavioralEventMixin():
     model=BehavioralEvent
@@ -10,19 +10,46 @@ class EditBehavioralEventMixin():
 
     def form_valid(self, form):
         context = self.get_context_data()
+        sub_behavioral_event_formset = context['sub_behavioral_event_formset']
+        sub_gestural_event_formset = context['sub_gestural_event_formset']
 
-        self.object = form.save(commit=False)
-        # Set the collator if this is a new session
-        if self.object.id is None:
-            self.object.collator=self.request.user
-        self.object.last_modified_by=self.request.user
-        self.object.save()
-        form.save_m2m()
+        if sub_behavioral_event_formset.is_valid() and sub_gestural_event_formset.is_valid():
+            self.object = form.save(commit=False)
+            self.object.save()
+            form.save_m2m()
 
-        url=self.get_success_url()
-        if '_popup' in self.request.GET:
-            url+='?_popup=1'
-        return redirect(url)
+            # save sub-events
+            sub_behavioral_event_formset.instance = self.object
+            for sub_behavioral_event_form in sub_behavioral_event_formset.forms:
+                if not sub_behavioral_event_form in sub_behavioral_event_formset.deleted_forms:
+                    behavioral_event=sub_behavioral_event_form.save(commit=False)
+                    behavioral_event.parent=self.object
+                    behavioral_event.observation_session=self.object.observation_session
+                    behavioral_event.save()
+
+            # delete removed sub-events
+            for sub_behavioral_event_form in sub_behavioral_event_formset.deleted_forms:
+                if sub_behavioral_event_form.instance.id:
+                    sub_behavioral_event_form.instance.delete()
+
+            sub_gestural_event_formset.instance=self.object
+            for sub_gestural_event_form in sub_gestural_event_formset.forms:
+                if not sub_gestural_event_form in sub_gestural_event_formset.deleted_forms:
+                    gestural_event=sub_gestural_event_form.save(commit=False)
+                    gestural_event.parent=self.object
+                    gestural_event.observation_session=self.object.observation_session
+                    gestural_event.save()
+
+            for sub_gestural_event_form in sub_gestural_event_formset.deleted_forms:
+                if sub_gestural_event_form.instance.id:
+                    sub_gestural_event_form.instance.delete()
+
+            url=self.get_success_url()
+            if '_popup' in self.request.GET:
+                url+='?_popup=1'
+            return redirect(url)
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
 
 
 class CreateBehavioralEventView(EditBehavioralEventMixin, CreateView):
@@ -34,6 +61,10 @@ class CreateBehavioralEventView(EditBehavioralEventMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(CreateBehavioralEventView,self).get_context_data(**kwargs)
+        context['sub_behavioral_event_formset']=SubBehavioralEventFormSet(self.request.POST or None, self.request.FILES or None,
+            prefix='sub_behavioral_event')
+        context['sub_gestural_event_formset']=GesturalEventFormSet(self.request.POST or None, self.request.FILES or None,
+            prefix='sub_gestural_event')
         return context
 
 
@@ -41,6 +72,12 @@ class UpdateBehavioralEventView(EditBehavioralEventMixin,UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(UpdateBehavioralEventView,self).get_context_data(**kwargs)
+        context['sub_behavioral_event_formset']=SubBehavioralEventFormSet(self.request.POST or None, self.request.FILES or None,
+            prefix='sub_behavioral_event', instance=self.object,
+            queryset=BehavioralEvent.objects.filter(parent=self.object))
+        context['sub_gestural_event_formset']=GesturalEventFormSet(self.request.POST or None, self.request.FILES or None,
+            prefix='sub_gestural_event', instance=self.object,
+            queryset=GesturalEvent.objects.filter(parent=self.object))
         return context
 
 
@@ -55,5 +92,7 @@ class BehavioralEventDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(BehavioralEventDetailView, self).get_context_data(**kwargs)
+        context['sub_behavioral_events']=BehavioralEvent.objects.filter(parent=self.object,gesturalevent__isnull=True)
+        context['sub_gestural_events']=GesturalEvent.objects.filter(parent=self.object)
         context['ispopup']='_popup' in self.request.GET
         return context

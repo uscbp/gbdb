@@ -1,7 +1,7 @@
 {% extends "base_generic.html" %}
 {% load staticfiles %}
 {% block extrahead %}
-    <title>GBDB - View Behavioral Event</title>
+    <title>GBDB - View Behavioral {% if object.parent %}Sub-{% endif %}Event</title>
     <script type="text/javascript">
 
         {% if ispopup %}
@@ -27,11 +27,13 @@
 {% endblock %}
 {% block content %}
 <div id="detail">
-    <h2>Behavioral Event</h2>
+    <h2>Behavioral {% if object.parent %}Sub-{% endif %}Event</h2>
     <table class="tab_panel">
-        <tr valign="top">
-            <td colspan="2"><strong>Video:</strong> {{ object.video }}</td>
-        </tr>
+        {% if not object.parent %}
+            <tr valign="top">
+                <td colspan="2"><strong>Video:</strong> {{ object.video }}</td>
+            </tr>
+        {% endif %}
         <tr valign="top">
             <td colspan="2"><strong>Start time:</strong> {{ object.start_time.hour }}:{{ object.start_time.minute }}:{{ object.start_time.second }}</td>
         </tr>
@@ -42,6 +44,58 @@
             <td colspan="2"><strong>Notes:</strong> {{ object.notes }}</td>
         </tr>
     </table>
+    {% if not object.parent %}
+        <br>
+        <h3>Behavioral Sub-Events</h3>
+        <div id="sub_behavioral_events">
+            {% for sub_behavioral_event in sub_behavioral_events %}
+                <div id="sub_behavioral_event-{{ forloop.counter }}" name="sub_behavioral_event">
+                    <table class="tab_panel">
+                        <tr>
+                            <td><strong><a href="/gbdb/behavioral_event/{{ sub_behavioral_event.id }}/">Event {{ forloop.counter }}</a></strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Start time:</strong> {{ sub_behavioral_event.start_time }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Duration:</strong> {{ sub_behavioral_event.duration }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Video:</strong> {{ sub_behavioral_event.video }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Notes:</strong> {{ sub_behavioral_event.notes }}</td>
+                        </tr>
+                    </table>
+                </div>
+            {% endfor %}
+        </div>
+        <br>
+        <h3>Gestural Sub-Events</h3>
+        <div id="sub_gestural_events">
+            {% for sub_gestural_event in sub_gestural_events %}
+                <div id="sub_gestural_event-{{ forloop.counter }}" name="sub_gestural_event">
+                    <table class="tab_panel">
+                        <tr>
+                            <td><strong><a href="/gbdb/gestural_event/{{ sub_gestural_event.id }}/">Event {{ forloop.counter }}</a></strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Start time:</strong> {{ sub_gestural_event.start_time }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Duration:</strong> {{ sub_gestural_event.duration }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Video:</strong> {{ sub_gestural_event.video }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Notes:</strong> {{ sub_gestural_event.notes }}</td>
+                        </tr>
+                    </table>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
     <input type="button" value="Edit" onclick="document.location.href='/gbdb/behavioral_event/{{object.id}}/edit/';"/>&nbsp;
     <input type="button" value="Delete" onclick="deleteBehavioralEvent()"/>&nbsp;
 </div>

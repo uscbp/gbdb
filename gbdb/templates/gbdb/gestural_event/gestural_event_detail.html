@@ -1,0 +1,69 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+{% block extrahead %}
+    <title>GBDB - {% if form.instance.id%}Edit{% else %}Add{% endif %} Gestural Sub-Event</title>
+{% endblock %}
+{% block content %}
+    <div id="detail">
+        <h2>{% if form.instance.id %}Edit{% else %}Add{% endif %} Gestural Sub-Event</h2>
+        <form id="behavioralEventForm" method="post" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            <table class="tab_panel">
+                <tr valign=top>
+                    <td width=20%>{{ form.start_time.label_tag }}*</td>
+                    <td>{{ form.start_time }}</td>
+                    <td class="myerrors" width=10%>{{ form.start_time.errors }}</td>
+                </tr>
+                <tr valign=top>
+                    <td>{{ form.duration.label_tag }}*</td>
+                    <td>{{ form.duration }}</td>
+                    <td class="myerrors">{{ form.duration.errors }}</td>
+                </tr>
+                <tr valign=top>
+                    <td>{{ form.signaller.label_tag }}*</td>
+                    <td>{{ form.signaller }}</td>
+                    <td class="myerrors">{{ form.signaller.errors }}</td>
+                </tr>
+                <tr valign=top>
+                    <td>{{ form.recipient.label_tag }}*</td>
+                    <td>{{ form.recipient }}</td>
+                    <td class="myerrors">{{ form.recipient.errors }}</td>
+                </tr>
+                <tr valign=top>
+                    <td>{{ form.gesture.label_tag }}*</td>
+                    <td>{{ form.gesture }}</td>
+                    <td class="myerrors">{{ form.gesture.errors }}</td>
+                </tr>
+                <tr valign=top>
+                    <td>{{ form.recipient_response.label_tag }}*</td>
+                    <td>{{ form.recipient_response }}</td>
+                    <td class="myerrors">{{ form.recipient_response.errors }}</td>
+                </tr>
+                <tr valign=top>
+                    <td>{{ form.goal_met.label_tag }}*</td>
+                    <td>{{ form.goal_met }}</td>
+                    <td class="myerrors">{{ form.goal_met.errors }}</td>
+                </tr>
+                <tr valign=top>
+                    <td valign=top>{{ form.notes.label_tag }}</td>
+                    <td>{{ form.notes }}</td>
+                    <td class="myerrors">{{ form.notes.errors }}</td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <div class="myerrors">
+                            {{ form.non_field_errors }}
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            {{ form.observation_session }}
+            {{ form.parent }}
+            {{ form.collator }}
+            <input type="submit" value="Save" />&nbsp;
+            {% if form.instance.id %}
+                <input type="button" value="Cancel" onclick="document.location.href='/gbdb/gestural_event/{{ form.instance.id }}/';"/>&nbsp;
+            {% endif %}
+        </form>
+    </div>
+{% endblock %}

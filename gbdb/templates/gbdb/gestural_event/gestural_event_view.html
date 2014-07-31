@@ -1,0 +1,56 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+{% block extrahead %}
+    <title>GBDB - View Gestural Sub-Event</title>
+    <script type="text/javascript">
+
+        function deleteGesturalEvent()
+        {
+            if(confirm('This will delete this Gestural Event as well as all links to it from other entries. Do you really want to delete the current Gestural Event?'))
+            {
+                var data={'csrfmiddlewaretoken': '{{ csrf_token }}'};
+                var args={type:"POST", url:"/gbdb/gestural_event/{{ object.id }}/delete/", data: data, complete: doneDelete };
+                $.ajax(args);
+            }
+        }
+
+        function doneDelete()
+        {
+            document.location.href='/gbdb/';
+        }
+
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="detail">
+        <h2>Gestural Sub-Event</h2>
+        <table class="tab_panel">
+            <tr valign="top">
+                <td colspan="2"><strong>Start time:</strong> {{ object.start_time.hour }}:{{ object.start_time.minute }}:{{ object.start_time.second }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Duration:</strong> {{ object.duration }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Signaller:</strong> {{ object.signaller }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Recipient:</strong> {{ object.recipient }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Gesture:</strong> {{ object.gesture }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Recipient response:</strong> {{ object.recipient_response }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Goal met:</strong> {{ object.goal_met }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Notes:</strong> {{ object.notes }}</td>
+            </tr>
+        </table>
+        <input type="button" value="Edit" onclick="document.location.href='/gbdb/gestural_event/{{object.id}}/edit/';"/>&nbsp;
+        <input type="button" value="Delete" onclick="deleteGesturalEvent()"/>&nbsp;
+    </div>
+{% endblock %}

@@ -1,6 +1,6 @@
 from django.shortcuts import redirect
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
-from gbdb.forms import ObservationSessionForm, BehavioralEventFormSet
+from gbdb.forms import ObservationSessionForm
 from gbdb.models import ObservationSession, BehavioralEvent
 
 class EditObservationSessionMixin():
@@ -27,8 +27,6 @@ class CreateObservationSessionView(EditObservationSessionMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(CreateObservationSessionView,self).get_context_data(**kwargs)
-        context['behavioral_event_formset']=BehavioralEventFormSet(self.request.POST or None, self.request.FILES or None,
-            prefix='behavioral_event')
         return context
 
 
@@ -36,9 +34,6 @@ class UpdateObservationSessionView(EditObservationSessionMixin,UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(UpdateObservationSessionView,self).get_context_data(**kwargs)
-        context['behavioral_event_formset']=BehavioralEventFormSet(self.request.POST or None, self.request.FILES or None,
-            prefix='behavioral_event', instance=self.object,
-            queryset=BehavioralEvent.objects.filter(observation_session=self.object))
         return context
 
 

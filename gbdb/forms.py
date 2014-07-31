@@ -3,7 +3,7 @@ from django.forms import TimeInput
 from django.forms.models import inlineformset_factory
 from django.forms.extras import SelectDateWidget
 from django import forms
-from gbdb.models import ObservationSession, BehavioralEvent, Primate, Context, Ethogram, Species, Gesture, BodyPart
+from gbdb.models import ObservationSession, BehavioralEvent, Primate, Context, Ethogram, Species, Gesture, BodyPart, GesturalEvent
 from registration.forms import RegistrationForm
 from registration.models import User
 
@@ -47,6 +47,7 @@ class ObservationSessionForm(forms.ModelForm):
 class BehavioralEventForm(forms.ModelForm):
     observation_session=forms.ModelChoiceField(queryset=ObservationSession.objects.all(),widget=forms.HiddenInput,
         required=False)
+    parent=forms.ModelChoiceField(queryset=BehavioralEvent.objects.all(),widget=forms.HiddenInput, required=False)
     start_time = forms.TimeField(widget=TimeInput(), required=True)
     duration = forms.CharField(widget=forms.TextInput(attrs={'size':'20'}),required=True)
     video = forms.FileField(required=False)
@@ -61,8 +62,30 @@ class BehavioralEventForm(forms.ModelForm):
     class Meta:
         model=BehavioralEvent
 
-BehavioralEventFormSet = inlineformset_factory(ObservationSession, BehavioralEvent, form=BehavioralEventForm,
+
+BaseBehavioralEventFormSet = inlineformset_factory(ObservationSession, BehavioralEvent, form=BehavioralEventForm,
     fk_name='observation_session', extra=0, can_delete=True, can_order=True)
+
+
+SubBehavioralEventFormSet = inlineformset_factory(BehavioralEvent, BehavioralEvent, form=BehavioralEventForm,
+    fk_name='parent', extra=0, can_delete=True, can_order=True)
+
+
+class GesturalEventForm(BehavioralEventForm):
+    signaller = forms.ModelChoiceField(queryset=Primate.objects.all(), required=False)
+    recipient = forms.ModelChoiceField(queryset=Primate.objects.all(), required=False)
+    gesture = forms.ModelChoiceField(queryset=Gesture.objects.all(), required=False)
+    recipient_response = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=False)
+    goal_met = forms.ChoiceField(choices=GesturalEvent.CHOICES,
+        widget=forms.Select(attrs={'style': 'font-size: 80%;font-family: verdana, sans-serif'}), required=True)
+
+    class Meta:
+        model=GesturalEvent
+
+
+GesturalEventFormSet = inlineformset_factory(BehavioralEvent, GesturalEvent, form=GesturalEventForm, fk_name='parent',
+    extra=0, can_delete=True, can_order=True)
+
 
 class PrimateForm(forms.ModelForm):
     
