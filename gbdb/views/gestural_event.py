@@ -1,6 +1,6 @@
 from django.shortcuts import redirect
 from django.views.generic import CreateView, UpdateView, DetailView, DeleteView
-from gbdb.forms import GesturalEventForm, GesturalEventFormSet
+from gbdb.forms import GesturalEventForm
 from gbdb.models import GesturalEvent, ObservationSession
 
 class EditGesturalEventMixin():
