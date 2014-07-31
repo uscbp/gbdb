@@ -2,14 +2,19 @@
 {% load staticfiles %}
 {% block extrahead %}
     <title>GBDB - View Gesture</title>
-    <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
     <script type="text/javascript">
-        function deletePrimate()
+
+        {% if ispopup %}
+            opener.setGesture({{ object.id }}, '{{ object.name }}', {{ gestural_event_idx }});
+            self.close();
+        {% endif %}
+
+        function deleteGesture()
         {
             if(confirm('This will delete this Gesture as well as all links to it from other entries. Do you really want to delete the current Gesture?'))
             {
                 var data={'csrfmiddlewaretoken': '{{ csrf_token }}'};
-                var args={type:"POST", url:"/gbdb/primate/{{ object.id }}/delete/", data: data, complete: doneDelete };
+                var args={type:"POST", url:"/gbdb/gesture/{{ object.id }}/delete/", data: data, complete: doneDelete };
                 $.ajax(args);
             }
         }
@@ -46,6 +51,6 @@
         </table>
 
         <input type="button" value="Edit" onclick="document.location.href='/gbdb/gesture/{{object.id}}/edit/';"/>&nbsp;
-        <input type="button" value="Delete" onclick="gesturePrimate()"/>&nbsp;
+        <input type="button" value="Delete" onclick="deleteGesture()"/>&nbsp;
     </div>
 {% endblock %}

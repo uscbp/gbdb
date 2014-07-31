@@ -61,9 +61,6 @@
                             <td><strong>Duration:</strong> {{ sub_behavioral_event.duration }}</td>
                         </tr>
                         <tr>
-                            <td><strong>Video:</strong> {{ sub_behavioral_event.video }}</td>
-                        </tr>
-                        <tr>
                             <td><strong>Notes:</strong> {{ sub_behavioral_event.notes }}</td>
                         </tr>
                     </table>
@@ -86,7 +83,19 @@
                             <td><strong>Duration:</strong> {{ sub_gestural_event.duration }}</td>
                         </tr>
                         <tr>
-                            <td><strong>Video:</strong> {{ sub_gestural_event.video }}</td>
+                            <td><strong>Signaller</strong> {{ sub_gestural_event.signaller }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Recipient</strong> {{ sub_gestural_event.recipient }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Gesture</strong> {{ sub_gestural_event.gesture }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Recipient response</strong> {{ sub_gestural_event.recipient_response }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Goal met</strong> {{ sub_gestural_event.goal_met }}</td>
                         </tr>
                         <tr>
                             <td><strong>Notes:</strong> {{ sub_gestural_event.notes }}</td>

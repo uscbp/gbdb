@@ -48,5 +48,5 @@ class ObservationSessionDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(ObservationSessionDetailView, self).get_context_data(**kwargs)
-        context['behavioral_events'] = BehavioralEvent.objects.filter(observation_session=self.object)
+        context['behavioral_events'] = BehavioralEvent.objects.filter(observation_session=self.object, parent__isnull=True)
         return context

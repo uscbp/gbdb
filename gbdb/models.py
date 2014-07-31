@@ -135,6 +135,8 @@ class GesturalEvent(BehavioralEvent):
     class Meta:
         app_label='gbdb'
 
+    def get_absolute_url(self):
+        return reverse('gestural_event_view', kwargs={'pk': self.pk})
 
 class Gesture(models.Model):
     CHOICES = (
