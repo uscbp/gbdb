@@ -8,16 +8,22 @@
 
     <ul>
     <li>Observation Sessions</li>
-    <ul>
-        <li><a href="/gbdb/observation_session/new/">Insert</a></li>
-    </ul>
+    {% if user.is_authenticated and not user.is_anonymous %}
+        <ul>
+            <li><a href="/gbdb/observation_session/new/">Insert</a></li>
+        </ul>
+    {% endif %}
     <li>Primates</li>
-    <ul>
-        <li><a href="/gbdb/primate/new/">Insert</a></li>
-    </ul>
+    {% if user.is_authenticated and not user.is_anonymous %}
+        <ul>
+            <li><a href="/gbdb/primate/new/">Insert</a></li>
+        </ul>
+    {% endif %}
     <li>Gestures</li>
-    <ul>
-        <li><a href="/gbdb/gesture/new/">Insert</a></li>
-    </ul>
+    {% if user.is_authenticated and not user.is_anonymous %}
+        <ul>
+            <li><a href="/gbdb/gesture/new/">Insert</a></li>
+        </ul>
+    {% endif %}
     </ul>
 {% endblock %}

@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
 from gbdb.forms import GestureForm
@@ -21,6 +22,7 @@ class EditGestureMixin():
             if 'gestural_event_idx' in self.request.GET:
                 url+='&gestural_event_idx='+self.request.GET['gestural_event_idx']
         return redirect(url)
+
 
 class CreateGestureView(EditGestureMixin, CreateView):
 

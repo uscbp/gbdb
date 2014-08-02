@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.views.generic import CreateView, UpdateView, DetailView, DeleteView
 from gbdb.forms import BehavioralEventForm, SubBehavioralEventFormSet, GesturalEventFormSet

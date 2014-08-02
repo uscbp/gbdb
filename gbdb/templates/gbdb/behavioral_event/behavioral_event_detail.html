@@ -93,7 +93,7 @@
             </table>
             {% if not form.instance.id or not form.instance.parent %}
                 <br>
-                <h3>Behavioral Sub-Events <a href="#" onclick="return addSubBehavioralEventForm();">Add new</a></h3>
+                <h3>Behavioral Sub-Events{% if not form.instance.id or form.instance.observation_session.user == user %} <a href="#" onclick="return addSubBehavioralEventForm();">Add new</a>{% endif %}</h3>
 
                 <div id="subBehavioralEventData">
                     <table class="tab_panel">
@@ -158,7 +158,7 @@
                     </table>
                 </div>
                 <br>
-                <h3>Gestural Sub-Events <a href="#" onclick="return addSubGesturalEventForm();">Add new</a></h3>
+                <h3>Gestural Sub-Events{% if not form.instance.id or form.instance.observation_session.user == user %} <a href="#" onclick="return addSubGesturalEventForm();">Add new</a>{% endif %}</h3>
 
                 <div id="subGesturalEventData">
                     <table class="tab_panel">

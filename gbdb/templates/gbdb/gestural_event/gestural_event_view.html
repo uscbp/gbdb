@@ -56,7 +56,9 @@
                 <td colspan="2"><strong>Notes:</strong> {{ object.notes }}</td>
             </tr>
         </table>
-        <input type="button" value="Edit" onclick="document.location.href='/gbdb/gestural_event/{{object.id}}/edit/';"/>&nbsp;
-        <input type="button" value="Delete" onclick="deleteGesturalEvent()"/>&nbsp;
+        {% if user == object.observation_session.collator %}
+            <input type="button" value="Edit" onclick="document.location.href='/gbdb/gestural_event/{{object.id}}/edit/';"/>&nbsp;
+            <input type="button" value="Delete" onclick="deleteGesturalEvent()"/>&nbsp;
+        {% endif %}
     </div>
 {% endblock %}

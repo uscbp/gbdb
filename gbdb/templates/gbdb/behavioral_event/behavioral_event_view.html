@@ -123,7 +123,9 @@
             {% endfor %}
         </div>
     {% endif %}
-    <input type="button" value="Edit" onclick="document.location.href='/gbdb/behavioral_event/{{object.id}}/edit/';"/>&nbsp;
-    <input type="button" value="Delete" onclick="deleteBehavioralEvent()"/>&nbsp;
+    {% if user == object.observation_session.collator %}
+        <input type="button" value="Edit" onclick="document.location.href='/gbdb/behavioral_event/{{object.id}}/edit/';"/>&nbsp;
+        <input type="button" value="Delete" onclick="deleteBehavioralEvent()"/>&nbsp;
+    {% endif %}
 </div>
 {% endblock %}

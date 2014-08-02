@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
 from gbdb.forms import PrimateForm
@@ -7,6 +8,7 @@ class EditPrimateMixin():
     model=Primate
     form_class=PrimateForm
     template_name='gbdb/primate/primate_detail.html'
+
 
 class CreatePrimateView(EditPrimateMixin, CreateView):
 
