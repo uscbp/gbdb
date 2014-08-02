@@ -18,11 +18,12 @@
             document.location.href='/gbdb/';
         }
 
-        function addBehavioralEvent(id, start_time, duration, video, notes)
+        function addBehavioralEvent(id, start_time, duration, video, contexts, ethograms, notes)
         {
             var count = $('#behavioral_events').children().length;
             var tmplMarkup = $('#behavioral_event-template').html();
-            var compiledTmpl = _.template(tmplMarkup, { idx : count+1, id: id, start_time: start_time, duration: duration, video: video, notes: notes});
+            var compiledTmpl = _.template(tmplMarkup, { idx : count+1, id: id, start_time: start_time,
+                duration: duration, video: video, notes: notes, contexts: contexts, ethograms: ethograms});
             $('#behavioral_events').append(compiledTmpl);
         }
     </script>
@@ -73,6 +74,12 @@
                             <td><strong>Duration:</strong> {{ behavioral_event.duration }}</td>
                         </tr>
                         <tr>
+                            <td><strong>Contexts:</strong> {% for context in behavioral_event.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ethograms:</strong> {% for ethogram in behavioral_event.ethograms.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ ethogram.name }}{% endfor %}</td>
+                        </tr>
+                        <tr>
                             <td><strong>Video:</strong> {{ behavioral_event.video }}</td>
                         </tr>
                         <tr>
@@ -96,6 +103,12 @@
                 </tr>
                 <tr>
                     <td><strong>Duration:</strong> <%= duration %></td>
+                </tr>
+                <tr>
+                    <td><strong>Contexts:</strong> <%= contexts %></td>
+                </tr>
+                <tr>
+                    <td><strong>Ethograms:</strong> <%= ethograms %></td>
                 </tr>
                 <tr>
                     <td><strong>Video:</strong> <%= video %></td>

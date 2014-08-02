@@ -1,7 +1,7 @@
 from django.shortcuts import redirect
 from django.views.generic import CreateView, UpdateView, DetailView, DeleteView
 from gbdb.forms import BehavioralEventForm, SubBehavioralEventFormSet, GesturalEventFormSet
-from gbdb.models import BehavioralEvent, ObservationSession, GesturalEvent, Context
+from gbdb.models import BehavioralEvent, ObservationSession, GesturalEvent, Context, Ethogram
 
 class EditBehavioralEventMixin():
     model=BehavioralEvent
@@ -64,6 +64,7 @@ class CreateBehavioralEventView(EditBehavioralEventMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super(CreateBehavioralEventView,self).get_context_data(**kwargs)
         context['contexts']=Context.objects.all()
+        context['ethograms']=Ethogram.objects.all()
         context['sub_behavioral_event_formset']=SubBehavioralEventFormSet(self.request.POST or None, self.request.FILES or None,
             prefix='sub_behavioral_event')
         context['sub_gestural_event_formset']=GesturalEventFormSet(self.request.POST or None, self.request.FILES or None,
@@ -76,6 +77,7 @@ class UpdateBehavioralEventView(EditBehavioralEventMixin,UpdateView):
     def get_context_data(self, **kwargs):
         context = super(UpdateBehavioralEventView,self).get_context_data(**kwargs)
         context['contexts']=Context.objects.all()
+        context['ethograms']=Ethogram.objects.all()
         context['sub_behavioral_event_formset']=SubBehavioralEventFormSet(self.request.POST or None, self.request.FILES or None,
             prefix='sub_behavioral_event', instance=self.object,
             queryset=BehavioralEvent.objects.filter(parent=self.object))

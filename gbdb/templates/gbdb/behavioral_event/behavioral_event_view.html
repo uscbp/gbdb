@@ -5,7 +5,7 @@
     <script type="text/javascript">
 
         {% if ispopup %}
-            opener.addBehavioralEvent({{ object.id }}, '{{ object.start_time.hour }}:{{ object.start_time.minute }}:{{ object.start_time.second }}', {{ object.duration }}, '{{ object.video }}', '{{ object.notes }}');
+            opener.addBehavioralEvent({{ object.id }}, '{{ object.start_time.hour }}:{{ object.start_time.minute }}:{{ object.start_time.second }}', {{ object.duration }}, '{{ object.video }}', '{% for context in object.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}', '{% for ethogram in object.ethograms.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ ethogram.name }}{% endfor %}', '{{ object.notes }}');
             self.close()
         {% endif %}
         function deleteBehavioralEvent()
@@ -44,6 +44,9 @@
             <td colspan="2"><strong>Contexts:</strong> {% for context in object.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}</td>
         </tr>
         <tr valign="top">
+            <td colspan="2"><strong>Ethograms:</strong> {% for ethogram in object.ethograms.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ ethogram.name }}{% endfor %}</td>
+        </tr>
+        <tr valign="top">
             <td colspan="2"><strong>Notes:</strong> {{ object.notes }}</td>
         </tr>
     </table>
@@ -65,6 +68,9 @@
                         </tr>
                         <tr>
                             <td><strong>Contexts:</strong> {% for context in sub_behavioral_event.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ethograms:</strong> {% for ethogram in sub_behavioral_event.ethograms.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ ethogram.name }}{% endfor %}</td>
                         </tr>
                         <tr>
                             <td><strong>Notes:</strong> {{ sub_behavioral_event.notes }}</td>
@@ -90,6 +96,9 @@
                         </tr>
                         <tr>
                             <td><strong>Contexts:</strong> {% for context in sub_gestural_event.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ethograms:</strong> {% for ethogram in sub_gestural_event.ethograms.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ ethogram.name }}{% endfor %}</td>
                         </tr>
                         <tr>
                             <td><strong>Signaller</strong> {{ sub_gestural_event.signaller }}</td>

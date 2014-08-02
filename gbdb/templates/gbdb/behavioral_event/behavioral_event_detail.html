@@ -74,6 +74,11 @@
                     <td class="myerrors">{{ form.contexts.errors }}</td>
                 </tr>
                 <tr valign=top>
+                    <td valign=top>{{ form.ethograms.label_tag }}</td>
+                    <td>{{ form.ethograms }}</td>
+                    <td class="myerrors">{{ form.ethograms.errors }}</td>
+                </tr>
+                <tr valign=top>
                     <td valign=top>{{ form.notes.label_tag }}</td>
                     <td>{{ form.notes }}</td>
                     <td class="myerrors">{{ form.notes.errors }}</td>
@@ -129,6 +134,13 @@
                                                 </tr>
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td width=60px>&nbsp;</td>
+                                                    <td>Ethograms</td>
+                                                    <td colspan="4">
+                                                        {{ sub_behavioral_event_form.ethograms }}
+                                                    </td>
+                                                </tr>
+                                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                                    <td width=60px>&nbsp;</td>
                                                     <td>Notes</td>
                                                     <td colspan="4">
                                                         {{ sub_behavioral_event_form.notes }}
@@ -177,6 +189,20 @@
                                                         {{ sub_gestural_event_form.duration }}
                                                     </td>
                                                     <td>&nbsp;</td>
+                                                </tr>
+                                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                                    <td width=60px>&nbsp;</td>
+                                                    <td>Contexts</td>
+                                                    <td colspan="4">
+                                                        {{ sub_gestural_event_form.contexts }}
+                                                    </td>
+                                                </tr>
+                                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                                    <td width=60px>&nbsp;</td>
+                                                    <td>Ethograms</td>
+                                                    <td colspan="4">
+                                                        {{ sub_gestural_event_form.ethograms }}
+                                                    </td>
                                                 </tr>
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td width=60px>&nbsp;</td>
@@ -281,6 +307,17 @@
                 </tr>
                 <tr class="even_row" valign=top>
                     <td width=60px>&nbsp;</td>
+                    <td>Ethograms</td>
+                    <td colspan="4">
+                        <select multiple="multiple" id="id_sub_behavioral_event-<%= idx %>-ethograms" name="sub_behavioral_event-<%= idx %>-ethograms">
+                            {% for ethogram in ethograms %}
+                                <option value="{{ ethogram.id }}">{{ ethogram.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                <tr class="even_row" valign=top>
+                    <td width=60px>&nbsp;</td>
                     <td>Notes</td>
                     <td colspan="4">
                         <textarea cols="57" id="id_sub_behavioral_event-<%= idx %>-notes" name="sub_behavioral_event-<%= idx %>-notes" rows="5">
@@ -320,6 +357,17 @@
                         <select multiple="multiple" id="id_sub_gestural_event-<%= idx %>-contexts" name="sub_gestural_event-<%= idx %>-contexts">
                             {% for context in contexts %}
                                 <option value="{{ context.id }}">{{ context.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                <tr class="even_row" valign=top>
+                    <td width=60px>&nbsp;</td>
+                    <td>Ethograms</td>
+                    <td colspan="4">
+                        <select multiple="multiple" id="id_sub_gestural_event-<%= idx %>-ethograms" name="sub_gestural_event-<%= idx %>-ethograms">
+                            {% for ethogram in ethograms %}
+                                <option value="{{ ethogram.id }}">{{ ethogram.name }}</option>
                             {% endfor %}
                         </select>
                     </td>
