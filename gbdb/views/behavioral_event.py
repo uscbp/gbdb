@@ -1,7 +1,7 @@
 from django.shortcuts import redirect
 from django.views.generic import CreateView, UpdateView, DetailView, DeleteView
 from gbdb.forms import BehavioralEventForm, SubBehavioralEventFormSet, GesturalEventFormSet
-from gbdb.models import BehavioralEvent, ObservationSession, GesturalEvent
+from gbdb.models import BehavioralEvent, ObservationSession, GesturalEvent, Context
 
 class EditBehavioralEventMixin():
     model=BehavioralEvent
@@ -26,6 +26,7 @@ class EditBehavioralEventMixin():
                     behavioral_event.parent=self.object
                     behavioral_event.observation_session=self.object.observation_session
                     behavioral_event.save()
+                    sub_behavioral_event_form.save_m2m()
 
             # delete removed sub-events
             for sub_behavioral_event_form in sub_behavioral_event_formset.deleted_forms:
@@ -39,6 +40,7 @@ class EditBehavioralEventMixin():
                     gestural_event.parent=self.object
                     gestural_event.observation_session=self.object.observation_session
                     gestural_event.save()
+                    sub_gestural_event_form.save_m2m()
 
             for sub_gestural_event_form in sub_gestural_event_formset.deleted_forms:
                 if sub_gestural_event_form.instance.id:
@@ -61,6 +63,7 @@ class CreateBehavioralEventView(EditBehavioralEventMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(CreateBehavioralEventView,self).get_context_data(**kwargs)
+        context['contexts']=Context.objects.all()
         context['sub_behavioral_event_formset']=SubBehavioralEventFormSet(self.request.POST or None, self.request.FILES or None,
             prefix='sub_behavioral_event')
         context['sub_gestural_event_formset']=GesturalEventFormSet(self.request.POST or None, self.request.FILES or None,
@@ -72,6 +75,7 @@ class UpdateBehavioralEventView(EditBehavioralEventMixin,UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(UpdateBehavioralEventView,self).get_context_data(**kwargs)
+        context['contexts']=Context.objects.all()
         context['sub_behavioral_event_formset']=SubBehavioralEventFormSet(self.request.POST or None, self.request.FILES or None,
             prefix='sub_behavioral_event', instance=self.object,
             queryset=BehavioralEvent.objects.filter(parent=self.object))

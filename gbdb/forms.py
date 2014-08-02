@@ -53,8 +53,7 @@ class BehavioralEventForm(forms.ModelForm):
     video = forms.FileField(required=False)
     primates = forms.ModelMultipleChoiceField(queryset=Primate.objects.all(), widget=forms.MultipleHiddenInput,
         required=False)
-    contexts = forms.ModelMultipleChoiceField(queryset=Context.objects.all(), widget=forms.MultipleHiddenInput,
-        required=False)
+    contexts = forms.ModelMultipleChoiceField(queryset=Context.objects.all(), required=False)
     ethograms = forms.ModelMultipleChoiceField(queryset=Ethogram.objects.all(), widget=forms.MultipleHiddenInput,
         required=False)
     notes = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=False)

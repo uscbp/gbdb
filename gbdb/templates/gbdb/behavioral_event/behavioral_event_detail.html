@@ -69,6 +69,11 @@
                     </tr>
                 {% endif %}
                 <tr valign=top>
+                    <td valign=top>{{ form.contexts.label_tag }}</td>
+                    <td>{{ form.contexts }}</td>
+                    <td class="myerrors">{{ form.contexts.errors }}</td>
+                </tr>
+                <tr valign=top>
                     <td valign=top>{{ form.notes.label_tag }}</td>
                     <td>{{ form.notes }}</td>
                     <td class="myerrors">{{ form.notes.errors }}</td>
@@ -114,6 +119,13 @@
                                                         {{ sub_behavioral_event_form.duration }}
                                                     </td>
                                                     <td>&nbsp;</td>
+                                                </tr>
+                                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                                    <td width=60px>&nbsp;</td>
+                                                    <td>Contexts</td>
+                                                    <td colspan="4">
+                                                        {{ sub_behavioral_event_form.contexts }}
+                                                    </td>
                                                 </tr>
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td width=60px>&nbsp;</td>
@@ -258,6 +270,17 @@
                 </tr>
                 <tr class="even_row" valign=top>
                     <td width=60px>&nbsp;</td>
+                    <td>Contexts</td>
+                    <td colspan="4">
+                        <select multiple="multiple" id="id_sub_behavioral_event-<%= idx %>-contexts" name="sub_behavioral_event-<%= idx %>-contexts">
+                            {% for context in contexts %}
+                                <option value="{{ context.id }}">{{ context.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                <tr class="even_row" valign=top>
+                    <td width=60px>&nbsp;</td>
                     <td>Notes</td>
                     <td colspan="4">
                         <textarea cols="57" id="id_sub_behavioral_event-<%= idx %>-notes" name="sub_behavioral_event-<%= idx %>-notes" rows="5">
@@ -289,6 +312,17 @@
                         <input id="id_sub_gestural_event-<%= idx %>-duration" name="sub_gestural_event-<%= idx %>-duration" size="20" type="text" />
                     </td>
                     <td>&nbsp;</td>
+                </tr>
+                <tr class="even_row" valign=top>
+                    <td width=60px>&nbsp;</td>
+                    <td>Contexts</td>
+                    <td colspan="4">
+                        <select multiple="multiple" id="id_sub_gestural_event-<%= idx %>-contexts" name="sub_gestural_event-<%= idx %>-contexts">
+                            {% for context in contexts %}
+                                <option value="{{ context.id }}">{{ context.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
                 </tr>
                 <tr class="even_row" valign=top>
                     <td width=60px>&nbsp;</td>
