@@ -32,6 +32,12 @@
                 <td colspan="2"><strong>Duration:</strong> {{ object.duration }}</td>
             </tr>
             <tr valign="top">
+                <td colspan="2"><strong>Contexts:</strong> {% for context in object.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Ethograms:</strong> {% for ethogram in object.ethograms.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ ethogram.name }}{% endfor %}</td>
+            </tr>
+            <tr valign="top">
                 <td colspan="2"><strong>Signaller:</strong> {{ object.signaller }}</td>
             </tr>
             <tr valign="top">
@@ -50,7 +56,9 @@
                 <td colspan="2"><strong>Notes:</strong> {{ object.notes }}</td>
             </tr>
         </table>
-        <input type="button" value="Edit" onclick="document.location.href='/gbdb/gestural_event/{{object.id}}/edit/';"/>&nbsp;
-        <input type="button" value="Delete" onclick="deleteGesturalEvent()"/>&nbsp;
+        {% if user == object.observation_session.collator %}
+            <input type="button" value="Edit" onclick="document.location.href='/gbdb/gestural_event/{{object.id}}/edit/';"/>&nbsp;
+            <input type="button" value="Delete" onclick="deleteGesturalEvent()"/>&nbsp;
+        {% endif %}
     </div>
 {% endblock %}

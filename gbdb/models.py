@@ -62,7 +62,7 @@ class ObservationSession(models.Model):
     creation_time = models.DateTimeField(auto_now_add=True,blank=True)
     last_modified_time = models.DateTimeField(auto_now=True,blank=True)
     last_modified_by = models.ForeignKey(User,null=True,blank=True,related_name='last_modified_by')
-
+    
     video = models.FileField(upload_to='videos/observation_session/%Y/%m/%d',  blank=True, null=True)
     date = models.DateField()
     location = models.CharField(max_length=100) #this should be some kind of geo model

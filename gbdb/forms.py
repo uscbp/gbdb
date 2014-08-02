@@ -53,10 +53,8 @@ class BehavioralEventForm(forms.ModelForm):
     video = forms.FileField(required=False)
     primates = forms.ModelMultipleChoiceField(queryset=Primate.objects.all(), widget=forms.SelectMultiple(attrs={"onChange":'populatePrimates()'}),
         required=False)
-    contexts = forms.ModelMultipleChoiceField(queryset=Context.objects.all(), widget=forms.MultipleHiddenInput,
-        required=False)
-    ethograms = forms.ModelMultipleChoiceField(queryset=Ethogram.objects.all(), widget=forms.MultipleHiddenInput,
-        required=False)
+    contexts = forms.ModelMultipleChoiceField(queryset=Context.objects.all(), required=False)
+    ethograms = forms.ModelMultipleChoiceField(queryset=Ethogram.objects.all(), required=False)
     notes = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=False)
 
     class Meta:
@@ -88,7 +86,6 @@ GesturalEventFormSet = inlineformset_factory(BehavioralEvent, GesturalEvent, for
 
 
 class PrimateForm(forms.ModelForm):
-    
     name = forms.CharField(widget=forms.TextInput(attrs={'size':'30'}),required=True)
     species = forms.ModelChoiceField(queryset=Species.objects.all(), required=True)
     birth_date = forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=True)
@@ -101,7 +98,6 @@ class PrimateForm(forms.ModelForm):
         
         
 class GestureForm(forms.ModelForm):
-    
     name = forms.CharField(widget=forms.TextInput(attrs={'size':'30'}),required=True)
     description = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=False)
     goal = forms.CharField(widget=forms.TextInput(attrs={'size':'30'}),required=True)
