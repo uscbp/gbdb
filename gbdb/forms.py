@@ -51,7 +51,7 @@ class BehavioralEventForm(forms.ModelForm):
     start_time = forms.TimeField(widget=TimeInput(), required=True)
     duration = forms.CharField(widget=forms.TextInput(attrs={'size':'20'}),required=True)
     video = forms.FileField(required=False)
-    primates = forms.ModelMultipleChoiceField(queryset=Primate.objects.all(), widget=forms.MultipleHiddenInput,
+    primates = forms.ModelMultipleChoiceField(queryset=Primate.objects.all(), widget=forms.SelectMultiple(attrs={"onChange":'populatePrimates()'}),
         required=False)
     contexts = forms.ModelMultipleChoiceField(queryset=Context.objects.all(), widget=forms.MultipleHiddenInput,
         required=False)

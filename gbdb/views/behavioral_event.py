@@ -1,7 +1,7 @@
 from django.shortcuts import redirect
 from django.views.generic import CreateView, UpdateView, DetailView, DeleteView
 from gbdb.forms import BehavioralEventForm, SubBehavioralEventFormSet, GesturalEventFormSet
-from gbdb.models import BehavioralEvent, ObservationSession, GesturalEvent
+from gbdb.models import BehavioralEvent, ObservationSession, GesturalEvent, Primate, Gesture
 
 class EditBehavioralEventMixin():
     model=BehavioralEvent
@@ -65,6 +65,9 @@ class CreateBehavioralEventView(EditBehavioralEventMixin, CreateView):
             prefix='sub_behavioral_event')
         context['sub_gestural_event_formset']=GesturalEventFormSet(self.request.POST or None, self.request.FILES or None,
             prefix='sub_gestural_event')
+        context['primates'] = Primate.objects.all()
+        context['signallers'] = context['recipients'] = Primate.objects.all()
+        context['gestures'] = Gesture.objects.all()
         return context
 
 
@@ -78,6 +81,9 @@ class UpdateBehavioralEventView(EditBehavioralEventMixin,UpdateView):
         context['sub_gestural_event_formset']=GesturalEventFormSet(self.request.POST or None, self.request.FILES or None,
             prefix='sub_gestural_event', instance=self.object,
             queryset=GesturalEvent.objects.filter(parent=self.object))
+        context['primates'] = Primate.objects.all()
+        context['signallers'] = context['recipients'] = Primate.objects.all()
+        context['gestures'] = Gesture.objects.all()
         return context
 
 

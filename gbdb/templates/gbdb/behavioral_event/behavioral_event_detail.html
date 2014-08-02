@@ -11,7 +11,7 @@
             $('#sub_behavioral_events').append(compiledTmpl);
             // update form count
             $('#id_sub_behavioral_event-TOTAL_FORMS').attr('value', count+1);
-
+            
             return false;
         }
 
@@ -26,6 +26,37 @@
 
             return false;
         }
+        
+
+        function populatePrimates() 
+        {
+        	var vals = $("#id_primates :selected");
+	        var count = $('#sub_behavioral_events').children().length;
+	
+			for(var i=0; i < count; i++){
+			var sel = $("#id_sub_behavioral_event-" + i + "-primates");
+			sel.empty();
+			vals.map(function(i, el) {
+				sel.append('<option value="">' + $(el).text() + '</option>');
+				});
+			}
+			
+			var count = $('#sub_gestural_events').children().length;
+	
+			for(var i=0; i < count; i++){
+			var selsignaller = $("#id_sub_gestural_event-" + i + "-signaller");
+			var selrecipient = $("#id_sub_gestural_event-" + i + "-recipient");
+			selsignaller.empty();
+			selrecipient.empty();
+			vals.map(function(i, el) {
+				selsignaller.append('<option value="">' + $(el).text() + '</option>');
+				selrecipient.append('<option value="">' + $(el).text() + '</option>');
+				});
+			}
+			
+
+        }
+        
 
         function setGesture(gestureID, gestureName, gesturalEventIdx)
         {
@@ -68,6 +99,11 @@
                         <td class="myerrors">{{ form.video.errors }}</td>
                     </tr>
                 {% endif %}
+                <tr valign=top>
+                    <td valign=top>{{ form.primates.label_tag }}</td>
+                    <td>{{ form.primates }} <input class="btn" type="button" value="Add Primate" onclick="return showPopup('Add Primate',600,500,'/gbdb/primate/new/');"/></td>
+                    <td class="myerrors">{{ form.primates.errors }}</td>
+                </tr>
                 <tr valign=top>
                     <td valign=top>{{ form.notes.label_tag }}</td>
                     <td>{{ form.notes }}</td>
@@ -252,8 +288,10 @@
                 <tr valign=top>
                     <td width=60px>&nbsp;</td>
                     <td style="width:120px;">Primates</td>
-                    <td>
-                        <input class="btn" type="button" value="Add Primate" onclick="return showPopup('Add Primate',600,500,'/gbdb/primate/new/');"/>
+                    <td colspan="4">
+                        <select multiple id="id_sub_behavioral_event-<%= idx %>-primates" name="sub_behavioral_event-<%= idx %>-primates">
+                            <option value="" selected="selected">---------</option>
+                        </select>
                     </td>
                 </tr>
                 <tr class="even_row" valign=top>
@@ -296,6 +334,9 @@
                     <td colspan="4">
                         <select id="id_sub_gestural_event-<%= idx %>-signaller" name="sub_gestural_event-<%= idx %>-signaller">
                             <option value="" selected="selected">---------</option>
+                            {% for signaller in signallers %}
+                            	<option value="{{ signaller.id }}">{{ signaller.name }}</option>
+                        	{% endfor %}
                         </select>
                     </td>
                 </tr>
@@ -305,6 +346,9 @@
                     <td colspan="4">
                         <select id="id_sub_gestural_event-<%= idx %>-recipient" name="sub_gestural_event-<%= idx %>-recipient">
                             <option value="" selected="selected">---------</option>
+                            {% for recipient in recipients %}
+                            	<option value="{{ recipient.id }}">{{ recipient.name }}</option>
+                        	{% endfor %}
                         </select>
                     </td>
                 </tr>
@@ -314,6 +358,9 @@
                     <td colspan="4">
                         <select id="id_sub_gestural_event-<%= idx %>-gesture" name="sub_gestural_event-<%= idx %>-gesture">
                             <option value="" selected="selected">---------</option>
+                            {% for gesture in gestures %}
+                            	<option value="{{ gesture.id }}">{{ gesture.name }}</option>
+                        	{% endfor %}
                         </select>
                         <input type="button" onclick="return showPopup('Add Gesture',1000,500,'/gbdb/gesture/new/?gestural_event_idx=<%= idx %>');" value="Add Gesture">
                     </td>
