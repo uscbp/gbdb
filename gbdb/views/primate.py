@@ -9,6 +9,17 @@ class EditPrimateMixin():
     form_class=PrimateForm
     template_name='gbdb/primate/primate_detail.html'
 
+    def form_valid(self, form):
+        context = self.get_context_data()
+
+        self.object = form.save(commit=False)
+        self.object.save()
+        form.save_m2m()
+
+        url=self.get_success_url()
+        if '_popup' in self.request.GET:
+            url+='?_popup=1'
+        return redirect(url)
 
 class CreatePrimateView(EditPrimateMixin, CreateView):
 
@@ -35,4 +46,5 @@ class PrimateDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(PrimateDetailView, self).get_context_data(**kwargs)
+        context['ispopup']='_popup' in self.request.GET
         return context

@@ -26,7 +26,16 @@
 
             return false;
         }
-        
+
+        function addPrimate(primateID, primateName)
+        {
+            var primateElem=document.createElement('option');
+            primateElem.value=primateID;
+            primateElem.innerHTML=primateName;
+            primateElem.selected='selected';
+            var selectElem=document.getElementById('id_primates');
+            selectElem.appendChild(primateElem);
+        }
 
         function populatePrimates() 
         {

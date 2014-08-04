@@ -8,6 +8,7 @@
             opener.addBehavioralEvent({{ object.id }}, '{{ object.start_time.hour }}:{{ object.start_time.minute }}:{{ object.start_time.second }}', {{ object.duration }}, '{{ object.video }}', '{% for context in object.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}', '{% for ethogram in object.ethograms.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ ethogram.name }}{% endfor %}', '{{ object.notes }}');
             self.close()
         {% endif %}
+
         function deleteBehavioralEvent()
         {
             if(confirm('This will delete this Behavioral Event as well as all links to it from other entries. Do you really want to delete the current Behavioral Event?'))

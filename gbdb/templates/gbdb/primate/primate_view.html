@@ -2,8 +2,12 @@
 {% load staticfiles %}
 {% block extrahead %}
     <title>GBDB - View Primate</title>
-    <script type="text/javascript" src="{% static 'bodb/scripts/multipleSelectFunctions.js' %}"></script>
     <script type="text/javascript">
+        {% if ispopup %}
+            opener.addPrimate({{ object.id }}, '{{ object.name }}');
+            self.close()
+        {% endif %}
+
         function deletePrimate()
         {
             if(confirm('This will delete this Primate as well as all links to it from other entries. Do you really want to delete the current Primate?'))
