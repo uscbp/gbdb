@@ -1335,5 +1335,59 @@
         "fields": {
             "name": "Reject"
         }
+    },
+    {
+        "model": "gbdb.Species",
+        "pk": 1,
+        "fields": {
+            "genus_name": "Gorilla",
+            "species_name": "gorilla",
+            "common_name": "Gorilla"
+        }
+    },
+    {
+        "model": "gbdb.Species",
+        "pk": 2,
+        "fields": {
+            "genus_name": "Pan",
+            "species_name": "troglodytes",
+            "common_name": "Chimpanzee"
+        }
+    },
+    {
+        "model": "gbdb.Species",
+        "pk": 3,
+        "fields": {
+            "genus_name": "Pan",
+            "species_name": "paniscus",
+            "common_name": "Bonobo"
+        }
+    },
+    {
+        "model": "gbdb.Species",
+        "pk": 4,
+        "fields": {
+            "genus_name": "Pan",
+            "species_name": "troglodytes",
+            "common_name": "Chimpanzee"
+        }
+    },
+    {
+        "model": "gbdb.Species",
+        "pk": 5,
+        "fields": {
+            "genus_name": "Pongo",
+            "species_name": "pygmaeus",
+            "common_name": "Bornean orangutan"
+        }
+    },
+    {
+        "model": "gbdb.Species",
+        "pk": 6,
+        "fields": {
+            "genus_name": "Pongo",
+            "species_name": "abelii",
+            "common_name": "Sumatran orangutan"
+        }
     }
 ]
