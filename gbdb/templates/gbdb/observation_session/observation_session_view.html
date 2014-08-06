@@ -44,9 +44,11 @@
             <tr valign="top">
                 <td colspan="2"><strong>Last modified:</strong> {{ object.get_modified_str }}</td>
             </tr>
-            <tr valign="top">
-                <td colspan="2"><strong>Video:</strong> {{ object.video }}</td>
-            </tr>
+            {% if object.video.name %}
+                <tr valign="top">
+                    <td colspan="2"><strong>Video:</strong> {{ object.video }}</td>
+                </tr>
+            {% endif %}
             <tr valign="top">
                 <td colspan="2"><strong>Date:</strong> {{ object.date }}</td>
             </tr>
@@ -67,20 +69,23 @@
                         <tr>
                             <td><strong><a href="/gbdb/behavioral_event/{{ behavioral_event.id }}/">Event {{ forloop.counter }}</a></strong></td>
                         </tr>
-                        <tr>
-                            <td><strong>Start time:</strong> {{ behavioral_event.start_time }}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Duration:</strong> {{ behavioral_event.duration }}</td>
-                        </tr>
+                        {% if not behavioral_event.video.name %}
+                            <tr>
+                                <td><strong>Start time:</strong> {{ behavioral_event.start_time.hour }}:{{ behavioral_event.start_time.minute }}:{{ behavioral_event.start_time.second }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Duration:</strong> {{ behavioral_event.duration }}</td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td><strong>Video:</strong> {{ behavioral_event.video }}</td>
+                            </tr>
+                        {% endif %}
                         <tr>
                             <td><strong>Contexts:</strong> {% for context in behavioral_event.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}</td>
                         </tr>
                         <tr>
                             <td><strong>Ethograms:</strong> {% for ethogram in behavioral_event.ethograms.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ ethogram.name }}{% endfor %}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Video:</strong> {{ behavioral_event.video }}</td>
                         </tr>
                         <tr>
                             <td><strong>Notes:</strong> {{ behavioral_event.notes }}</td>
@@ -100,20 +105,23 @@
                 <tr>
                     <td><strong><a href="/gbdb/behavioral_event/<%= id %>/">Event <%= idx %></a></strong></td>
                 </tr>
-                <tr>
-                    <td><strong>Start time:</strong> <%= start_time %></td>
-                </tr>
-                <tr>
-                    <td><strong>Duration:</strong> <%= duration %></td>
-                </tr>
+                <% if(video.length==0) { %>
+                    <tr>
+                        <td><strong>Start time:</strong> <%= start_time %></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Duration:</strong> <%= duration %></td>
+                    </tr>
+                <% } else { %>
+                    <tr>
+                        <td><strong>Video:</strong> <%= video %></td>
+                    </tr>
+                <% } %>
                 <tr>
                     <td><strong>Contexts:</strong> <%= contexts %></td>
                 </tr>
                 <tr>
                     <td><strong>Ethograms:</strong> <%= ethograms %></td>
-                </tr>
-                <tr>
-                    <td><strong>Video:</strong> <%= video %></td>
                 </tr>
                 <tr>
                     <td><strong>Notes:</strong> <%= notes %></td>

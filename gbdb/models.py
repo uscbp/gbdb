@@ -96,8 +96,8 @@ class ObservationSession(models.Model):
 class BehavioralEvent(MPTTModel):
     observation_session=models.ForeignKey(ObservationSession, null=True, blank=True)
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
-    start_time = models.TimeField()
-    duration = models.IntegerField()
+    start_time = models.TimeField(blank=True, null=True)
+    duration = models.IntegerField(blank=True, null=True)
     video = models.FileField(upload_to='videos/behavioral_event/%Y/%m/%d',  blank=True, null=True)
     primates = models.ManyToManyField(Primate)
     contexts = models.ManyToManyField(Context)

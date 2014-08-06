@@ -64,6 +64,10 @@ class CreateBehavioralEventView(EditBehavioralEventMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(CreateBehavioralEventView,self).get_context_data(**kwargs)
+        context['allow_video']=False
+        observation_session=ObservationSession.objects.get(id=self.request.GET.get('observation_session'))
+        if observation_session.video is None or not observation_session.video.name:
+            context['allow_video']=True
         context['contexts']=Context.objects.all()
         context['ethograms']=Ethogram.objects.all()
         context['sub_behavioral_event_formset']=SubBehavioralEventFormSet(self.request.POST or None, self.request.FILES or None,
@@ -80,6 +84,11 @@ class UpdateBehavioralEventView(EditBehavioralEventMixin,UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(UpdateBehavioralEventView,self).get_context_data(**kwargs)
+        context['allow_video']=False
+        if self.object.parent is None:
+            observation_session=ObservationSession.objects.get(id=self.object.observation_session.id)
+            if observation_session.video is None or not observation_session.video.name:
+                context['allow_video']=True
         context['contexts']=Context.objects.all()
         context['ethograms']=Ethogram.objects.all()
         context['sub_behavioral_event_formset']=SubBehavioralEventFormSet(self.request.POST or None, self.request.FILES or None,

@@ -91,20 +91,25 @@
         <form id="behavioralEventForm" method="post" action="" enctype="multipart/form-data">
             {% csrf_token %}
             <table class="tab_panel">
-                <tr valign=top>
-                    <td width=20%>{{ form.start_time.label_tag }}*</td>
-                    <td>{{ form.start_time }}</td>
-                    <td class="myerrors" width=10%>{{ form.start_time.errors }}</td>
-                </tr>
-                <tr valign=top>
-                    <td>{{ form.duration.label_tag }}*</td>
-                    <td>{{ form.duration }}</td>
-                    <td class="myerrors">{{ form.duration.errors }}</td>
-                </tr>
-                {% if not form.instance.id or not form.instance.parent %}
+                {% if not allow_video %}
                     <tr valign=top>
-                        <td valign=top>{{ form.video.label_tag }}*</td>
-                        <td>{{ form.video }}</td>
+                        <td width=300px>{{ form.start_time.label_tag }}*</td>
+                        <td>{{ form.start_time }} (relative to start of observation session video)  </td>
+                        <td class="myerrors" width=10%>{{ form.start_time.errors }}</td>
+                    </tr>
+                    <tr valign=top>
+                        <td>{{ form.duration.label_tag }}*</td>
+                        <td>{{ form.duration }}</td>
+                        <td class="myerrors">{{ form.duration.errors }}</td>
+                    </tr>
+                {% else %}
+                    <tr valign=top>
+                        <td width=30%>{{ form.video.label_tag }}*</td>
+                        <td>
+                            {{ form.video }}
+                            <input type="hidden" id="id_start_time" name="start_time" value="0:0:0">
+                            <input type="hidden" id="id_duration" name="duration" value="0">
+                        </td>
                         <td class="myerrors">{{ form.video.errors }}</td>
                     </tr>
                 {% endif %}
@@ -138,7 +143,7 @@
             </table>
             {% if not form.instance.id or not form.instance.parent %}
                 <br>
-                <h3>Behavioral Sub-Events{% if not form.instance.id or form.instance.observation_session.user == user %} <a href="#" onclick="return addSubBehavioralEventForm();">Add new</a>{% endif %}</h3>
+                <h3>Behavioral Sub-Events{% if not form.instance.id or form.instance.observation_session.collator == user %} <a href="#" onclick="return addSubBehavioralEventForm();">Add new</a>{% endif %}</h3>
 
                 <div id="subBehavioralEventData">
                     <table class="tab_panel">
@@ -161,14 +166,16 @@
                                                         <a href="" onclick="return deleteInlineForm('sub_behavioral_event', {{ forloop.counter0 }});">Delete</a>
                                                     </td>
                                                     <td style="width:120px">Start time</td>
-                                                    <td style="width:200px">
-                                                        {{ sub_behavioral_event_form.start_time }}
+                                                    <td colspan="4">
+                                                        {{ sub_behavioral_event_form.start_time }} (Relative to the start of the {% if allow_video %}behavioral event{% else %}observation session{% endif %} video)
                                                     </td>
+                                                </tr>
+                                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                                    <td width=60px>&nbsp;</td>
                                                     <td style="width:120px">Duration</td>
-                                                    <td style="width:200px">
+                                                    <td colspan="4">
                                                         {{ sub_behavioral_event_form.duration }}
                                                     </td>
-                                                    <td>&nbsp;</td>
                                                 </tr>
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td width=60px>&nbsp;</td>
@@ -203,7 +210,7 @@
                     </table>
                 </div>
                 <br>
-                <h3>Gestural Sub-Events{% if not form.instance.id or form.instance.observation_session.user == user %} <a href="#" onclick="return addSubGesturalEventForm();">Add new</a>{% endif %}</h3>
+                <h3>Gestural Sub-Events{% if not form.instance.id or form.instance.observation_session.collator == user %} <a href="#" onclick="return addSubGesturalEventForm();">Add new</a>{% endif %}</h3>
 
                 <div id="subGesturalEventData">
                     <table class="tab_panel">
@@ -226,14 +233,16 @@
                                                         <a href="" onclick="return deleteInlineForm('sub_gestural_event', {{ forloop.counter0 }});">Delete</a>
                                                     </td>
                                                     <td style="width:120px">Start time</td>
-                                                    <td style="width:200px">
-                                                        {{ sub_gestural_event_form.start_time }}
+                                                    <td colspan="4">
+                                                        {{ sub_gestural_event_form.start_time }} (Relative to the start of the {% if allow_video %}behavioral event{% else %}observation session{% endif %} video)
                                                     </td>
+                                                </tr>
+                                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                                    <td width=60px>&nbsp;</td>
                                                     <td style="width:120px">Duration</td>
-                                                    <td style="width:200px">
+                                                    <td colspan="4">
                                                         {{ sub_gestural_event_form.duration }}
                                                     </td>
-                                                    <td>&nbsp;</td>
                                                 </tr>
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td width=60px>&nbsp;</td>
@@ -323,14 +332,16 @@
                         <a href="" onclick="return deleteInlineForm('sub_behavioral_event', <%= idx %>);">Delete</a>
                     </td>
                     <td style="width:120px">Start time</td>
-                    <td style="width:200px">
-                        <input id="id_sub_behavioral_event-<%= idx %>-start_time" name="sub_behavioral_event-<%= idx %>-start_time" type="text" />
+                    <td colspan="4">
+                        <input id="id_sub_behavioral_event-<%= idx %>-start_time" name="sub_behavioral_event-<%= idx %>-start_time" type="text" /> (Relative to the start of the {% if allow_video %}behavioral event{% else %}observation session{% endif %} video)
                     </td>
+                </tr>
+                <tr valign=top>
+                    <td width=60px>&nbsp;</td>
                     <td style="width:120px">Duration</td>
-                    <td style="width:200px">
+                    <td colspan="4">
                         <input id="id_sub_behavioral_event-<%= idx %>-duration" name="sub_behavioral_event-<%= idx %>-duration" size="20" type="text" />
                     </td>
-                    <td>&nbsp;</td>
                 </tr>
                 <tr valign=top>
                     <td width=60px>&nbsp;</td>
@@ -388,14 +399,16 @@
                         <a href="" onclick="return deleteInlineForm('sub_gestural_event', <%= idx %>);">Delete</a>
                     </td>
                     <td style="width:120px">Start time</td>
-                    <td style="width:200px">
-                        <input id="id_sub_gestural_event-<%= idx %>-start_time" name="sub_gestural_event-<%= idx %>-start_time" type="text" />
+                    <td colspan="4">
+                        <input id="id_sub_gestural_event-<%= idx %>-start_time" name="sub_gestural_event-<%= idx %>-start_time" type="text" /> (Relative to the start of the {% if allow_video %}behavioral event{% else %}observation session{% endif %} video)
                     </td>
+                </tr>
+                <tr class="even_row" valign=top>
+                    <td width=60px>&nbsp;</td>
                     <td style="width:120px">Duration</td>
-                    <td style="width:200px">
+                    <td colspan="4">
                         <input id="id_sub_gestural_event-<%= idx %>-duration" name="sub_gestural_event-<%= idx %>-duration" size="20" type="text" />
                     </td>
-                    <td>&nbsp;</td>
                 </tr>
                 <tr class="even_row" valign=top>
                     <td width=60px>&nbsp;</td>

@@ -6,7 +6,7 @@ body {
 /* Content
 ---------------------------------------------------*/
 #content {
-    margin-left: 255px;
+    margin-left: 100px;
     padding: 0px 20px 0 10px;
 }
 
@@ -14,7 +14,7 @@ body {
 ---------------------------------------------------------*/
 #detail { font-size: 75%; }
 #detail table {
-    width: 80%;
+    width: 90%;
     padding: 5px;
     border-collapse: collapse;
 }

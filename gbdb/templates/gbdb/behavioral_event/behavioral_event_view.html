@@ -30,17 +30,18 @@
 <div id="detail">
     <h2>Behavioral {% if object.parent %}Sub-{% endif %}Event</h2>
     <table class="tab_panel">
-        {% if not object.parent %}
+        {% if object.video.name %}
             <tr valign="top">
                 <td colspan="2"><strong>Video:</strong> {{ object.video }}</td>
             </tr>
+        {% else %}
+            <tr valign="top">
+                <td colspan="2"><strong>Start time:</strong> {{ object.start_time.hour }}:{{ object.start_time.minute }}:{{ object.start_time.second }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Duration:</strong> {{ object.duration }}</td>
+            </tr>
         {% endif %}
-        <tr valign="top">
-            <td colspan="2"><strong>Start time:</strong> {{ object.start_time.hour }}:{{ object.start_time.minute }}:{{ object.start_time.second }}</td>
-        </tr>
-        <tr valign="top">
-            <td colspan="2"><strong>Duration:</strong> {{ object.duration }}</td>
-        </tr>
         <tr valign="top">
             <td colspan="2"><strong>Contexts:</strong> {% for context in object.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}</td>
         </tr>
