@@ -1,8 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
-from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
-from gbdb.forms import ObservationSessionForm
+from django.views.generic import CreateView, UpdateView, DeleteView, DetailView, FormView
+from gbdb.forms import ObservationSessionForm, ObservationSessionSearchForm
 from gbdb.models import ObservationSession, BehavioralEvent
+from gbdb.search import runObservationSessionSearch
 
 class EditObservationSessionMixin():
     model=ObservationSession
@@ -51,3 +52,16 @@ class ObservationSessionDetailView(DetailView):
         context = super(ObservationSessionDetailView, self).get_context_data(**kwargs)
         context['behavioral_events'] = BehavioralEvent.objects.filter(observation_session=self.object, parent__isnull=True)
         return context
+
+
+class SearchObservationSessionView(FormView):
+    form_class=ObservationSessionSearchForm
+    template_name='gbdb/observation_session/observation_session_search.html'
+
+    def form_valid(self, form):
+        context=self.get_context_data(form=form)
+        user=self.request.user
+
+        context['observation_sessions']=runObservationSessionSearch(form.cleaned_data, user.id)
+
+        return self.render_to_response(context)

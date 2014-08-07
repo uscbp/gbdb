@@ -7,12 +7,13 @@
     <h4>Welcome to the Gesture and Behavior DataBase (GBDB)</h4>
 
     <ul>
-    <li>Observation Sessions</li>
-    {% if user.is_authenticated and not user.is_anonymous %}
+        <li>Observation Sessions</li>
         <ul>
-            <li><a href="/gbdb/observation_session/new/">Insert</a></li>
+            {% if user.is_authenticated and not user.is_anonymous %}
+                <li><a href="/gbdb/observation_session/new/">Insert</a></li>
+            {% endif %}
+            <li><a href="/gbdb/observation_session/search/">Search</a></li>
         </ul>
-    {% endif %}
     <li>Primates</li>
     {% if user.is_authenticated and not user.is_anonymous %}
         <ul>

@@ -2,7 +2,7 @@ from django.conf.urls import url, patterns
 from gbdb.views.behavioral_event import CreateBehavioralEventView, UpdateBehavioralEventView, BehavioralEventDetailView, DeleteBehavioralEventView
 from gbdb.views.gestural_event import GesturalEventDetailView, DeleteGesturalEventView, UpdateGesturalEventView, CreateGesturalEventView
 from gbdb.views.main import IndexView
-from gbdb.views.observation_session import CreateObservationSessionView, ObservationSessionDetailView, DeleteObservationSessionView, UpdateObservationSessionView
+from gbdb.views.observation_session import CreateObservationSessionView, ObservationSessionDetailView, DeleteObservationSessionView, UpdateObservationSessionView, SearchObservationSessionView
 from gbdb.views.primate import CreatePrimateView, PrimateDetailView, DeletePrimateView, UpdatePrimateView
 from gbdb.views.gesture import CreateGestureView, GestureDetailView, DeleteGestureView, UpdateGestureView
 
@@ -21,6 +21,7 @@ urlpatterns = patterns('',
     url(r'^observation_session/(?P<pk>\d+)/delete/$', DeleteObservationSessionView.as_view(), {}, 'observation_session_delete'),
     url(r'^observation_session/(?P<pk>\d+)/edit/$', UpdateObservationSessionView.as_view(), {}, 'observation_session_edit'),
     url(r'^observation_session/new/$', CreateObservationSessionView.as_view(), {}, 'observation_session_add'),
+    url(r'^observation_session/search/$', SearchObservationSessionView.as_view(), {}, 'observation_session_search'),
     
     url(r'^primate/(?P<pk>\d+)/$', PrimateDetailView.as_view(), {}, 'primate_view'),
     url(r'^primate/(?P<pk>\d+)/delete/$', DeletePrimateView.as_view(), {}, 'primate_delete'),

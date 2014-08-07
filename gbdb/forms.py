@@ -7,6 +7,11 @@ from gbdb.models import ObservationSession, BehavioralEvent, Primate, Context, E
 from registration.forms import RegistrationForm
 from registration.models import User
 
+SEARCH_CHOICES = (
+    ('all', 'all'),
+    ('any', 'any')
+    )
+
 class GbdbRegistrationForm(RegistrationForm):
     """
     Extends the basic registration form with support for fields required by BODB.
@@ -42,6 +47,22 @@ class ObservationSessionForm(forms.ModelForm):
 
     class Meta:
         model=ObservationSession
+
+
+class ObservationSessionSearchForm(forms.Form):
+    created_from = forms.DateTimeField(help_text="Earliest creation date", widget=forms.DateTimeInput, required=False)
+    created_to = forms.DateTimeField(help_text="Latest creation date", widget=forms.DateTimeInput, required=False)
+    collator = forms.BooleanField(help_text="Only search your entries", required=False)
+    username = forms.CharField(help_text='Username of the collator',required=False)
+    first_name = forms.CharField(help_text='First name of the collator',required=False)
+    last_name = forms.CharField(help_text='Last name of the collator',required=False)
+    keywords = forms.CharField(help_text="Keyword search", required=False)
+    keywords_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    date_min=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
+    date_max=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
+    location=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
+    location_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    search_options = forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
 
 
 class BehavioralEventForm(forms.ModelForm):

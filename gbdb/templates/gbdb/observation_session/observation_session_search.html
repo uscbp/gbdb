@@ -1,0 +1,86 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+{% block extrahead %}
+<title>GBDB - Search Observation Sessions</title>
+{% endblock %}
+{% block content %}
+<div id="detail">
+    <form id="observationSessionSearchForm" method="post" action="">
+        {% csrf_token %}
+        <table class="tab_panel">
+            <tr>
+                <td colspan="8">
+                    <strong>Any field:</strong>&nbsp;{{ form.keywords }}&nbsp;
+                    <strong>Phrase combination:</strong>&nbsp;{{ form.keywords_options }}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="8">
+                    <strong>Date:</strong> {{ form.date_min }} - {{ form.date_max }}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="8">
+                    <strong>Location:</strong>&nbsp;{{ form.location }}&nbsp;
+                    <strong>Phrase combination:</strong>&nbsp;{{ form.location_options }}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="8">
+                    <strong>Created:</strong> {{ form.created_from }} - {{ form.created_to }}</td>
+                </td>
+            </tr>
+            <tr><td colspan="8">&nbsp;</td> </tr>
+            <tr class="col_header">
+                <td colspan=8><h4>Collator</h4></td>
+            </tr>
+            <tr>
+                <td colspan="8"><strong>Username:</strong> {{ form.username }}</td>
+            </tr>
+            <tr>
+                <td colspan="8"><strong>First name:</strong> {{ form.first_name }}</td>
+            </tr>
+            <tr>
+                <td colspan="8"><strong>Last name:</strong> {{ form.last_name }}</td>
+            </tr>
+            <tr>
+                <td colspan="8"><strong>Only my entries:</strong> {{ form.collator }}</td>
+            </tr>
+            <tr><td colspan="8">&nbsp;</td> </tr>
+            <tr>
+                <td colspan=8>
+                    <div class="myerrors">
+                        {{ form.errors }}
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan=8>
+                    <strong>Search criteria combination:</strong> {{ form.search_options }}
+                    <br><br><input class="btn" type="button" value="Search" onclick="document.getElementById('observationSessionSearchForm').submit();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <div id="results" name="results">
+        <table class="tab_panel">
+            <tr>
+                <td colspan=8>&nbsp;</td>
+            </tr>
+            <tr class="section_header">
+                <td colspan=8><h3>Results</h3></td>
+            </tr>
+            <tr class="table_header">
+                <td colspan=8>
+                    <a href="/bodb/observation_session/new/">Add new</a>
+                </td>
+            </tr>
+            <tr>
+                <td colspan=8>
+                    {% include 'gbdb/observation_session/observation_session_list_view.html' %}
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+{% endblock %}
