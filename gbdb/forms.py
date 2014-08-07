@@ -90,6 +90,40 @@ SubBehavioralEventFormSet = inlineformset_factory(BehavioralEvent, BehavioralEve
     fk_name='parent', extra=0, can_delete=True, can_order=True)
 
 
+class BehavioralEventSearchForm(forms.Form):
+    HABITAT_CHOICES = (
+        ('', ''),
+        ('captive', 'Captive'),
+        ('wild', 'Wild'),
+        )
+    created_from = forms.DateTimeField(help_text="Earliest creation date", widget=forms.DateTimeInput, required=False)
+    created_to = forms.DateTimeField(help_text="Latest creation date", widget=forms.DateTimeInput, required=False)
+    collator = forms.BooleanField(help_text="Only search your entries", required=False)
+    username = forms.CharField(help_text='Username of the collator',required=False)
+    first_name = forms.CharField(help_text='First name of the collator',required=False)
+    last_name = forms.CharField(help_text='Last name of the collator',required=False)
+    keywords = forms.CharField(help_text="Keyword search", required=False)
+    keywords_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    date_min=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
+    date_max=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
+    location=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
+    location_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    primates_name=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
+    primates_species_genus=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
+    primates_species_species=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
+    primates_species_common_name=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
+    primates_birth_date_min=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
+    primates_birth_date_max=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
+    primates_location=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
+    primates_location_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    primates_habitat=forms.ChoiceField(choices=HABITAT_CHOICES, help_text='Primate habitat', required=False)
+    contexts = forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
+    contexts_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    ethograms = forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
+    ethograms_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    search_options = forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+
+
 class GesturalEventForm(BehavioralEventForm):
     signaller = forms.ModelChoiceField(queryset=Primate.objects.all(), required=False)
     recipient = forms.ModelChoiceField(queryset=Primate.objects.all(), required=False)

@@ -14,17 +14,21 @@
             {% endif %}
             <li><a href="/gbdb/observation_session/search/">Search</a></li>
         </ul>
-    <li>Primates</li>
-    {% if user.is_authenticated and not user.is_anonymous %}
+        <li>Behavioral Events</li>
         <ul>
-            <li><a href="/gbdb/primate/new/">Insert</a></li>
+            <li><a href="/gbdb/behavioral_event/search/">Search</a></li>
         </ul>
-    {% endif %}
-    <li>Gestures</li>
-    {% if user.is_authenticated and not user.is_anonymous %}
-        <ul>
-            <li><a href="/gbdb/gesture/new/">Insert</a></li>
-        </ul>
-    {% endif %}
+        <li>Primates</li>
+        {% if user.is_authenticated and not user.is_anonymous %}
+            <ul>
+                <li><a href="/gbdb/primate/new/">Insert</a></li>
+            </ul>
+        {% endif %}
+        <li>Gestures</li>
+        {% if user.is_authenticated and not user.is_anonymous %}
+            <ul>
+                <li><a href="/gbdb/gesture/new/">Insert</a></li>
+            </ul>
+        {% endif %}
     </ul>
 {% endblock %}

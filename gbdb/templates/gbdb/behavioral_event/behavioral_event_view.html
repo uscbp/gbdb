@@ -43,6 +43,9 @@
             </tr>
         {% endif %}
         <tr valign="top">
+            <td colspan="2"><strong>Primates:</strong> {% for primate in object.primates.all %}{% if forloop.counter0 > 0%}, {% endif %}{{ primate.name }}{% endfor %}</td>
+        </tr>
+        <tr valign="top">
             <td colspan="2"><strong>Contexts:</strong> {% for context in object.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}</td>
         </tr>
         <tr valign="top">
@@ -67,6 +70,9 @@
                         </tr>
                         <tr>
                             <td><strong>Duration:</strong> {{ sub_behavioral_event.duration }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Primates:</strong> {% for primate in sub_behavioral_event.primates.all %}{% if forloop.counter0 > 0%}, {% endif %}{{ primate.name }}{% endfor %}</td>
                         </tr>
                         <tr>
                             <td><strong>Contexts:</strong> {% for context in sub_behavioral_event.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}</td>

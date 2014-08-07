@@ -1,0 +1,121 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+{% block extrahead %}
+    <title>GBDB - Search Behavioral Events</title>
+{% endblock %}
+{% block content %}
+    <div id="detail">
+        <form id="behavioralEventSearchForm" method="post" action="">
+            {% csrf_token %}
+            <table class="tab_panel">
+                <tr>
+                    <td colspan="8">
+                        <strong>Any field:</strong>&nbsp;{{ form.keywords }}&nbsp;
+                        <strong>Phrase combination:</strong>&nbsp;{{ form.keywords_options }}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="8">
+                        <strong>Date:</strong> {{ form.date_min }} - {{ form.date_max }}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="8">
+                        <strong>Location:</strong>&nbsp;{{ form.location }}&nbsp;
+                        <strong>Phrase combination:</strong>&nbsp;{{ form.location_options }}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="8">
+                        <strong>Contexts:</strong>&nbsp;{{ form.contexts }}&nbsp;
+                        <strong>Phrase combination:</strong>&nbsp;{{ form.contexts_options }}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="8">
+                        <strong>Ethograms:</strong>&nbsp;{{ form.ethograms }}&nbsp;
+                        <strong>Phrase combination:</strong>&nbsp;{{ form.ethograms_options }}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="8">
+                        <strong>Created:</strong> {{ form.created_from }} - {{ form.created_to }}</td>
+                    </td>
+                </tr>
+                <tr><td colspan="8">&nbsp;</td> </tr>
+                <tr class="col_header">
+                    <td colspan=8><h4>Collator</h4></td>
+                </tr>
+                <tr>
+                    <td colspan="8"><strong>Username:</strong> {{ form.username }}</td>
+                </tr>
+                <tr>
+                    <td colspan="8"><strong>First name:</strong> {{ form.first_name }}</td>
+                </tr>
+                <tr>
+                    <td colspan="8"><strong>Last name:</strong> {{ form.last_name }}</td>
+                </tr>
+                <tr>
+                    <td colspan="8"><strong>Only my entries:</strong> {{ form.collator }}</td>
+                </tr>
+                <tr><td colspan="8">&nbsp;</td> </tr>
+                <tr class="col_header">
+                    <td colspan=8><h4>Primates</h4></td>
+                </tr>
+                <tr>
+                    <td colspan="8"><strong>Name:</strong> {{ form.primates_name }}</td>
+                </tr>
+                <tr>
+                    <td colspan="8"><strong>Genus:</strong> {{ form.primates_species_genus }}</td>
+                </tr>
+                <tr>
+                    <td colspan="8"><strong>Species:</strong> {{ form.primates_species_species }}</td>
+                </tr>
+                <tr>
+                    <td colspan="8"><strong>Common Name:</strong> {{ form.primates_species_common_name }}</td>
+                </tr>
+                <tr>
+                    <td colspan="8"><strong>Birth Date:</strong> {{ form.primates_birth_date_min }} - {{ form.primates_birth_date_max }}</td>
+                </tr>
+                <tr>
+                    <td colspan="8">
+                        <strong>Location:</strong>&nbsp;{{ form.primates_location }}&nbsp;
+                        <strong>Phrase combination:</strong>&nbsp;{{ form.primates_location_options }}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="8"><strong>Habitat:</strong> {{ form.primates_habitat }}</td>
+                </tr>
+                <tr><td colspan="8">&nbsp;</td> </tr>
+                <tr>
+                    <td colspan=8>
+                        <div class="myerrors">
+                            {{ form.errors }}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=8>
+                        <strong>Search criteria combination:</strong> {{ form.search_options }}
+                        <br><br><input class="btn" type="button" value="Search" onclick="document.getElementById('behavioralEventSearchForm').submit();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <div id="results" name="results">
+            <table class="tab_panel">
+                <tr>
+                    <td colspan=8>&nbsp;</td>
+                </tr>
+                <tr class="section_header">
+                    <td colspan=8><h3>Results</h3></td>
+                </tr>
+                <tr>
+                    <td colspan=8>
+                        {% include 'gbdb/behavioral_event/behavioral_event_list_view.html' %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+{% endblock %}

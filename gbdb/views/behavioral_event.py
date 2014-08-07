@@ -1,8 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
-from django.views.generic import CreateView, UpdateView, DetailView, DeleteView
-from gbdb.forms import BehavioralEventForm, SubBehavioralEventFormSet, GesturalEventFormSet
+from django.views.generic import CreateView, UpdateView, DetailView, DeleteView, FormView
+from gbdb.forms import BehavioralEventForm, SubBehavioralEventFormSet, GesturalEventFormSet, BehavioralEventSearchForm
 from gbdb.models import BehavioralEvent, ObservationSession, GesturalEvent, Context, Ethogram, Primate, Gesture
+from gbdb.search import runBehavioralEventSearch
 
 class EditBehavioralEventMixin():
     model=BehavioralEvent
@@ -118,3 +119,16 @@ class BehavioralEventDetailView(DetailView):
         context['sub_gestural_events']=GesturalEvent.objects.filter(parent=self.object)
         context['ispopup']='_popup' in self.request.GET
         return context
+
+
+class SearchBehavioralEventView(FormView):
+    form_class=BehavioralEventSearchForm
+    template_name='gbdb/behavioral_event/behavioral_event_search.html'
+
+    def form_valid(self, form):
+        context=self.get_context_data(form=form)
+        user=self.request.user
+
+        context['behavioral_events']=runBehavioralEventSearch(form.cleaned_data, user.id)
+
+        return self.render_to_response(context)

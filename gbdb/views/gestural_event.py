@@ -15,6 +15,11 @@ class EditGesturalEventMixin():
         self.object = form.save(commit=False)
         self.object.save()
         form.save_m2m()
+        if not self.object.recipient in self.object.primates.all() or not self.object.signaller in self.object.primates.all():
+            self.object.primates.clear()
+            self.object.primates.add(self.object.recipient)
+            self.object.primates.add(self.object.signaller)
+            self.object.save()
 
         url=self.get_success_url()
         if '_popup' in self.request.GET:

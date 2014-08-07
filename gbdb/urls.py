@@ -1,5 +1,5 @@
 from django.conf.urls import url, patterns
-from gbdb.views.behavioral_event import CreateBehavioralEventView, UpdateBehavioralEventView, BehavioralEventDetailView, DeleteBehavioralEventView
+from gbdb.views.behavioral_event import CreateBehavioralEventView, UpdateBehavioralEventView, BehavioralEventDetailView, DeleteBehavioralEventView, SearchBehavioralEventView
 from gbdb.views.gestural_event import GesturalEventDetailView, DeleteGesturalEventView, UpdateGesturalEventView, CreateGesturalEventView
 from gbdb.views.main import IndexView
 from gbdb.views.observation_session import CreateObservationSessionView, ObservationSessionDetailView, DeleteObservationSessionView, UpdateObservationSessionView, SearchObservationSessionView
@@ -11,6 +11,7 @@ urlpatterns = patterns('',
     url(r'^behavioral_event/(?P<pk>\d+)/delete/$', DeleteBehavioralEventView.as_view(), {}, 'behavioral_event_delete'),
     url(r'^behavioral_event/(?P<pk>\d+)/edit/$', UpdateBehavioralEventView.as_view(), {}, 'behavioral_event_edit'),
     url(r'^behavioral_event/new/$', CreateBehavioralEventView.as_view(), {}, 'behavioral_event_add'),
+    url(r'^behavioral_event/search/$', SearchBehavioralEventView.as_view(), {}, 'behavioral_event_search'),
 
     url(r'^gestural_event/(?P<pk>\d+)/$', GesturalEventDetailView.as_view(), {}, 'gestural_event_view'),
     url(r'^gestural_event/(?P<pk>\d+)/delete/$', DeleteGesturalEventView.as_view(), {}, 'gestural_event_delete'),
