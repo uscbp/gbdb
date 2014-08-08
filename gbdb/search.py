@@ -170,7 +170,7 @@ class ObservationSessionSearch(object):
             if self.location_options=='all':
                 op=operator.and_
             words=parse_search_string(self.location)
-            location_filters=[Q(location__icontains=word) for word in words]
+            location_filters=[Q(location_name__icontains=word) for word in words]
             return reduce(op,location_filters)
         return Q()
 
@@ -285,7 +285,7 @@ class BehavioralEventSearch(object):
             if self.location_options=='all':
                 op=operator.and_
             words=parse_search_string(self.location)
-            location_filters=[Q(observation_session__location__icontains=word) for word in words]
+            location_filters=[Q(observation_session__location_name__icontains=word) for word in words]
             return reduce(op,location_filters)
         return Q()
 
@@ -315,7 +315,7 @@ class BehavioralEventSearch(object):
             if self.primates_location_options=='all':
                 op=operator.and_
             words=parse_search_string(self.primates_location)
-            location_filters=[Q(primates__location__icontains=word) for word in words]
+            location_filters=[Q(primates__location_name__icontains=word) for word in words]
             return reduce(op,location_filters)
         return Q()
 
@@ -370,7 +370,7 @@ class BehavioralEventSearch(object):
             if self.type=='gestural' and self.gestural_signaller_location_options=='all':
                 op=operator.and_
             words=parse_search_string(self.gestural_signaller_location)
-            location_filters=[Q(gesturalevent__signaller__location__icontains=word) for word in words]
+            location_filters=[Q(gesturalevent__signaller__location_name__icontains=word) for word in words]
             return reduce(op,location_filters)
         return Q()
 
@@ -405,7 +405,7 @@ class BehavioralEventSearch(object):
             if self.type=='gestural' and self.gestural_recipient_location_options=='all':
                 op=operator.and_
             words=parse_search_string(self.gestural_recipient_location)
-            location_filters=[Q(gesturalevent__recipient__location__icontains=word) for word in words]
+            location_filters=[Q(gesturalevent__recipient__location_name__icontains=word) for word in words]
             return reduce(op,location_filters)
         return Q()
 
@@ -536,7 +536,7 @@ class PrimateSearch(object):
             if self.location_options=='all':
                 op=operator.and_
             words=parse_search_string(self.location)
-            location_filters=[Q(location__icontains=word) for word in words]
+            location_filters=[Q(location_name__icontains=word) for word in words]
             return reduce(op,location_filters)
         return Q()
 

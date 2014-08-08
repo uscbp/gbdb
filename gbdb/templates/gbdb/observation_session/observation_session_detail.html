@@ -7,6 +7,7 @@
     <div id="detail">
         <h2>{% if form.instance.id %}Edit{% else %}Add{% endif %} Observation Session</h2>
         <form id="observationSessionForm" method="post" action="" enctype="multipart/form-data">
+            {{ form.media }}
             {% csrf_token %}
             <table class="tab_panel">
                 <tr valign=top>
@@ -18,6 +19,11 @@
                     <td>{{ form.date.label_tag }}*</td>
                     <td>{{ form.date }}</td>
                     <td class="myerrors">{{ form.date.errors }}</td>
+                </tr>
+                <tr valign=top>
+                    <td valign=top>{{ form.location_name.label_tag }}*</td>
+                    <td>{{ form.location_name }}</td>
+                    <td class="myerrors">{{ form.location_name.errors }}</td>
                 </tr>
                 <tr valign=top>
                     <td valign=top>{{ form.location.label_tag }}*</td>

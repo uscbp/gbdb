@@ -1,5 +1,6 @@
 from django.core.urlresolvers import reverse
 from django.db import models
+from geoposition.fields import GeopositionField
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from registration.models import User
@@ -25,7 +26,8 @@ class Primate(models.Model):
     name = models.CharField(max_length=100)
     species = models.ForeignKey(Species)
     birth_date = models.DateField()
-    location = models.CharField(max_length=100) #this should be some kind of geo model
+    location_name = models.CharField(max_length=100) #this should be some kind of geo model
+    location = GeopositionField()
     habitat = models.CharField(max_length=100, choices=HABITAT_CHOICES, default='wild')
     class Meta:
         app_label='gbdb'
@@ -65,7 +67,8 @@ class ObservationSession(models.Model):
     
     video = models.FileField(upload_to='videos/observation_session/%Y/%m/%d',  blank=True, null=True)
     date = models.DateField()
-    location = models.CharField(max_length=100) #this should be some kind of geo model
+    location_name = models.CharField(max_length=100) #this should be some kind of geo model
+    location = GeopositionField()
     notes = models.TextField()
     
     class Meta:
