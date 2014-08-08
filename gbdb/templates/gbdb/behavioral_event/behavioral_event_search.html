@@ -2,6 +2,15 @@
 {% load staticfiles %}
 {% block extrahead %}
     <title>GBDB - Search Behavioral Events</title>
+    <script type="text/javascript">
+        function updateBehavioralEventSearchOptions(sedType)
+        {
+            if(sedType=='gestural')
+                document.getElementById('gesturalEventTypeOptions').style.display='inline';
+            else
+                document.getElementById('gesturalEventTypeOptions').style.display='none';
+        }
+    </script>
 {% endblock %}
 {% block content %}
     <div id="detail">
@@ -40,6 +49,108 @@
                 <tr>
                     <td colspan="8">
                         <strong>Created:</strong> {{ form.created_from }} - {{ form.created_to }}</td>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="8"><strong>Type:</strong> {{ form.type }}</td>
+                </tr>
+                <tr>
+                    <td colspan="8">
+                        <div id="gesturalEventTypeOptions" style="display:{% if form.type.value == 'gestural' %}inline{% else %}none{% endif %}">
+                            <table class="tab_panel">
+                                <tr class="col_header">
+                                    <td colspan="8"><h4>Signaller</h4></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="8"><strong>Name:</strong> {{ form.gestural_signaller_name }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="8"><strong>Genus:</strong> {{ form.gestural_signaller_species_genus }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="8"><strong>Species:</strong> {{ form.gestural_signaller_species_species }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="8"><strong>Common Name:</strong> {{ form.gestural_signaller_species_common_name }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="8"><strong>Birth Date:</strong> {{ form.gestural_signaller_birth_date_min }} - {{ form.gestural_signaller_birth_date_max }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="8">
+                                        <strong>Location:</strong>&nbsp;{{ form.gestural_signaller_location }}&nbsp;
+                                        <strong>Phrase combination:</strong>&nbsp;{{ form.gestural_signaller_location_options }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="8"><strong>Habitat:</strong> {{ form.gestural_signaller_habitat }}</td>
+                                </tr>
+                                <tr><td colspan="8">&nbsp;</td> </tr>
+                                <tr class="col_header">
+                                    <td colspan="8"><h4>Recipient</h4></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="8"><strong>Name:</strong> {{ form.gestural_recipient_name }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="8"><strong>Genus:</strong> {{ form.gestural_recipient_species_genus }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="8"><strong>Species:</strong> {{ form.gestural_recipient_species_species }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="8"><strong>Common Name:</strong> {{ form.gestural_recipient_species_common_name }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="8"><strong>Birth Date:</strong> {{ form.gestural_recipient_birth_date_min }} - {{ form.gestural_recipient_birth_date_max }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="8">
+                                        <strong>Location:</strong>&nbsp;{{ form.gestural_recipient_location }}&nbsp;
+                                        <strong>Phrase combination:</strong>&nbsp;{{ form.gestural_recipient_location_options }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="8"><strong>Habitat:</strong> {{ form.gestural_recipient_habitat }}</td>
+                                </tr>
+                                <tr><td colspan="8">&nbsp;</td> </tr>
+                                <tr class="col_header">
+                                    <td colspan="8"><h4>Gesture</h4></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="8">
+                                        <strong>Keywords:</strong>&nbsp;{{ form.gestural_gesture }}&nbsp;<strong>Phrase combination:</strong>&nbsp;{{ form.gestural_gesture_options }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="8">
+                                        <strong>Goal:</strong>&nbsp;{{ form.gestural_gesture_goal }}&nbsp;<strong>Phrase combination:</strong>&nbsp;{{ form.gestural_gesture_goal_options }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="8">
+                                        <strong>Signaller body parts:</strong>&nbsp;{{ form.gestural_gesture_signaller_body_parts }}&nbsp;<strong>Phrase combination:</strong>&nbsp;{{ form.gestural_gesture_signaller_body_parts_options }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="8">
+                                        <strong>Recipient body parts:</strong>&nbsp;{{ form.gestural_gesture_recipient_body_parts }}&nbsp;<strong>Phrase combination:</strong>&nbsp;{{ form.gestural_gesture_recipient_body_parts_options }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="8"><strong>Audible:</strong> {{ form.gestural_gesture_audible }}</td>
+                                </tr>
+                                <tr><td colspan="8">&nbsp;</td> </tr>
+                                <tr>
+                                    <td colspan="8">
+                                        <strong>Recipient response:</strong>&nbsp;{{ form.gestural_recipient_response }}&nbsp;<strong>Phrase combination:</strong>&nbsp;{{ form.gestural_recipient_response_options }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="8"><strong>Goal met:</strong> {{ form.gestural_goal_met }}</td>
+                                </tr>
+                            </table>
+                        </div>
                     </td>
                 </tr>
                 <tr><td colspan="8">&nbsp;</td> </tr>

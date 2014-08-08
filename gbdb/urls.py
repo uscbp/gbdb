@@ -3,8 +3,8 @@ from gbdb.views.behavioral_event import CreateBehavioralEventView, UpdateBehavio
 from gbdb.views.gestural_event import GesturalEventDetailView, DeleteGesturalEventView, UpdateGesturalEventView, CreateGesturalEventView
 from gbdb.views.main import IndexView
 from gbdb.views.observation_session import CreateObservationSessionView, ObservationSessionDetailView, DeleteObservationSessionView, UpdateObservationSessionView, SearchObservationSessionView
-from gbdb.views.primate import CreatePrimateView, PrimateDetailView, DeletePrimateView, UpdatePrimateView
-from gbdb.views.gesture import CreateGestureView, GestureDetailView, DeleteGestureView, UpdateGestureView
+from gbdb.views.primate import CreatePrimateView, PrimateDetailView, DeletePrimateView, UpdatePrimateView, SearchPrimateView
+from gbdb.views.gesture import CreateGestureView, GestureDetailView, DeleteGestureView, UpdateGestureView, SearchGestureView
 
 urlpatterns = patterns('',
     url(r'^behavioral_event/(?P<pk>\d+)/$', BehavioralEventDetailView.as_view(), {}, 'behavioral_event_view'),
@@ -28,11 +28,13 @@ urlpatterns = patterns('',
     url(r'^primate/(?P<pk>\d+)/delete/$', DeletePrimateView.as_view(), {}, 'primate_delete'),
     url(r'^primate/(?P<pk>\d+)/edit/$', UpdatePrimateView.as_view(), {}, 'primate_edit'),
     url(r'^primate/new/$', CreatePrimateView.as_view(), {}, 'primate_add'),
+    url(r'^primate/search/$', SearchPrimateView.as_view(), {}, 'primate_search'),
     
     url(r'^gesture/(?P<pk>\d+)/$', GestureDetailView.as_view(), {}, 'gesture_view'),
     url(r'^gesture/(?P<pk>\d+)/delete/$', DeleteGestureView.as_view(), {}, 'gesture_delete'),
     url(r'^gesture/(?P<pk>\d+)/edit/$', UpdateGestureView.as_view(), {}, 'gesture_edit'),
     url(r'^gesture/new/$', CreateGestureView.as_view(), {}, 'gesture_add'),
+    url(r'^gesture/search/$', SearchGestureView.as_view(), {}, 'gesture_search'),
     
     url(r'', IndexView.as_view(), {}, 'index'),
 )

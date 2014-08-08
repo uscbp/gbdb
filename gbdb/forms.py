@@ -12,6 +12,18 @@ SEARCH_CHOICES = (
     ('any', 'any')
     )
 
+HABITAT_CHOICES = (
+    ('', ''),
+    ('captive', 'Captive'),
+    ('wild', 'Wild'),
+    )
+
+YESNO_CHOICES = (
+    ('', ''),
+    ('yes', 'Yes'),
+    ('no', 'No'),
+    )
+
 class GbdbRegistrationForm(RegistrationForm):
     """
     Extends the basic registration form with support for fields required by BODB.
@@ -91,11 +103,13 @@ SubBehavioralEventFormSet = inlineformset_factory(BehavioralEvent, BehavioralEve
 
 
 class BehavioralEventSearchForm(forms.Form):
-    HABITAT_CHOICES = (
+    TYPE_CHOICES = (
         ('', ''),
-        ('captive', 'Captive'),
-        ('wild', 'Wild'),
-        )
+        ('generic', 'Generic'),
+        ('gestural', 'Gestural')
+    )
+    type = forms.ChoiceField(choices=TYPE_CHOICES, help_text='Type of Behavioral Event', required=False,
+        widget=forms.Select(attrs={'onchange': 'updateBehavioralEventSearchOptions(this.value)'}))
     created_from = forms.DateTimeField(help_text="Earliest creation date", widget=forms.DateTimeInput, required=False)
     created_to = forms.DateTimeField(help_text="Latest creation date", widget=forms.DateTimeInput, required=False)
     collator = forms.BooleanField(help_text="Only search your entries", required=False)
@@ -109,9 +123,7 @@ class BehavioralEventSearchForm(forms.Form):
     location=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
     location_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
     primates_name=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
-    primates_species_genus=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
-    primates_species_species=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
-    primates_species_common_name=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
+    primates_species=forms.ModelMultipleChoiceField(queryset=Species.objects.all(), required=False)
     primates_birth_date_min=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
     primates_birth_date_max=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
     primates_location=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
@@ -121,6 +133,32 @@ class BehavioralEventSearchForm(forms.Form):
     contexts_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
     ethograms = forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
     ethograms_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    gestural_signaller_name=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
+    gestural_signaller_species=forms.ModelMultipleChoiceField(queryset=Species.objects.all(), required=False)
+    gestural_signaller_birth_date_min=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
+    gestural_signaller_birth_date_max=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
+    gestural_signaller_location=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
+    gestural_signaller_location_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    gestural_signaller_habitat=forms.ChoiceField(choices=HABITAT_CHOICES, help_text='Primate habitat', required=False)
+    gestural_recipient_name=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
+    gestural_recipient_species=forms.ModelMultipleChoiceField(queryset=Primate.objects.all(), required=False)
+    gestural_recipient_birth_date_min=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
+    gestural_recipient_birth_date_max=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
+    gestural_recipient_location=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
+    gestural_recipient_location_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    gestural_recipient_habitat=forms.ChoiceField(choices=HABITAT_CHOICES, help_text='Primate habitat', required=False)
+    gestural_gesture=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
+    gestural_gesture_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    gestural_gesture_goal=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
+    gestural_gesture_goal_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    gestural_gesture_signaller_body_parts=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
+    gestural_gesture_signaller_body_parts_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    gestural_gesture_recipient_body_parts=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
+    gestural_gesture_recipient_body_parts_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    gestural_gesture_audible=forms.ChoiceField(choices=YESNO_CHOICES, help_text='Audible gesture', required=False)
+    gestural_recipient_response=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
+    gestural_recipient_response_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    gestural_goal_met=forms.ChoiceField(choices=YESNO_CHOICES, help_text='Goal of gesture met', required=False)
     search_options = forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
 
 
@@ -151,7 +189,18 @@ class PrimateForm(forms.ModelForm):
     class Meta:
         model=Primate
         
-        
+
+class PrimateSearchForm(forms.Form):
+    name = forms.CharField(help_text="Name search", required=False)
+    species=forms.ModelMultipleChoiceField(help_text='Species', queryset=Species.objects.all(), required=False)
+    birth_date_min=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
+    birth_date_max=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
+    location=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
+    location_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    habitat=forms.ChoiceField(choices=HABITAT_CHOICES, help_text='Primate habitat', required=False)
+    search_options = forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+
+
 class GestureForm(forms.ModelForm):
     name = forms.CharField(widget=forms.TextInput(attrs={'size':'30'}),required=True)
     description = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=False)
@@ -163,5 +212,18 @@ class GestureForm(forms.ModelForm):
 
     class Meta:
         model=Gesture
-        
-        
+
+
+class GestureSearchForm(forms.Form):
+    keywords = forms.CharField(help_text="Keyword search", required=False)
+    keywords_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    name = forms.CharField(help_text="Name search", required=False)
+    name_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    description = forms.CharField(help_text="Description search", required=False)
+    description_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    goal = forms.CharField(help_text="Goal search", required=False)
+    goal_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    signaller_body_parts=forms.ModelMultipleChoiceField(help_text='Signaller ody parts', queryset=BodyPart.objects.all(), required=False)
+    recipient_body_parts=forms.ModelMultipleChoiceField(help_text='Recipient ody parts', queryset=BodyPart.objects.all(), required=False)
+    audible = forms.ChoiceField(choices=YESNO_CHOICES, widget=forms.Select(), required=False)
+    search_options = forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)

@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.utils import six
 from django.utils.encoding import force_text
 from tagging.utils import split_strip
-from gbdb.models import ObservationSession, BehavioralEvent
+from gbdb.models import ObservationSession, BehavioralEvent, GesturalEvent, Primate, Gesture
 from registration.models import User
 
 def parse_search_string(searchstring):
@@ -200,11 +200,18 @@ def runBehavioralEventSearch(search_data, userId):
 
     q = reduce(op,filters)
 
+    converted_results=[]
     # get results
     if q and len(q):
         results = BehavioralEvent.objects.filter(q).select_related().distinct()
     else:
         results = BehavioralEvent.objects.all().select_related()
+
+    for r in results:
+        if r.type=='gestural':
+            converted_results.append(GesturalEvent.objects.get(id=r.id))
+        else:
+            converted_results.append(r)
 
     return results
 
@@ -224,6 +231,11 @@ class BehavioralEventSearch(object):
             contexts_filters=[Q(contexts__names__icontains=word) for word in words]
             ethograms_filters=[Q(ethograms__names__icontains=word) for word in words]
             return reduce(op,notes_filters) | reduce(op,contexts_filters) | reduce(op,ethograms_filters)
+        return Q()
+
+    def search_type(self, userId):
+        if self.type:
+            return Q(type__iexact=self.type)
         return Q()
 
     # search by collator
@@ -282,19 +294,9 @@ class BehavioralEventSearch(object):
             return Q(primates__name__iexact=self.primates_name)
         return Q()
 
-    def search_primates_species_genus(self, userId):
-        if self.primates_species_genus:
-            return Q(primates__species__genus__iexact=self.primates_species_genus)
-        return Q()
-
-    def search_primates_species_species(self, userId):
-        if self.primates_species_species:
-            return Q(primates__species__species__iexact=self.primates_species_species)
-        return Q()
-
-    def search_primates_species_common_name(self, userId):
-        if self.primates_species_common_name:
-            return Q(primates__species__common_name__iexact=self.primates_species_common_name)
+    def search_primates_species(self, userId):
+        if self.primates_species:
+            return Q(primates__species__in=self.primates_species)
         return Q()
 
     def search_primates_birth_date_min(self, userId):
@@ -340,4 +342,296 @@ class BehavioralEventSearch(object):
             words=parse_search_string(self.ethograms)
             ethogram_filters=[Q(ethograms__name__icontains=word) for word in words]
             return reduce(op,ethogram_filters)
+        return Q()
+    
+    def search_gestural_signaller_name(self, userId):
+        if self.type=='gestural' and self.gestural_signaller_name:
+            return Q(gesturalevent__signaller__name__iexact=self.gestural_signaller_name)
+        return Q()
+
+    def search_gestural_signaller_species(self, userId):
+        if self.type=='gestural' and self.gestural_signaller_species:
+            return Q(gesturalevent__signaller__species__in=self.gestural_signaller_species)
+        return Q()
+
+    def search_gestural_signaller_birth_date_min(self, userId):
+        if self.type=='gestural' and self.gestural_signaller_birth_date_min:
+            return Q(gesturalevent__signaller__birth_date__gte=self.gestural_signaller_birth_date_min)
+        return Q()
+
+    def search_gestural_signaller_birth_date_max(self, userId):
+        if self.type=='gestural' and self.gestural_signaller_birth_date_max:
+            return Q(gesturalevent__signaller__birth_date__gte=self.gestural_signaller_birth_date_max)
+        return Q()
+
+    def search_gestural_signaller_location(self, userId):
+        if self.type=='gestural' and self.gestural_signaller_location:
+            op=operator.or_
+            if self.type=='gestural' and self.gestural_signaller_location_options=='all':
+                op=operator.and_
+            words=parse_search_string(self.gestural_signaller_location)
+            location_filters=[Q(gesturalevent__signaller__location__icontains=word) for word in words]
+            return reduce(op,location_filters)
+        return Q()
+
+    def search_gestural_signaller_habitat(self, userId):
+        if self.type=='gestural' and self.gestural_signaller_habitat:
+            return Q(gesturalevent__signaller__habitat__iexact=self.gestural_signaller_habitat)
+        return Q()
+
+    def search_gestural_recipient_name(self, userId):
+        if self.type=='gestural' and self.gestural_recipient_name:
+            return Q(gesturalevent__recipient__name__iexact=self.gestural_recipient_name)
+        return Q()
+
+    def search_gestural_recipient_species(self, userId):
+        if self.type=='gestural' and self.gestural_recipient_species:
+            return Q(gesturalevent__recipient__species__in=self.gestural_recipient_species)
+        return Q()
+
+    def search_gestural_recipient_birth_date_min(self, userId):
+        if self.type=='gestural' and self.gestural_recipient_birth_date_min:
+            return Q(gesturalevent__recipient__birth_date__gte=self.gestural_recipient_birth_date_min)
+        return Q()
+
+    def search_gestural_recipient_birth_date_max(self, userId):
+        if self.type=='gestural' and self.gestural_recipient_birth_date_max:
+            return Q(gesturalevent__recipient__birth_date__gte=self.gestural_recipient_birth_date_max)
+        return Q()
+
+    def search_gestural_recipient_location(self, userId):
+        if self.type=='gestural' and self.gestural_recipient_location:
+            op=operator.or_
+            if self.type=='gestural' and self.gestural_recipient_location_options=='all':
+                op=operator.and_
+            words=parse_search_string(self.gestural_recipient_location)
+            location_filters=[Q(gesturalevent__recipient__location__icontains=word) for word in words]
+            return reduce(op,location_filters)
+        return Q()
+
+    def search_gestural_recipient_habitat(self, userId):
+        if self.type=='gestural' and self.gestural_recipient_habitat:
+            return Q(gesturalevent__recipient__habitat__iexact=self.gestural_recipient_habitat)
+        return Q()
+
+    def search_gestural_gesture(self, userId):
+        if self.type=='gestural' and self.gestural_gesture:
+            op=operator.or_
+            if self.type=='gestural' and self.gestural_gesture_options=='all':
+                op=operator.and_
+            words=parse_search_string(self.gestural_gesture)
+            name_filters=[Q(gesturalevent__gesture__name__icontains=word) for word in words]
+            description_filters=[Q(gesturalevent__gesture__description__icontains=word) for word in words]
+            return reduce(op,name_filters) | reduce(op,description_filters)
+        return Q()
+
+    def search_gestural_gesture_goal(self, userId):
+        if self.type=='gestural' and self.gestural_gesture_goal:
+            op=operator.or_
+            if self.type=='gestural' and self.gestural_gesture_goal_options=='all':
+                op=operator.and_
+            words=parse_search_string(self.gestural_gesture_goal)
+            goal_filters=[Q(gesturalevent__gesture__goal__icontains=word) for word in words]
+            return reduce(op,goal_filters)
+        return Q()
+
+    def search_gestural_gesture_signaller_body_parts(self, userId):
+        if self.type=='gestural' and self.gestural_gesture_signaller_body_parts:
+            op=operator.or_
+            if self.type=='gestural' and self.gestural_gesture_signaller_body_parts_options=='all':
+                op=operator.and_
+            words=parse_search_string(self.gestural_gesture_signaller_body_parts)
+            signaller_body_parts_filters=[Q(gesturalevent__gesture__signaller_body_parts__name__icontains=word) for word in words]
+            return reduce(op,signaller_body_parts_filters)
+        return Q()
+
+    def search_gestural_gesture_recipient_body_parts(self, userId):
+        if self.type=='gestural' and self.gestural_gesture_recipient_body_parts:
+            op=operator.or_
+            if self.type=='gestural' and self.gestural_gesture_recipient_body_parts_options=='all':
+                op=operator.and_
+            words=parse_search_string(self.gestural_gesture_recipient_body_parts)
+            recipient_body_parts_filters=[Q(gesturalevent__gesture__recipient_body_parts__name__icontains=word) for word in words]
+            return reduce(op,recipient_body_parts_filters)
+        return Q()
+
+    def search_gestural_gesture_audible(self, userId):
+        if self.type=='gestural' and self.gestural_gesture_audible:
+            return Q(gesturalevent__gesture__audible__iexact=self.gestural_gesture_audible)
+        return Q()
+
+    def search_gestural_recipient_response(self, userId):
+        if self.type=='gestural' and self.gestural_recipient_response:
+            op=operator.or_
+            if self.type=='gestural' and self.gestural_recipient_response_options=='all':
+                op=operator.and_
+            words=parse_search_string(self.gestural_recipient_response)
+            recipient_response_filters=[Q(gesturalevent__recipient_response__icontains=word) for word in words]
+            return reduce(op,recipient_response_filters)
+        return Q()
+
+    def search_gestural_goal_met(self, userId):
+        if self.type=='gestural' and self.gestural_goal_met:
+            return Q(gesturalevent__goal_met__iexact=self.gestural_goal_met)
+        return Q()
+
+
+def runPrimateSearch(search_data, userId):
+    filters=[]
+
+    op=operator.or_
+    if search_data['search_options']=='all':
+        op=operator.and_
+
+    searcher=PrimateSearch(search_data)
+
+    # construct search query
+    for key in search_data.iterkeys():
+        # if the searcher can search by this field
+        if hasattr(searcher, 'search_%s' % key):
+            # add field to query
+            dispatch=getattr(searcher, 'search_%s' % key)
+            filters.append(dispatch(userId))
+
+    print(filters)
+    q = reduce(op,filters)
+
+    # get results
+    if q and len(q):
+        results = Primate.objects.filter(q).select_related().distinct()
+    else:
+        results = Primate.objects.all().select_related()
+
+    return results.order_by('name')
+
+
+class PrimateSearch(object):
+
+    def __init__(self, search_data):
+        self.__dict__.update(search_data)
+
+    def search_name(self, userId):
+        if self.name:
+            return Q(name__iexact=self.name)
+        return Q()
+
+    def search_species(self, userId):
+        if self.species:
+            return Q(species__in=self.species)
+        return Q()
+
+    def search_birth_date_min(self, userId):
+        if self.birth_date_min:
+            return Q(birth_date__gte=self.birth_date_min)
+        return Q()
+
+    def search_birth_date_max(self, userId):
+        if self.birth_date_max:
+            return Q(birth_date__lte=self.birth_date_max)
+        return Q()
+
+    def search_location(self, userId):
+        if self.location:
+            op=operator.or_
+            if self.location_options=='all':
+                op=operator.and_
+            words=parse_search_string(self.location)
+            location_filters=[Q(location__icontains=word) for word in words]
+            return reduce(op,location_filters)
+        return Q()
+
+    def search_habitat(self, userId):
+        if self.habitat:
+            return Q(habitat__iexact=self.habitat)
+        return Q()
+
+
+def runGestureSearch(search_data, userId):
+    filters=[]
+
+    op=operator.or_
+    if search_data['search_options']=='all':
+        op=operator.and_
+
+    searcher=GestureSearch(search_data)
+
+    # construct search query
+    for key in search_data.iterkeys():
+        # if the searcher can search by this field
+        if hasattr(searcher, 'search_%s' % key):
+            # add field to query
+            dispatch=getattr(searcher, 'search_%s' % key)
+            filters.append(dispatch(userId))
+
+    print(filters)
+    q = reduce(op,filters)
+
+    # get results
+    if q and len(q):
+        results = Gesture.objects.filter(q).select_related().distinct()
+    else:
+        results = Gesture.objects.all().select_related()
+
+    return results.order_by('name')
+
+
+class GestureSearch(object):
+
+    def __init__(self, search_data):
+        self.__dict__.update(search_data)
+
+    def search_keywords(self, userId):
+        if self.keywords:
+            op=operator.or_
+            if self.keywords_options=='all':
+                op=operator.and_
+            words=parse_search_string(self.keywords)
+            name_filters=[Q(name__icontains=word) for word in words]
+            description_filters=[Q(description__icontains=word) for word in words]
+            return reduce(op,name_filters) | reduce(op,description_filters)
+        return Q()
+    
+    def search_name(self, userId):
+        if self.name:
+            op=operator.or_
+            if self.name_options=='all':
+                op=operator.and_
+            words=parse_search_string(self.name)
+            name_filters=[Q(name__icontains=word) for word in words]
+            return reduce(op,name_filters)
+        return Q()
+
+    def search_description(self, userId):
+        if self.description:
+            op=operator.or_
+            if self.description_options=='all':
+                op=operator.and_
+            words=parse_search_string(self.description)
+            description_filters=[Q(description__icontains=word) for word in words]
+            return reduce(op,description_filters)
+        return Q()
+
+    def search_goal(self, userId):
+        if self.goal:
+            op=operator.or_
+            if self.goal_options=='all':
+                op=operator.and_
+            words=parse_search_string(self.goal)
+            goal_filters=[Q(goal__icontains=word) for word in words]
+            return reduce(op,goal_filters)
+        return Q()
+
+    def search_signaller_body_parts(self, userId):
+        if self.signaller_body_parts:
+            return Q(signaller_body_parts__in=self.signaller_body_parts)
+        return Q()
+
+    def search_recipient_body_parts(self, userId):
+        if self.recipient_body_parts:
+            return Q(recipient_body_parts__in=self.recipient_body_parts)
+        return Q()
+
+    def search_audible(self, userId):
+        if self.audible:
+            return Q(audible__iexact=self.audible)
         return Q()

@@ -1,0 +1,61 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+{% block extrahead %}
+    <title>GBDB - Search Primates</title>
+{% endblock %}
+{% block content %}
+    <div id="detail">
+    <form id="primateSearchForm" method="post" action="">
+        {% csrf_token %}
+        <table class="tab_panel">
+            <tr>
+                <td colspan="8"><strong>Name:</strong> {{ form.name }}</td>
+            </tr>
+            <tr>
+                <td colspan="8"><strong>Species:</strong> {{ form.species }}</td>
+            </tr>
+            <tr>
+                <td colspan="8"><strong>Birth Date:</strong> {{ form.birth_date_min }} - {{ form.birth_date_max }}</td>
+            </tr>
+            <tr>
+                <td colspan="8">
+                    <strong>Location:</strong>&nbsp;{{ form.location }}&nbsp;
+                    <strong>Phrase combination:</strong>&nbsp;{{ form.location_options }}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="8"><strong>Habitat:</strong> {{ form.habitat }}</td>
+            </tr>
+            <tr><td colspan="8">&nbsp;</td> </tr>
+            <tr>
+                <td colspan=8>
+                    <div class="myerrors">
+                        {{ form.errors }}
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan=8>
+                    <strong>Search criteria combination:</strong> {{ form.search_options }}
+                    <br><br><input class="btn" type="button" value="Search" onclick="document.getElementById('primateSearchForm').submit();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <div id="results" name="results">
+        <table class="tab_panel">
+            <tr>
+                <td colspan=8>&nbsp;</td>
+            </tr>
+            <tr class="section_header">
+                <td colspan=8><h3>Results</h3></td>
+            </tr>
+            <tr>
+                <td colspan=8>
+                    {% include 'gbdb/primate/primate_list_view.html' %}
+                </td>
+            </tr>
+        </table>
+    </div>
+    </div>
+{% endblock %}

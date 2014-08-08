@@ -96,6 +96,7 @@ class ObservationSession(models.Model):
 class BehavioralEvent(MPTTModel):
     observation_session=models.ForeignKey(ObservationSession, null=True, blank=True)
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
+    type = models.CharField(max_length=45, blank=False, null=False, default='generic')
     start_time = models.TimeField(blank=True, null=True)
     duration = models.IntegerField(blank=True, null=True)
     video = models.FileField(upload_to='videos/behavioral_event/%Y/%m/%d',  blank=True, null=True)
@@ -137,6 +138,10 @@ class GesturalEvent(BehavioralEvent):
 
     def get_absolute_url(self):
         return reverse('gestural_event_view', kwargs={'pk': self.pk})
+
+    def save(self, *args, **kwargs):
+        self.type='gestural'
+        super(GesturalEvent,self).save(*args, **kwargs)
 
 
 class Gesture(models.Model):

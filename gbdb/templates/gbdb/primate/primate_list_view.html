@@ -1,0 +1,24 @@
+<div id="primates">
+    <table class="tab_panel">
+        <tr class="col_header">
+            <td width=25px>&nbsp;</td>
+            <td width=200px>Name</td>
+            <td width=200px>Species</td>
+            <td width=200px>Birth date</td>
+            <td width=200px>Location</td>
+            <td width=200px>Habitat</td>
+            <td>&nbsp;</td>
+        </tr>
+        {% for primate in primates %}
+            <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                <td width=25px>{{ forloop.counter }}</td>
+                <td width=200px><a href="/gbdb/primate/{{ primate.id }}/">{{ primate.name }}</a></td>
+                <td width=200px>{{ primate.species }}</td>
+                <td width=200px>{{ primate.birth_date }}</td>
+                <td width=200px>{{ primate.location }}</td>
+                <td>{{ primate.habitat }}</td>
+                <td>&nbsp;</td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>

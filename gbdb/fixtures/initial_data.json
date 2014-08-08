@@ -1367,15 +1367,6 @@
         "model": "gbdb.Species",
         "pk": 4,
         "fields": {
-            "genus_name": "Pan",
-            "species_name": "troglodytes",
-            "common_name": "Chimpanzee"
-        }
-    },
-    {
-        "model": "gbdb.Species",
-        "pk": 5,
-        "fields": {
             "genus_name": "Pongo",
             "species_name": "pygmaeus",
             "common_name": "Bornean orangutan"
@@ -1383,11 +1374,74 @@
     },
     {
         "model": "gbdb.Species",
-        "pk": 6,
+        "pk": 5,
         "fields": {
             "genus_name": "Pongo",
             "species_name": "abelii",
             "common_name": "Sumatran orangutan"
+        }
+    },
+    {
+        "model": "gbdb.BodyPart",
+        "pk": 1,
+        "fields": {
+            "name": "body"
+        }
+    },
+    {
+        "model": "gbdb.BodyPart",
+        "pk": 2,
+        "fields": {
+            "name": "right arm"
+        }
+    },
+    {
+        "model": "gbdb.BodyPart",
+        "pk": 3,
+        "fields": {
+            "name": "left arm"
+        }
+    },
+    {
+        "model": "gbdb.BodyPart",
+        "pk": 3,
+        "fields": {
+            "name": "back"
+        }
+    },
+    {
+        "model": "gbdb.BodyPart",
+        "pk": 4,
+        "fields": {
+            "name": "right hand"
+        }
+    },
+    {
+        "model": "gbdb.BodyPart",
+        "pk": 5,
+        "fields": {
+            "name": "left hand"
+        }
+    },
+    {
+        "model": "gbdb.BodyPart",
+        "pk": 6,
+        "fields": {
+            "name": "right fingers"
+        }
+    },
+    {
+        "model": "gbdb.BodyPart",
+        "pk": 7,
+        "fields": {
+            "name": "left fingers"
+        }
+    },
+    {
+        "model": "gbdb.BodyPart",
+        "pk": 8,
+        "fields": {
+            "name": "bottom "
         }
     }
 ]

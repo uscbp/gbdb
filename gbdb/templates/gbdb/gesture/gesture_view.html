@@ -40,10 +40,10 @@
                 <td colspan="2"><strong>Goal:</strong> {{ object.goal }}</td>
             </tr>
             <tr valign="top">
-                <td colspan="2"><strong>Signaller Body Parts:</strong> {{ object.signaller_body_parts }}</td>
+                <td colspan="2"><strong>Signaller Body Parts:</strong> {% for body_part in object.signaller_body_parts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ body_part.name }}{% endfor %}</td>
             </tr>
             <tr valign="top">
-                <td colspan="2"><strong>Recipient Body Parts:</strong> {{ object.recipient_body_parts }}</td>
+                <td colspan="2"><strong>Recipient Body Parts:</strong> {% for body_part in object.recipient_body_parts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ body_part.name }}{% endfor %}</td>
             </tr>
             <tr valign="top">
                 <td colspan="2"><strong>Audible:</strong> {{ object.audible }}</td>

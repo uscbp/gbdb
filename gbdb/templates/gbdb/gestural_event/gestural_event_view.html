@@ -38,13 +38,13 @@
                 <td colspan="2"><strong>Ethograms:</strong> {% for ethogram in object.ethograms.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ ethogram.name }}{% endfor %}</td>
             </tr>
             <tr valign="top">
-                <td colspan="2"><strong>Signaller:</strong> {{ object.signaller }}</td>
+                <td colspan="2"><strong>Signaller:</strong> <a href="/gbdb/primate/{{ object.signaller.id }}/">{{ object.signaller }}</a></td>
             </tr>
             <tr valign="top">
-                <td colspan="2"><strong>Recipient:</strong> {{ object.recipient }}</td>
+                <td colspan="2"><strong>Recipient:</strong> <a href="/gbdb/primate/{{ object.recipient.id }}/">{{ object.recipient }}</a></td>
             </tr>
             <tr valign="top">
-                <td colspan="2"><strong>Gesture:</strong> {{ object.gesture }}</td>
+                <td colspan="2"><strong>Gesture:</strong> <a href="/gbdb/gesture/{{ object.gesture.id }}/">{{ object.gesture }}</a></td>
             </tr>
             <tr valign="top">
                 <td colspan="2"><strong>Recipient response:</strong> {{ object.recipient_response }}</td>

@@ -43,7 +43,7 @@
             </tr>
         {% endif %}
         <tr valign="top">
-            <td colspan="2"><strong>Primates:</strong> {% for primate in object.primates.all %}{% if forloop.counter0 > 0%}, {% endif %}{{ primate.name }}{% endfor %}</td>
+            <td colspan="2"><strong>Primates:</strong> {% for primate in object.primates.all %}{% if forloop.counter0 > 0%}, {% endif %}<a href="/gbdb/primate/{{ primate.id }}/">{{ primate.name }}</a>{% endfor %}</td>
         </tr>
         <tr valign="top">
             <td colspan="2"><strong>Contexts:</strong> {% for context in object.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}</td>
@@ -72,7 +72,7 @@
                             <td><strong>Duration:</strong> {{ sub_behavioral_event.duration }}</td>
                         </tr>
                         <tr>
-                            <td><strong>Primates:</strong> {% for primate in sub_behavioral_event.primates.all %}{% if forloop.counter0 > 0%}, {% endif %}{{ primate.name }}{% endfor %}</td>
+                            <td><strong>Primates:</strong> {% for primate in sub_behavioral_event.primates.all %}{% if forloop.counter0 > 0%}, {% endif %}<a href="/gbdb/primate/{{ primate.id }}/">{{ primate.name }}</a>{% endfor %}</td>
                         </tr>
                         <tr>
                             <td><strong>Contexts:</strong> {% for context in sub_behavioral_event.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}</td>
@@ -109,13 +109,13 @@
                             <td><strong>Ethograms:</strong> {% for ethogram in sub_gestural_event.ethograms.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ ethogram.name }}{% endfor %}</td>
                         </tr>
                         <tr>
-                            <td><strong>Signaller</strong> {{ sub_gestural_event.signaller }}</td>
+                            <td><strong>Signaller</strong> <a href="/gbdb/primate/{{ sug_gestural_event.signaller.id }}/">{{ sub_gestural_event.signaller }}</a></td>
                         </tr>
                         <tr>
-                            <td><strong>Recipient</strong> {{ sub_gestural_event.recipient }}</td>
+                            <td><strong>Recipient</strong> <a href="/gbdb/primate/{{ sug_gestural_event.recipient.id }}/">{{ sub_gestural_event.recipient }}</a></td>
                         </tr>
                         <tr>
-                            <td><strong>Gesture</strong> {{ sub_gestural_event.gesture }}</td>
+                            <td><strong>Gesture</strong> <a href="/gbdb/gesture/{{ sug_gestural_event.gesture.id }}/">{{ sub_gestural_event.gesture }}</a></td>
                         </tr>
                         <tr>
                             <td><strong>Recipient response</strong> {{ sub_gestural_event.recipient_response }}</td>

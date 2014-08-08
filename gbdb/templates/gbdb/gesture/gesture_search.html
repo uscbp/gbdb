@@ -1,0 +1,77 @@
+{% extends "base_generic.html" %}
+{% load staticfiles %}
+{% block extrahead %}
+    <title>GBDB - Search Gestures</title>    
+{% endblock %}
+{% block content %}
+    <div id="detail">
+    <form id="gestureSearchForm" method="post" action="">
+        {% csrf_token %}
+        <table class="tab_panel">
+            <tr>
+                <td colspan="8">
+                    <strong>Any field:</strong>&nbsp;{{ form.keywords }}&nbsp;
+                    <strong>Phrase combination:</strong>&nbsp;{{ form.keywords_options }}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="8">
+                    <strong>Name:</strong>&nbsp;{{ form.name }}&nbsp;<strong>Phrase combination:</strong>&nbsp;{{ form.name_options }}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="8">
+                    <strong>Description:</strong>&nbsp;{{ form.name }}&nbsp;<strong>Phrase combination:</strong>&nbsp;{{ form.description_options }}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="8">
+                    <strong>Goal:</strong>&nbsp;{{ form.goal }}&nbsp;<strong>Phrase combination:</strong>&nbsp;{{ form.goal_options }}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="8">
+                    <strong>Signaller body parts:</strong>&nbsp;{{ form.signaller_body_parts }}&nbsp;<strong>Phrase combination:</strong>&nbsp;{{ form.signaller_body_parts_options }}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="8">
+                    <strong>Recipient body parts:</strong>&nbsp;{{ form.recipient_body_parts }}&nbsp;<strong>Phrase combination:</strong>&nbsp;{{ form.recipient_body_parts_options }}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="8"><strong>Audible:</strong> {{ form.audible }}</td>
+            </tr>
+            <tr><td colspan="8">&nbsp;</td> </tr>
+            <tr>
+                <td colspan=8>
+                    <div class="myerrors">
+                        {{ form.errors }}
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan=8>
+                    <strong>Search criteria combination:</strong> {{ form.search_options }}
+                    <br><br><input class="btn" type="button" value="Search" onclick="document.getElementById('gestureSearchForm').submit();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <div id="results" name="results">
+        <table class="tab_panel">
+            <tr>
+                <td colspan=8>&nbsp;</td>
+            </tr>
+            <tr class="section_header">
+                <td colspan=8><h3>Results</h3></td>
+            </tr>
+            <tr>
+                <td colspan=8>
+                    {% include 'gbdb/gesture/gesture_list_view.html' %}
+                </td>
+            </tr>
+        </table>
+    </div>
+    </div>
+{% endblock %}

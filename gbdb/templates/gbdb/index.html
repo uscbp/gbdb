@@ -19,16 +19,18 @@
             <li><a href="/gbdb/behavioral_event/search/">Search</a></li>
         </ul>
         <li>Primates</li>
-        {% if user.is_authenticated and not user.is_anonymous %}
-            <ul>
+        <ul>
+            {% if user.is_authenticated and not user.is_anonymous %}
                 <li><a href="/gbdb/primate/new/">Insert</a></li>
-            </ul>
-        {% endif %}
+            {% endif %}
+            <li><a href="/gbdb/primate/search/">Search</a></li>
+        </ul>
         <li>Gestures</li>
-        {% if user.is_authenticated and not user.is_anonymous %}
-            <ul>
+        <ul>
+            {% if user.is_authenticated and not user.is_anonymous %}
                 <li><a href="/gbdb/gesture/new/">Insert</a></li>
-            </ul>
-        {% endif %}
+            {% endif %}
+            <li><a href="/gbdb/gesture/search/">Search</a></li>
+        </ul>
     </ul>
 {% endblock %}

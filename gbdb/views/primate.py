@@ -1,8 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
-from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
-from gbdb.forms import PrimateForm
+from django.views.generic import CreateView, UpdateView, DeleteView, DetailView, FormView
+from gbdb.forms import PrimateForm, PrimateSearchForm
 from gbdb.models import Primate
+from gbdb.search import runPrimateSearch
 
 class EditPrimateMixin():
     model=Primate
@@ -48,3 +49,16 @@ class PrimateDetailView(DetailView):
         context = super(PrimateDetailView, self).get_context_data(**kwargs)
         context['ispopup']='_popup' in self.request.GET
         return context
+
+
+class SearchPrimateView(FormView):
+    form_class=PrimateSearchForm
+    template_name='gbdb/primate/primate_search.html'
+
+    def form_valid(self, form):
+        context=self.get_context_data(form=form)
+        user=self.request.user
+
+        context['primates']=runPrimateSearch(form.cleaned_data, user.id)
+
+        return self.render_to_response(context)
