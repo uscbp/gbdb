@@ -2,10 +2,23 @@
 {% load staticfiles %}
 {% block extrahead %}
 <title>GBDB - Search Observation Sessions</title>
+    <script type="text/javascript">
+        function updateCircle()
+        {
+            // Add circle overlay and bind to marker
+            var circle = new google.maps.Circle({
+                map: map,
+                radius: 16093,    // 10 miles in metres
+                fillColor: '#AA0000'
+            });
+            circle.bindTo('center', marker, 'position');
+        }
+    </script>
 {% endblock %}
 {% block content %}
 <div id="detail">
     <form id="observationSessionSearchForm" method="post" action="">
+        {{ form.media }}
         {% csrf_token %}
         <table class="tab_panel">
             <tr>
@@ -21,8 +34,13 @@
             </tr>
             <tr>
                 <td colspan="8">
-                    <strong>Location:</strong>&nbsp;{{ form.location }}&nbsp;
-                    <strong>Phrase combination:</strong>&nbsp;{{ form.location_options }}
+                    <strong>Location name:</strong>&nbsp;{{ form.location_name }}&nbsp;
+                    <strong>Phrase combination:</strong>&nbsp;{{ form.location_name_options }}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="8">
+                    <strong>Location:</strong> {{ form.location }}
                 </td>
             </tr>
             <tr>
@@ -72,7 +90,7 @@
             </tr>
             <tr class="table_header">
                 <td colspan=8>
-                    <a href="/bodb/observation_session/new/">Add new</a>
+                    <a href="/gbdb/observation_session/new/">Add new</a>
                 </td>
             </tr>
             <tr>

@@ -12,12 +12,20 @@ class GeopositionField(forms.MultiValueField):
         'invalid': _('Enter a valid geoposition.')
     }
 
-    def __init__(self, *args, **kwargs):
-        self.widget = GeopositionWidget()
-        fields = (
-            forms.DecimalField(label=_('latitude')),
-            forms.DecimalField(label=_('longitude')),
-        )
+    def __init__(self, use_radius=False, *args, **kwargs):
+        self.widget = GeopositionWidget(use_radius=use_radius)
+        self.use_radius=use_radius
+        if use_radius:
+            fields = (
+                forms.DecimalField(label=_('latitude')),
+                forms.DecimalField(label=_('longitude')),
+                forms.DecimalField(label=_('radius'))
+            )
+        else:
+            fields = (
+                forms.DecimalField(label=_('latitude')),
+                forms.DecimalField(label=_('longitude'))
+            )
         if 'initial' in kwargs:
             kwargs['initial'] = Geoposition(*kwargs['initial'].split(','))
         super(GeopositionField, self).__init__(fields, **kwargs)

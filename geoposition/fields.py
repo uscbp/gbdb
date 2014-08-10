@@ -25,7 +25,10 @@ class GeopositionField(with_metaclass(models.SubfieldBase, models.Field)):
         if isinstance(value, Geoposition):
             return value
         if isinstance(value, list):
-            return Geoposition(value[0], value[1])
+            if len(value)==3:
+                return Geoposition(value[0], value[1], value[2])
+            else:
+                return Geoposition(value[0], value[1], 0)
 
         # default case is string
         value_parts = value.rsplit(',')
@@ -37,8 +40,12 @@ class GeopositionField(with_metaclass(models.SubfieldBase, models.Field)):
             longitude = value_parts[1]
         except IndexError:
             longitude = '0.0'
+        try:
+            radius = value_parts[2]
+        except IndexError:
+            radius = '0.0'
 
-        return Geoposition(latitude, longitude)
+        return Geoposition(latitude, longitude, radius)
 
     def get_prep_value(self, value):
         return str(value)

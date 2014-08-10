@@ -4,6 +4,7 @@ from django.utils import six
 from django.utils.encoding import force_text
 from tagging.utils import split_strip
 from gbdb.models import ObservationSession, BehavioralEvent, GesturalEvent, Primate, Gesture
+from geoposition.models import compute_distance
 from registration.models import User
 
 def parse_search_string(searchstring):
@@ -101,11 +102,23 @@ def runObservationSessionSearch(search_data, userId):
 
     # get results
     if q and len(q):
-        results = ObservationSession.objects.filter(q).select_related().distinct()
+        results = ObservationSession.objects.filter(q).select_related().distinct().order_by('date')
     else:
-        results = ObservationSession.objects.all().select_related()
+        results = ObservationSession.objects.all().select_related().order_by('date')
 
-    return results.order_by('date')
+    filtered_results=[]
+    for result in results:
+        if not searcher.location:
+            filtered_results.append(result)
+        else:
+            search_lat=searcher.location[0]
+            search_long=searcher.location[1]
+            search_rad=searcher.location[2]
+            distance=compute_distance(float(search_lat),float(search_long),float(result.location.latitude),
+                float(result.location.longitude))
+            if distance<=search_rad:
+                filtered_results.append(result)
+    return filtered_results
 
 
 class ObservationSessionSearch(object):
@@ -164,12 +177,12 @@ class ObservationSessionSearch(object):
             return Q(date__lte=self.date_max)
         return Q()
 
-    def search_location(self, userId):
-        if self.location:
+    def search_location_name(self, userId):
+        if self.location_name:
             op=operator.or_
-            if self.location_options=='all':
+            if self.location_name_options=='all':
                 op=operator.and_
-            words=parse_search_string(self.location)
+            words=parse_search_string(self.location_name)
             location_filters=[Q(location_name__icontains=word) for word in words]
             return reduce(op,location_filters)
         return Q()

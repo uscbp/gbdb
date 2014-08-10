@@ -36,15 +36,18 @@ if (jQuery != undefined) {
                 $searchInput = $('<input>', {'type': 'search', 'placeholder': 'Start typing an address …'}),
                 $latitudeField = $container.find('input.geoposition:eq(0)'),
                 $longitudeField = $container.find('input.geoposition:eq(1)'),
+                $radiusField = $container.find('input.geoposition:eq(2)'),
                 latitude = parseFloat($latitudeField.val()) || null,
                 longitude = parseFloat($longitudeField.val()) || null,
+                radius = parseFloat($radiusField.val()) || null,
                 map,
                 mapLatLng,
                 mapOptions,
                 mapCustomOptions,
                 markerOptions,
                 markerCustomOptions,
-                marker;
+                marker,
+                circle;
 
             $mapContainer.css('height', $container.data('map-widget-height') + 'px');
             mapCustomOptions = $container.data('map-options') || {};
@@ -153,6 +156,13 @@ if (jQuery != undefined) {
                 google.maps.event.trigger(marker, 'dragend');
             }
 
+            circle = new google.maps.Circle({
+                map: map,
+                radius: radius*1000.0,
+                fillColor: '#AA0000'
+            });
+            circle.bindTo('center',marker,'position');
+
             $latitudeField.add($longitudeField).on('keyup', function(e) {
                 var latitude = parseFloat($latitudeField.val()) || 0;
                 var longitude = parseFloat($longitudeField.val()) || 0;
@@ -160,8 +170,14 @@ if (jQuery != undefined) {
                 map.setCenter(center);
                 map.setZoom(15);
                 marker.setPosition(center);
+                circle.setCenter(center);
                 doGeocode();
             });
+
+            $radiusField.on('keyup', function(e) {
+                var radius = parseFloat($radiusField.val()) || 0;
+                circle.setRadius(radius*1000.0);
+            })
         });
     });
 })(django.jQuery);

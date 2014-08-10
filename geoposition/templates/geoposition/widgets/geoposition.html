@@ -8,5 +8,11 @@
             <td>{{ longitude.label|capfirst }}</td>
             <td>{{ longitude.html }}</td>
         </tr>
+        {% if radius %}
+            <tr>
+                <td>{{ radius.label|capfirst }} (km)</td>
+                <td>{{ radius.html }}</td>
+            </tr>
+        {% endif %}
     </table>
 </div>
