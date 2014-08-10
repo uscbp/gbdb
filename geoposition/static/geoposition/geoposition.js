@@ -4,7 +4,6 @@ if (jQuery != undefined) {
     }
 }
 
-
 (function($) {
 
     $(document).ready(function() {
@@ -40,7 +39,6 @@ if (jQuery != undefined) {
                 latitude = parseFloat($latitudeField.val()) || null,
                 longitude = parseFloat($longitudeField.val()) || null,
                 radius = parseFloat($radiusField.val()) || null,
-                map,
                 mapLatLng,
                 mapOptions,
                 mapCustomOptions,
