@@ -226,7 +226,20 @@ def runBehavioralEventSearch(search_data, userId):
         else:
             converted_results.append(r)
 
-    return results
+    filtered_results=[]
+    for result in converted_results:
+        if not searcher.location:
+            filtered_results.append(result)
+        else:
+            search_lat=searcher.location[0]
+            search_long=searcher.location[1]
+            search_rad=searcher.location[2]
+            distance=compute_distance(float(search_lat),float(search_long),float(result.observation_session.location.latitude),
+                float(result.observation_session.location.longitude))
+            if distance<=search_rad:
+                filtered_results.append(result)
+    return filtered_results
+
 
 
 class BehavioralEventSearch(object):
@@ -292,12 +305,12 @@ class BehavioralEventSearch(object):
             return Q(observation_session__date__lte=self.date_max)
         return Q()
 
-    def search_location(self, userId):
-        if self.location:
+    def search_location_name(self, userId):
+        if self.location_name:
             op=operator.or_
-            if self.location_options=='all':
+            if self.location_name_options=='all':
                 op=operator.and_
-            words=parse_search_string(self.location)
+            words=parse_search_string(self.location_name)
             location_filters=[Q(observation_session__location_name__icontains=word) for word in words]
             return reduce(op,location_filters)
         return Q()
@@ -320,16 +333,6 @@ class BehavioralEventSearch(object):
     def search_primates_birth_date_max(self, userId):
         if self.primates_birth_date_max:
             return Q(primates__birth_date__lte=self.primates_birth_date_max)
-        return Q()
-
-    def search_primates_location(self, userId):
-        if self.primates_location:
-            op=operator.or_
-            if self.primates_location_options=='all':
-                op=operator.and_
-            words=parse_search_string(self.primates_location)
-            location_filters=[Q(primates__location_name__icontains=word) for word in words]
-            return reduce(op,location_filters)
         return Q()
 
     def search_primates_habitat(self, userId):
@@ -377,16 +380,6 @@ class BehavioralEventSearch(object):
             return Q(gesturalevent__signaller__birth_date__gte=self.gestural_signaller_birth_date_max)
         return Q()
 
-    def search_gestural_signaller_location(self, userId):
-        if self.type=='gestural' and self.gestural_signaller_location:
-            op=operator.or_
-            if self.type=='gestural' and self.gestural_signaller_location_options=='all':
-                op=operator.and_
-            words=parse_search_string(self.gestural_signaller_location)
-            location_filters=[Q(gesturalevent__signaller__location_name__icontains=word) for word in words]
-            return reduce(op,location_filters)
-        return Q()
-
     def search_gestural_signaller_habitat(self, userId):
         if self.type=='gestural' and self.gestural_signaller_habitat:
             return Q(gesturalevent__signaller__habitat__iexact=self.gestural_signaller_habitat)
@@ -410,16 +403,6 @@ class BehavioralEventSearch(object):
     def search_gestural_recipient_birth_date_max(self, userId):
         if self.type=='gestural' and self.gestural_recipient_birth_date_max:
             return Q(gesturalevent__recipient__birth_date__gte=self.gestural_recipient_birth_date_max)
-        return Q()
-
-    def search_gestural_recipient_location(self, userId):
-        if self.type=='gestural' and self.gestural_recipient_location:
-            op=operator.or_
-            if self.type=='gestural' and self.gestural_recipient_location_options=='all':
-                op=operator.and_
-            words=parse_search_string(self.gestural_recipient_location)
-            location_filters=[Q(gesturalevent__recipient__location_name__icontains=word) for word in words]
-            return reduce(op,location_filters)
         return Q()
 
     def search_gestural_recipient_habitat(self, userId):
@@ -506,16 +489,27 @@ def runPrimateSearch(search_data, userId):
             dispatch=getattr(searcher, 'search_%s' % key)
             filters.append(dispatch(userId))
 
-    print(filters)
     q = reduce(op,filters)
 
     # get results
     if q and len(q):
-        results = Primate.objects.filter(q).select_related().distinct()
+        results = Primate.objects.filter(q).select_related().distinct().order_by('name')
     else:
-        results = Primate.objects.all().select_related()
+        results = Primate.objects.all().select_related().order_by('name')
 
-    return results.order_by('name')
+    filtered_results=[]
+    for result in results:
+        if not searcher.location:
+            filtered_results.append(result)
+        else:
+            search_lat=searcher.location[0]
+            search_long=searcher.location[1]
+            search_rad=searcher.location[2]
+            distance=compute_distance(float(search_lat),float(search_long),float(result.location.latitude),
+                float(result.location.longitude))
+            if distance<=search_rad:
+                filtered_results.append(result)
+    return filtered_results
 
 
 class PrimateSearch(object):
@@ -543,12 +537,12 @@ class PrimateSearch(object):
             return Q(birth_date__lte=self.birth_date_max)
         return Q()
 
-    def search_location(self, userId):
-        if self.location:
+    def search_location_name(self, userId):
+        if self.location_name:
             op=operator.or_
-            if self.location_options=='all':
+            if self.location_name_options=='all':
                 op=operator.and_
-            words=parse_search_string(self.location)
+            words=parse_search_string(self.location_name)
             location_filters=[Q(location_name__icontains=word) for word in words]
             return reduce(op,location_filters)
         return Q()
@@ -576,7 +570,6 @@ def runGestureSearch(search_data, userId):
             dispatch=getattr(searcher, 'search_%s' % key)
             filters.append(dispatch(userId))
 
-    print(filters)
     q = reduce(op,filters)
 
     # get results

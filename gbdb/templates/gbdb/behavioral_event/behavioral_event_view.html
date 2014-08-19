@@ -2,6 +2,7 @@
 {% load staticfiles %}
 {% block extrahead %}
     <title>GBDB - View Behavioral {% if object.parent %}Sub-{% endif %}Event</title>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
     <script type="text/javascript">
 
         {% if ispopup %}
@@ -24,6 +25,23 @@
             document.location.href='/gbdb/';
         }
 
+        function initialize() {
+            var map = new google.maps.Map(
+                    document.getElementById('map-canvas'), {
+                        center: new google.maps.LatLng({{ object.observation_session.location.latitude }}, {{ object.observation_session.location.longitude }}),
+                        zoom: 13,
+                        mapTypeId: google.maps.MapTypeId.HYBRID
+                    });
+
+            var marker = new google.maps.Marker({
+                position: new google.maps.LatLng({{ object.observation_session.location.latitude }}, {{ object.observation_session.location.longitude }}),
+                map: map,
+                title: '{{ object.observation_session.location_name }}'
+            });
+
+        }
+        google.maps.event.addDomListener(window, 'load', initialize);
+
     </script>
 {% endblock %}
 {% block content %}
@@ -42,6 +60,17 @@
                 <td colspan="2"><strong>Duration:</strong> {{ object.duration }}</td>
             </tr>
         {% endif %}
+        <tr valign="top">
+            <td colspan="2"><strong>Location name:</strong> {{ object.observation_session.location_name }}</td>
+        </tr>
+        <tr valign="top">
+            <td colspan="2"><strong>Location:</strong></td>
+        </tr>
+        <tr valign="top">
+            <td colspan="2">
+                <div id="map-canvas" style="height:600px"></div>
+            </td>
+        </tr>
         <tr valign="top">
             <td colspan="2"><strong>Primates:</strong> {% for primate in object.primates.all %}{% if forloop.counter0 > 0%}, {% endif %}<a href="/gbdb/primate/{{ primate.id }}/">{{ primate.name }}</a>{% endfor %}</td>
         </tr>

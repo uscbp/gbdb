@@ -3,6 +3,9 @@
 {% block extrahead %}
     <title>GBDB - Search Behavioral Events</title>
     <script type="text/javascript">
+
+        var map=null;
+
         function updateBehavioralEventSearchOptions(sedType)
         {
             if(sedType=='gestural')
@@ -15,6 +18,7 @@
 {% block content %}
     <div id="detail">
         <form id="behavioralEventSearchForm" method="post" action="">
+            {{ form.media }}
             {% csrf_token %}
             <table class="tab_panel">
                 <tr>
@@ -30,8 +34,13 @@
                 </tr>
                 <tr>
                     <td colspan="8">
-                        <strong>Location:</strong>&nbsp;{{ form.location }}&nbsp;
-                        <strong>Phrase combination:</strong>&nbsp;{{ form.location_options }}
+                        <strong>Location name:</strong>&nbsp;{{ form.location_name }}&nbsp;
+                        <strong>Phrase combination:</strong>&nbsp;{{ form.location_name_options }}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="8">
+                        <strong>Location:</strong> {{ form.location }}
                     </td>
                 </tr>
                 <tr>
@@ -65,22 +74,10 @@
                                     <td colspan="8"><strong>Name:</strong> {{ form.gestural_signaller_name }}</td>
                                 </tr>
                                 <tr>
-                                    <td colspan="8"><strong>Genus:</strong> {{ form.gestural_signaller_species_genus }}</td>
-                                </tr>
-                                <tr>
-                                    <td colspan="8"><strong>Species:</strong> {{ form.gestural_signaller_species_species }}</td>
-                                </tr>
-                                <tr>
-                                    <td colspan="8"><strong>Common Name:</strong> {{ form.gestural_signaller_species_common_name }}</td>
+                                    <td colspan="8"><strong>Species:</strong> {{ form.gestural_signaller_species }}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="8"><strong>Birth Date:</strong> {{ form.gestural_signaller_birth_date_min }} - {{ form.gestural_signaller_birth_date_max }}</td>
-                                </tr>
-                                <tr>
-                                    <td colspan="8">
-                                        <strong>Location:</strong>&nbsp;{{ form.gestural_signaller_location }}&nbsp;
-                                        <strong>Phrase combination:</strong>&nbsp;{{ form.gestural_signaller_location_options }}
-                                    </td>
                                 </tr>
                                 <tr>
                                     <td colspan="8"><strong>Habitat:</strong> {{ form.gestural_signaller_habitat }}</td>
@@ -93,22 +90,10 @@
                                     <td colspan="8"><strong>Name:</strong> {{ form.gestural_recipient_name }}</td>
                                 </tr>
                                 <tr>
-                                    <td colspan="8"><strong>Genus:</strong> {{ form.gestural_recipient_species_genus }}</td>
-                                </tr>
-                                <tr>
-                                    <td colspan="8"><strong>Species:</strong> {{ form.gestural_recipient_species_species }}</td>
-                                </tr>
-                                <tr>
-                                    <td colspan="8"><strong>Common Name:</strong> {{ form.gestural_recipient_species_common_name }}</td>
+                                    <td colspan="8"><strong>Species:</strong> {{ form.gestural_recipient_species }}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="8"><strong>Birth Date:</strong> {{ form.gestural_recipient_birth_date_min }} - {{ form.gestural_recipient_birth_date_max }}</td>
-                                </tr>
-                                <tr>
-                                    <td colspan="8">
-                                        <strong>Location:</strong>&nbsp;{{ form.gestural_recipient_location }}&nbsp;
-                                        <strong>Phrase combination:</strong>&nbsp;{{ form.gestural_recipient_location_options }}
-                                    </td>
                                 </tr>
                                 <tr>
                                     <td colspan="8"><strong>Habitat:</strong> {{ form.gestural_recipient_habitat }}</td>
@@ -177,22 +162,10 @@
                     <td colspan="8"><strong>Name:</strong> {{ form.primates_name }}</td>
                 </tr>
                 <tr>
-                    <td colspan="8"><strong>Genus:</strong> {{ form.primates_species_genus }}</td>
-                </tr>
-                <tr>
-                    <td colspan="8"><strong>Species:</strong> {{ form.primates_species_species }}</td>
-                </tr>
-                <tr>
-                    <td colspan="8"><strong>Common Name:</strong> {{ form.primates_species_common_name }}</td>
+                    <td colspan="8"><strong>Species:</strong> {{ form.primates_species }}</td>
                 </tr>
                 <tr>
                     <td colspan="8"><strong>Birth Date:</strong> {{ form.primates_birth_date_min }} - {{ form.primates_birth_date_max }}</td>
-                </tr>
-                <tr>
-                    <td colspan="8">
-                        <strong>Location:</strong>&nbsp;{{ form.primates_location }}&nbsp;
-                        <strong>Phrase combination:</strong>&nbsp;{{ form.primates_location_options }}
-                    </td>
                 </tr>
                 <tr>
                     <td colspan="8"><strong>Habitat:</strong> {{ form.primates_habitat }}</td>
@@ -224,6 +197,28 @@
                 <tr>
                     <td colspan=8>
                         {% include 'gbdb/behavioral_event/behavioral_event_list_view.html' %}
+                        <script type="text/javascript">
+                            $(document).ready(function() {
+                                {% for behavioral_event in behavioral_events %}
+                                    var pinColor = "2F76EE"; // a random blue color that i picked
+                                    var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
+                                            new google.maps.Size(21, 34),
+                                            new google.maps.Point(0,0),
+                                            new google.maps.Point(10, 34));
+                                    var pinShadow = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
+                                            new google.maps.Size(40, 37),
+                                            new google.maps.Point(0, 0),
+                                            new google.maps.Point(12, 35));
+                                    var marker = new google.maps.Marker({
+                                        position: new google.maps.LatLng({{ behavioral_event.observation_session.location.latitude }}, {{ behavioral_event.observation_session.location.longitude }}),
+                                        map: map,
+                                        title: '{{ behavioral_event.observation_session.location_name }}',
+                                        icon: pinImage,
+                                        shadown: pinShadow
+                                    });
+                                {% endfor %}
+                            });
+                        </script>
                     </td>
                 </tr>
             </table>

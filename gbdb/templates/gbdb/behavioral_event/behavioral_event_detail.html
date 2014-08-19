@@ -145,6 +145,7 @@
     <div id="detail">
         <h2>{% if form.instance.id %}Edit{% else %}Add{% endif %} Behavioral {% if form.instance.id and form.instance.parent %}Sub-{% endif %}Event</h2>
         <form id="behavioralEventForm" method="post" action="" enctype="multipart/form-data">
+            {{ form.type }}
             {% csrf_token %}
             <table class="tab_panel">
                 {% if not allow_video %}
@@ -192,6 +193,7 @@
                 <tr>
                     <td colspan="3">
                         <div class="myerrors">
+                            {{ form.errors }}
                             {{ form.non_field_errors }}
                         </div>
                     </td>

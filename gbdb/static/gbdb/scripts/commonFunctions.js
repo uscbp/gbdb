@@ -14,3 +14,14 @@ function showPopup(windowName, width, height, href)
     win.focus();
     return false;
 }
+
+function updateCircle()
+{
+    // Add circle overlay and bind to marker
+    var circle = new google.maps.Circle({
+        map: map,
+        radius: 16093,    // 10 miles in metres
+        fillColor: '#AA0000'
+    });
+    circle.bindTo('center', marker, 'position');
+}

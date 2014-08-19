@@ -1,5 +1,5 @@
 import datetime
-from django.forms import TimeInput
+from django.forms import TimeInput, HiddenInput
 from django.forms.models import inlineformset_factory
 from django.forms.extras import SelectDateWidget
 from django import forms
@@ -82,6 +82,7 @@ class ObservationSessionSearchForm(forms.Form):
 
 
 class BehavioralEventForm(forms.ModelForm):
+    type=forms.CharField(widget=HiddenInput, required=False)
     observation_session=forms.ModelChoiceField(queryset=ObservationSession.objects.all(),widget=forms.HiddenInput,
         required=False)
     parent=forms.ModelChoiceField(queryset=BehavioralEvent.objects.all(),widget=forms.HiddenInput, required=False)
@@ -123,14 +124,14 @@ class BehavioralEventSearchForm(forms.Form):
     keywords_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
     date_min=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
     date_max=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
-    location=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
-    location_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    location_name=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
+    location_name_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    location = GeopositionField(use_radius=True, required=False)
+    radius = forms.CharField(help_text='Radius to search in', required=False)
     primates_name=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
     primates_species=forms.ModelMultipleChoiceField(queryset=Species.objects.all(), required=False)
     primates_birth_date_min=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
     primates_birth_date_max=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
-    primates_location=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
-    primates_location_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
     primates_habitat=forms.ChoiceField(choices=HABITAT_CHOICES, help_text='Primate habitat', required=False)
     contexts = forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
     contexts_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
@@ -140,15 +141,11 @@ class BehavioralEventSearchForm(forms.Form):
     gestural_signaller_species=forms.ModelMultipleChoiceField(queryset=Species.objects.all(), required=False)
     gestural_signaller_birth_date_min=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
     gestural_signaller_birth_date_max=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
-    gestural_signaller_location=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
-    gestural_signaller_location_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
     gestural_signaller_habitat=forms.ChoiceField(choices=HABITAT_CHOICES, help_text='Primate habitat', required=False)
     gestural_recipient_name=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
     gestural_recipient_species=forms.ModelMultipleChoiceField(queryset=Primate.objects.all(), required=False)
     gestural_recipient_birth_date_min=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
     gestural_recipient_birth_date_max=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
-    gestural_recipient_location=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
-    gestural_recipient_location_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
     gestural_recipient_habitat=forms.ChoiceField(choices=HABITAT_CHOICES, help_text='Primate habitat', required=False)
     gestural_gesture=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
     gestural_gesture_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
@@ -199,8 +196,10 @@ class PrimateSearchForm(forms.Form):
     species=forms.ModelMultipleChoiceField(help_text='Species', queryset=Species.objects.all(), required=False)
     birth_date_min=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
     birth_date_max=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
-    location=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
-    location_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    location_name=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
+    location_name_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    location = GeopositionField(use_radius=True, required=False)
+    radius = forms.CharField(help_text='Radius to search in', required=False)
     habitat=forms.ChoiceField(choices=HABITAT_CHOICES, help_text='Primate habitat', required=False)
     search_options = forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
 
