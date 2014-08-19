@@ -197,8 +197,10 @@ class PrimateSearchForm(forms.Form):
     species=forms.ModelMultipleChoiceField(help_text='Species', queryset=Species.objects.all(), required=False)
     birth_date_min=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
     birth_date_max=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
-    location=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
-    location_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    location_name=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
+    location_name_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    location = GeopositionField(use_radius=True, required=False)
+    radius = forms.CharField(help_text='Radius to search in', required=False)
     habitat=forms.ChoiceField(choices=HABITAT_CHOICES, help_text='Primate habitat', required=False)
     search_options = forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
 

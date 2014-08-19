@@ -2,10 +2,14 @@
 {% load staticfiles %}
 {% block extrahead %}
     <title>GBDB - Search Primates</title>
+    <script type="text/javascript">
+        var map=null;
+    </script>
 {% endblock %}
 {% block content %}
     <div id="detail">
     <form id="primateSearchForm" method="post" action="">
+        {{ form.media }}
         {% csrf_token %}
         <table class="tab_panel">
             <tr>
@@ -19,8 +23,13 @@
             </tr>
             <tr>
                 <td colspan="8">
-                    <strong>Location:</strong>&nbsp;{{ form.location }}&nbsp;
-                    <strong>Phrase combination:</strong>&nbsp;{{ form.location_options }}
+                    <strong>Location name:</strong>&nbsp;{{ form.location_name }}&nbsp;
+                    <strong>Phrase combination:</strong>&nbsp;{{ form.location_name_options }}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="8">
+                    <strong>Location:</strong> {{ form.location }}
                 </td>
             </tr>
             <tr>
@@ -53,6 +62,28 @@
             <tr>
                 <td colspan=8>
                     {% include 'gbdb/primate/primate_list_view.html' %}
+                    <script type="text/javascript">
+                        $(document).ready(function() {
+                            {% for primate in primates %}
+                                var pinColor = "2F76EE"; // a random blue color that i picked
+                                var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
+                                        new google.maps.Size(21, 34),
+                                        new google.maps.Point(0,0),
+                                        new google.maps.Point(10, 34));
+                                var pinShadow = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
+                                        new google.maps.Size(40, 37),
+                                        new google.maps.Point(0, 0),
+                                        new google.maps.Point(12, 35));
+                                var marker = new google.maps.Marker({
+                                    position: new google.maps.LatLng({{ primate.location.latitude }}, {{ primate.location.longitude }}),
+                                    map: map,
+                                    title: '{{ primate.location_name }}',
+                                    icon: pinImage,
+                                    shadown: pinShadow
+                                });
+                            {% endfor %}
+                        });
+                    </script>
                 </td>
             </tr>
         </table>
