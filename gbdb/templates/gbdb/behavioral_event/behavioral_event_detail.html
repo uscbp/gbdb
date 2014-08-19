@@ -12,6 +12,10 @@
             // update form count
             $('#id_sub_behavioral_event-TOTAL_FORMS').attr('value', count+1);
             
+            populatePrimates();
+            populateContexts();
+            populateEthograms();
+            
             return false;
         }
 
@@ -24,6 +28,10 @@
             // update form count
             $('#id_sub_gestural_event-TOTAL_FORMS').attr('value', count+1);
 
+			populatePrimates();
+            populateContexts();
+            populateEthograms();
+            
             return false;
         }
 
@@ -64,6 +72,54 @@
 			}
 			
 
+        }
+        
+        function populateContexts() 
+        {
+        	var vals = $("#id_contexts :selected");
+	        var count = $('#sub_behavioral_events').children().length;
+	
+			for(var i=0; i < count; i++){
+			var sel = $("#id_sub_behavioral_event-" + i + "-contexts");
+			sel.empty();
+			vals.map(function(i, el) {
+				sel.append('<option value="">' + $(el).text() + '</option>');
+				});
+			}
+			
+			var count = $('#sub_gestural_events').children().length;
+	
+			for(var i=0; i < count; i++){
+			var sel = $("#id_sub_gestural_event-" + i + "-contexts");
+			sel.empty();
+			vals.map(function(i, el) {
+				sel.append('<option value="">' + $(el).text() + '</option>');
+				});
+			}
+        }
+        
+        function populateEthograms() 
+        {
+        	var vals = $("#id_ethograms :selected");
+	        var count = $('#sub_behavioral_events').children().length;
+	
+			for(var i=0; i < count; i++){
+			var sel = $("#id_sub_behavioral_event-" + i + "-ethograms");
+			sel.empty();
+			vals.map(function(i, el) {
+				sel.append('<option value="">' + $(el).text() + '</option>');
+				});
+			}
+			
+			var count = $('#sub_gestural_events').children().length;
+	
+			for(var i=0; i < count; i++){
+			var sel = $("#id_sub_gestural_event-" + i + "-ethograms");
+			sel.empty();
+			vals.map(function(i, el) {
+				sel.append('<option value="">' + $(el).text() + '</option>');
+				});
+			}
         }
         
 
@@ -357,9 +413,7 @@
                     <td>Contexts</td>
                     <td colspan="4">
                         <select multiple="multiple" id="id_sub_behavioral_event-<%= idx %>-contexts" name="sub_behavioral_event-<%= idx %>-contexts">
-                            {% for context in contexts %}
-                                <option value="{{ context.id }}">{{ context.name }}</option>
-                            {% endfor %}
+                            <option value="" selected="selected">---------</option>
                         </select>
                     </td>
                 </tr>
@@ -368,9 +422,7 @@
                     <td>Ethograms</td>
                     <td colspan="4">
                         <select multiple="multiple" id="id_sub_behavioral_event-<%= idx %>-ethograms" name="sub_behavioral_event-<%= idx %>-ethograms">
-                            {% for ethogram in ethograms %}
-                                <option value="{{ ethogram.id }}">{{ ethogram.name }}</option>
-                            {% endfor %}
+                            <option value="" selected="selected">---------</option>
                         </select>
                     </td>
                 </tr>
@@ -415,9 +467,7 @@
                     <td>Contexts</td>
                     <td colspan="4">
                         <select multiple="multiple" id="id_sub_gestural_event-<%= idx %>-contexts" name="sub_gestural_event-<%= idx %>-contexts">
-                            {% for context in contexts %}
-                                <option value="{{ context.id }}">{{ context.name }}</option>
-                            {% endfor %}
+                            <option value="" selected="selected">---------</option>
                         </select>
                     </td>
                 </tr>
@@ -426,9 +476,7 @@
                     <td>Ethograms</td>
                     <td colspan="4">
                         <select multiple="multiple" id="id_sub_gestural_event-<%= idx %>-ethograms" name="sub_gestural_event-<%= idx %>-ethograms">
-                            {% for ethogram in ethograms %}
-                                <option value="{{ ethogram.id }}">{{ ethogram.name }}</option>
-                            {% endfor %}
+                            <option value="" selected="selected">---------</option>
                         </select>
                     </td>
                 </tr>
@@ -438,9 +486,6 @@
                     <td colspan="4">
                         <select id="id_sub_gestural_event-<%= idx %>-signaller" name="sub_gestural_event-<%= idx %>-signaller">
                             <option value="" selected="selected">---------</option>
-                            {% for signaller in signallers %}
-                            	<option value="{{ signaller.id }}">{{ signaller.name }}</option>
-                        	{% endfor %}
                         </select>
                     </td>
                 </tr>
@@ -450,9 +495,6 @@
                     <td colspan="4">
                         <select id="id_sub_gestural_event-<%= idx %>-recipient" name="sub_gestural_event-<%= idx %>-recipient">
                             <option value="" selected="selected">---------</option>
-                            {% for recipient in recipients %}
-                            	<option value="{{ recipient.id }}">{{ recipient.name }}</option>
-                        	{% endfor %}
                         </select>
                     </td>
                 </tr>

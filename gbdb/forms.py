@@ -88,10 +88,9 @@ class BehavioralEventForm(forms.ModelForm):
     start_time = forms.TimeField(widget=TimeInput(), required=False)
     duration = forms.CharField(widget=forms.TextInput(attrs={'size':'20'}),required=False)
     video = forms.FileField(required=False)
-    primates = forms.ModelMultipleChoiceField(queryset=Primate.objects.all(), widget=forms.SelectMultiple(attrs={"onChange":'populatePrimates()'}),
-        required=False)
-    contexts = forms.ModelMultipleChoiceField(queryset=Context.objects.all(), required=False)
-    ethograms = forms.ModelMultipleChoiceField(queryset=Ethogram.objects.all(), required=False)
+    primates = forms.ModelMultipleChoiceField(queryset=Primate.objects.all(), widget=forms.SelectMultiple(attrs={"onChange":'populatePrimates()'}), required=False)
+    contexts = forms.ModelMultipleChoiceField(queryset=Context.objects.all(), widget=forms.SelectMultiple(attrs={"onChange":'populateContexts()'}), required=False)
+    ethograms = forms.ModelMultipleChoiceField(queryset=Ethogram.objects.all(), widget=forms.SelectMultiple(attrs={"onChange":'populateEthograms()'}), required=False)
     notes = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=False)
 
     class Meta:
@@ -228,7 +227,7 @@ class GestureSearchForm(forms.Form):
     description_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
     goal = forms.CharField(help_text="Goal search", required=False)
     goal_options=forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
-    signaller_body_parts=forms.ModelMultipleChoiceField(help_text='Signaller ody parts', queryset=BodyPart.objects.all(), required=False)
-    recipient_body_parts=forms.ModelMultipleChoiceField(help_text='Recipient ody parts', queryset=BodyPart.objects.all(), required=False)
+    signaller_body_parts=forms.ModelMultipleChoiceField(help_text='Signaller body parts', queryset=BodyPart.objects.all(), required=False)
+    recipient_body_parts=forms.ModelMultipleChoiceField(help_text='Recipient body parts', queryset=BodyPart.objects.all(), required=False)
     audible = forms.ChoiceField(choices=YESNO_CHOICES, widget=forms.Select(), required=False)
     search_options = forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)

@@ -2,7 +2,7 @@ import operator
 from django.db.models import Q
 from django.utils import six
 from django.utils.encoding import force_text
-from tagging.utils import split_strip
+from taggit.utils import split_strip
 from gbdb.models import ObservationSession, BehavioralEvent, GesturalEvent, Primate, Gesture
 from geoposition.models import compute_distance
 from registration.models import User
