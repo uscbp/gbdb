@@ -489,7 +489,6 @@ def runPrimateSearch(search_data, userId):
             dispatch=getattr(searcher, 'search_%s' % key)
             filters.append(dispatch(userId))
 
-    print(filters)
     q = reduce(op,filters)
 
     # get results
@@ -571,7 +570,6 @@ def runGestureSearch(search_data, userId):
             dispatch=getattr(searcher, 'search_%s' % key)
             filters.append(dispatch(userId))
 
-    print(filters)
     q = reduce(op,filters)
 
     # get results
