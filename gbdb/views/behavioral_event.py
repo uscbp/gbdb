@@ -61,6 +61,7 @@ class CreateBehavioralEventView(EditBehavioralEventMixin, CreateView):
     def get_initial(self):
         initial = super(CreateBehavioralEventView,self).get_initial()
         initial['observation_session']=ObservationSession.objects.get(id=self.request.GET.get('observation_session'))
+        initial['type']='generic'
         return initial
 
     def get_context_data(self, **kwargs):
