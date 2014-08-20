@@ -1,9 +1,12 @@
+import os
+import subprocess
 from django.core.urlresolvers import reverse
 from django.db import models
 from geoposition.fields import GeopositionField
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from registration.models import User
+from uscbp import settings
 
 
 class Species(models.Model):
@@ -94,6 +97,25 @@ class ObservationSession(models.Model):
 
     def get_modified_str(self):
         return self.last_modified_time.strftime('%B %d, %Y')
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        convert_video=False
+        if not self.id:
+            convert_video=True
+        super(ObservationSession,self).save(force_insert=force_insert, force_update=force_update, using=using,
+            update_fields=update_fields)
+
+        if convert_video and self.video.name:
+            print(self.video.name)
+            orig_filename=os.path.join(settings.MEDIA_ROOT,self.video.name)
+            root,ext=os.path.splitext(orig_filename)
+            #cmds=['ffmpeg','-i',orig_filename,'-vcodec', 'libx264', '-acodec', 'aac', '-strict', '-2', '%s.mp4' % root]
+            cmds=['avconv', '-i', orig_filename, '-vcodec', 'libx264', '%s.mp4' % root]
+            subprocess.call(cmds)
+            cmds=['ffmpeg2theora', orig_filename, '-o', '%s.ogg' % root]
+            subprocess.call(cmds)
+            cmds=['ffmpeg', '-i', orig_filename, '%s.swf' % root]
         
         
 class BehavioralEvent(MPTTModel):

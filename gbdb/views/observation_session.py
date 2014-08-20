@@ -1,4 +1,8 @@
+import os
+from django.contrib.sites.models import get_current_site
 from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
+from django.http import request
 from django.shortcuts import redirect
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView, FormView
 from gbdb.forms import ObservationSessionForm, ObservationSessionSearchForm
@@ -51,6 +55,11 @@ class ObservationSessionDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(ObservationSessionDetailView, self).get_context_data(**kwargs)
         context['behavioral_events'] = BehavioralEvent.objects.filter(observation_session=self.object, parent__isnull=True)
+        if self.object.video.name:
+            root,ext=os.path.splitext(self.object.video.name)
+            context['video_url_mp4'] = ''.join(['http://', get_current_site(self.request).domain, os.path.join('/media/','%s.mp4' % root)])
+            context['video_url_ogg'] = ''.join(['http://', get_current_site(self.request).domain, os.path.join('/media/','%s.ogg' % root)])
+            context['video_url_swf'] = ''.join(['http://', get_current_site(self.request).domain, os.path.join('/media/','%s.swf' % root)])
         return context
 
 

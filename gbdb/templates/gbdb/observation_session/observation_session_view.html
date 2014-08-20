@@ -67,6 +67,17 @@
                 <tr valign="top">
                     <td colspan="2"><strong>Video:</strong> {{ object.video }}</td>
                 </tr>
+                <tr valign="top">
+                    <td colspan="2">
+                        <video width="320" height="240" controls>
+                            <source src="{{ video_url_mp4 }}" type="video/mp4">
+                            <source src="{{ video_url_ogg }}" type="video/ogg">
+                            <object data="{{ video_url_mp4 }}" width="320" height="240">
+                                <embed src="{{ video_url_swf }}" width="320" height="240">
+                            </object>
+                        </video>
+                    </td>
+                </tr>
             {% endif %}
             <tr valign="top">
                 <td colspan="2"><strong>Date:</strong> {{ object.date }}</td>
