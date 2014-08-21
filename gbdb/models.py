@@ -107,7 +107,6 @@ class ObservationSession(models.Model):
             update_fields=update_fields)
 
         if convert_video and self.video.name:
-            print(self.video.name)
             orig_filename=os.path.join(settings.MEDIA_ROOT,self.video.name)
             root,ext=os.path.splitext(orig_filename)
             #cmds=['ffmpeg','-i',orig_filename,'-vcodec', 'libx264', '-acodec', 'aac', '-strict', '-2', '%s.mp4' % root]
@@ -116,6 +115,7 @@ class ObservationSession(models.Model):
             cmds=['ffmpeg2theora', orig_filename, '-o', '%s.ogg' % root]
             subprocess.call(cmds)
             cmds=['ffmpeg', '-i', orig_filename, '%s.swf' % root]
+            subprocess.call(cmds)
         
         
 class BehavioralEvent(MPTTModel):
