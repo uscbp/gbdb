@@ -100,22 +100,24 @@ class ObservationSession(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
-        convert_video=False
-        if not self.id:
-            convert_video=True
         super(ObservationSession,self).save(force_insert=force_insert, force_update=force_update, using=using,
             update_fields=update_fields)
 
-        if convert_video and self.video.name:
+        if self.video.name:
             orig_filename=os.path.join(settings.MEDIA_ROOT,self.video.name)
             root,ext=os.path.splitext(orig_filename)
-            #cmds=['ffmpeg','-i',orig_filename,'-vcodec', 'libx264', '-acodec', 'aac', '-strict', '-2', '%s.mp4' % root]
-            cmds=['avconv', '-i', orig_filename, '-vcodec', 'libx264', '%s.mp4' % root]
-            subprocess.call(cmds)
-            cmds=['ffmpeg2theora', orig_filename, '-o', '%s.ogg' % root]
-            subprocess.call(cmds)
-            cmds=['ffmpeg', '-i', orig_filename, '%s.swf' % root]
-            subprocess.call(cmds)
+            mp4_filename='%s.mp4' % root
+            if not os.path.exists(mp4_filename):
+                cmds=['avconv', '-i', orig_filename, '-vcodec', 'libx264', mp4_filename]
+                subprocess.call(cmds)
+            ogg_filename='%s.ogg' % root
+            if not os.path.exists(ogg_filename):
+                cmds=['ffmpeg2theora', orig_filename, '-o', ogg_filename]
+                subprocess.call(cmds)
+            swf_filename='%s.swf' % root
+            if not os.path.exists(swf_filename):
+                cmds=['ffmpeg', '-i', orig_filename, swf_filename]
+                subprocess.call(cmds)
         
         
 class BehavioralEvent(MPTTModel):
