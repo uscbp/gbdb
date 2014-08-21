@@ -1,3 +1,5 @@
+from django.contrib.sites.models import get_current_site
+import os
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.views.generic import CreateView, UpdateView, DetailView, DeleteView, FormView
@@ -119,6 +121,11 @@ class BehavioralEventDetailView(DetailView):
         context['sub_behavioral_events']=BehavioralEvent.objects.filter(parent=self.object,gesturalevent__isnull=True)
         context['sub_gestural_events']=GesturalEvent.objects.filter(parent=self.object)
         context['ispopup']='_popup' in self.request.GET
+        if self.object.video.name:
+            root,ext=os.path.splitext(self.object.video.name)
+            context['video_url_mp4'] = ''.join(['http://', get_current_site(self.request).domain, os.path.join('/media/','%s.mp4' % root)])
+            context['video_url_ogg'] = ''.join(['http://', get_current_site(self.request).domain, os.path.join('/media/','%s.ogg' % root)])
+            context['video_url_swf'] = ''.join(['http://', get_current_site(self.request).domain, os.path.join('/media/','%s.swf' % root)])
         return context
 
 
