@@ -2,11 +2,14 @@ import datetime
 from django.forms import TimeInput, HiddenInput
 from django.forms.models import inlineformset_factory
 from django.forms.extras import SelectDateWidget
+from django.contrib.admin.widgets import FilteredSelectMultiple
 from django import forms
 from gbdb.models import ObservationSession, BehavioralEvent, Primate, Context, Ethogram, Species, Gesture, BodyPart, GesturalEvent
 from geoposition.forms import GeopositionField
 from registration.forms import RegistrationForm
 from registration.models import User
+
+from ajax_select import make_ajax_field
 
 SEARCH_CHOICES = (
     ('all', 'all'),
@@ -90,12 +93,18 @@ class BehavioralEventForm(forms.ModelForm):
     duration = forms.CharField(widget=forms.TextInput(attrs={'size':'20'}),required=False)
     video = forms.FileField(required=False)
     primates = forms.ModelMultipleChoiceField(queryset=Primate.objects.all(), widget=forms.SelectMultiple(attrs={"onChange":'populatePrimates()'}), required=False)
-    contexts = forms.ModelMultipleChoiceField(queryset=Context.objects.all(), widget=forms.SelectMultiple(attrs={"onChange":'populateContexts()'}), required=False)
+    #contexts = forms.ModelMultipleChoiceField(queryset=Context.objects.all(), widget=forms.SelectMultiple(attrs={"onChange":'populateContexts()'}), required=False)
+    #contexts = forms.ModelMultipleChoiceField(queryset=Context.objects.all(), required=False,widget=FilteredSelectMultiple(verbose_name='Contexts',is_stacked=False, attrs={"onChange":'populateContexts()'}))
+    contexts  = make_ajax_field(BehavioralEvent, 'contexts', 'context', show_help_text=True)
     ethograms = forms.ModelMultipleChoiceField(queryset=Ethogram.objects.all(), widget=forms.SelectMultiple(attrs={"onChange":'populateEthograms()'}), required=False)
     notes = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=False)
 
     class Meta:
         model=BehavioralEvent
+    
+#     class Media:
+#         css = {'all':['admin/css/widgets.css']}
+#         js = ['/admin/jsi18n/']
 
 
 BaseBehavioralEventFormSet = inlineformset_factory(ObservationSession, BehavioralEvent, form=BehavioralEventForm,

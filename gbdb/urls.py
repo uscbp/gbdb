@@ -6,6 +6,8 @@ from gbdb.views.observation_session import CreateObservationSessionView, Observa
 from gbdb.views.primate import CreatePrimateView, PrimateDetailView, DeletePrimateView, UpdatePrimateView, SearchPrimateView
 from gbdb.views.gesture import CreateGestureView, GestureDetailView, DeleteGestureView, UpdateGestureView, SearchGestureView
 
+from ajax_select import urls as ajax_select_urls
+
 urlpatterns = patterns('',
     url(r'^behavioral_event/(?P<pk>\d+)/$', BehavioralEventDetailView.as_view(), {}, 'behavioral_event_view'),
     url(r'^behavioral_event/(?P<pk>\d+)/delete/$', DeleteBehavioralEventView.as_view(), {}, 'behavioral_event_delete'),
@@ -35,6 +37,8 @@ urlpatterns = patterns('',
     url(r'^gesture/(?P<pk>\d+)/edit/$', UpdateGestureView.as_view(), {}, 'gesture_edit'),
     url(r'^gesture/new/$', CreateGestureView.as_view(), {}, 'gesture_add'),
     url(r'^gesture/search/$', SearchGestureView.as_view(), {}, 'gesture_search'),
+    
+    url(r'^ajax_lookup/(?P<channel>[-\w]+)$', 'ajax_select.views.ajax_lookup', name = 'ajax_lookup'),
     
     url(r'', IndexView.as_view(), {}, 'index'),
 )
