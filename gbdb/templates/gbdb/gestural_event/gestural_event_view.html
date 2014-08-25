@@ -26,10 +26,10 @@
         <h2>Gestural Sub-Event</h2>
         <table class="tab_panel">
             <tr valign="top">
-                <td colspan="2"><strong>Start time:</strong> {{ object.start_time.hour }}:{{ object.start_time.minute }}:{{ object.start_time.second }}</td>
+                <td colspan="2"><strong>Start time:</strong> {{ object.start_time.hour }}:{{ object.start_time.minute }}:{{ object.start_time.second }}.{{ object.start_time.microsecond }}</td>
             </tr>
             <tr valign="top">
-                <td colspan="2"><strong>Duration:</strong> {{ object.duration }}</td>
+                <td colspan="2"><strong>Duration:</strong> {{ object.duration.hour }}:{{ object.duration.minute }}:{{ object.duration.second }}.{{ object.duration.microsecond }}</td>
             </tr>
             <tr valign="top">
                 <td colspan="2">

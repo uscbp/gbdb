@@ -19,12 +19,12 @@
             document.location.href='/gbdb/';
         }
 
-        function addBehavioralEvent(id, start_time, duration, video, contexts, ethograms, notes)
+        function addBehavioralEvent(id, start_time, duration, contexts, ethograms, notes)
         {
             var count = $('#behavioral_events').children().length;
             var tmplMarkup = $('#behavioral_event-template').html();
             var compiledTmpl = _.template(tmplMarkup, { idx : count+1, id: id, start_time: start_time,
-                duration: duration, video: video, notes: notes, contexts: contexts, ethograms: ethograms});
+                duration: duration, notes: notes, contexts: contexts, ethograms: ethograms});
             $('#behavioral_events').append(compiledTmpl);
         }
 
@@ -64,9 +64,6 @@
                 <td colspan="2"><strong>Last modified:</strong> {{ object.get_modified_str }}</td>
             </tr>
             {% if object.video.name %}
-                <tr valign="top">
-                    <td colspan="2"><strong>Video:</strong> {{ object.video }}</td>
-                </tr>
                 <tr valign="top">
                     <td colspan="2">
                         <video width="320" height="240" controls>
@@ -143,16 +140,12 @@
                 <tr>
                     <td><strong><a href="/gbdb/behavioral_event/<%= id %>/">Event <%= idx %></a></strong></td>
                 </tr>
-                <% if(video.length==0) { %>
+                <% if(start_time.length>0) { %>
                     <tr>
                         <td><strong>Start time:</strong> <%= start_time %></td>
                     </tr>
                     <tr>
                         <td><strong>Duration:</strong> <%= duration %></td>
-                    </tr>
-                <% } else { %>
-                    <tr>
-                        <td><strong>Video:</strong> <%= video %></td>
                     </tr>
                 <% } %>
                 <tr>

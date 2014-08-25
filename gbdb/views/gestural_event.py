@@ -1,3 +1,5 @@
+from django.contrib.sites.models import get_current_site
+import os
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.views.generic import CreateView, UpdateView, DetailView, DeleteView
@@ -63,4 +65,9 @@ class GesturalEventDetailView(DetailView):
             context['video_url_mp4'] = ''.join(['http://', get_current_site(self.request).domain, os.path.join('/media/','%s.mp4' % root)])
             context['video_url_ogg'] = ''.join(['http://', get_current_site(self.request).domain, os.path.join('/media/','%s.ogg' % root)])
             context['video_url_swf'] = ''.join(['http://', get_current_site(self.request).domain, os.path.join('/media/','%s.swf' % root)])
+        else:
+            file_root=os.path.join('videos','behavioral_event')
+            context['video_url_mp4'] = ''.join(['http://', get_current_site(self.request).domain, os.path.join('/media',file_root,'%d.mp4' % self.object.id)])
+            context['video_url_ogg'] = ''.join(['http://', get_current_site(self.request).domain, os.path.join('/media',file_root,'%d.ogg' % self.object.id)])
+            context['video_url_swf'] = ''.join(['http://', get_current_site(self.request).domain, os.path.join('/media',file_root,'%d.swf' % self.object.id)])
         return context
