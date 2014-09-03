@@ -203,7 +203,7 @@ class BehavioralEvent(MPTTModel):
         td = datetime.date.today()
         end_time=(datetime.datetime.combine(td, self.start_time)+datetime.timedelta(self.duration.hour,self.duration.minute,self.duration.second,self.duration.microsecond)).time()
         end_time_string='%d:%d:%d.%d' % (end_time.hour, end_time.minute, end_time.second, end_time.microsecond)
-        orig_filename='%s.mp4' % os.path.join(settings.MEDIA_ROOT,parent_root)
+        orig_filename='%s%s' % (os.path.join(settings.MEDIA_ROOT,parent_root),parent_ext)
         new_path = os.path.join(settings.MEDIA_ROOT, 'videos', 'behavioral_event')
         mp4_filename = os.path.join(new_path, '%d.mp4' % self.id)
         if not os.path.exists(mp4_filename):
