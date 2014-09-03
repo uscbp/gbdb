@@ -1,5 +1,6 @@
 import os
 import subprocess
+import datetime
 from django.core.urlresolvers import reverse
 from django.db import models
 from geoposition.fields import GeopositionField
@@ -199,7 +200,8 @@ class BehavioralEvent(MPTTModel):
                                              self.start_time.microsecond)
         duration_string = '%d:%d:%d.%d' % (self.duration.hour, self.duration.minute, self.duration.second,
                                            self.duration.microsecond)
-        end_time=self.start_time+self.duration
+        td = datetime.date.today()
+        end_time=(datetime.datetime.combine(td, self.start_time)+datetime.timedelta(self.duration.hour,self.duration.minute,self.duration.second,self.duration.microsecond)).time()
         end_time_string='%d:%d:%d.%d' % (end_time.hour, end_time.minute, end_time.second, end_time.microsecond)
         orig_filename='%s.mp4' % os.path.join(settings.MEDIA_ROOT,parent_root)
         new_path = os.path.join(settings.MEDIA_ROOT, 'videos', 'behavioral_event')
