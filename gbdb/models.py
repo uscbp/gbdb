@@ -205,6 +205,8 @@ class BehavioralEvent(MPTTModel):
         end_time_string='%d:%d:%d.%d' % (end_time.hour, end_time.minute, end_time.second, end_time.microsecond)
         orig_filename='%s%s' % (os.path.join(settings.MEDIA_ROOT,parent_root),parent_ext)
         new_path = os.path.join(settings.MEDIA_ROOT, 'videos', 'behavioral_event')
+        if not os.path.exists(new_path):
+            os.mkdir(new_path)
         mp4_filename = os.path.join(new_path, '%d.mp4' % self.id)
         if not os.path.exists(mp4_filename):
             convert_to_mp4(mp4_filename, orig_filename, start_time=start_time_string, duration=duration_string)
