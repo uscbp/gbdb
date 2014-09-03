@@ -109,7 +109,7 @@
                                 <td><strong>Start time:</strong> {{ behavioral_event.start_time.hour }}:{{ behavioral_event.start_time.minute }}:{{ behavioral_event.start_time.second }}</td>
                             </tr>
                             <tr>
-                                <td><strong>Duration:</strong> {{ behavioral_event.duration }}</td>
+                                <td><strong>Duration:</strong> {{ behavioral_event.duration.hour }}:{{ behavioral_event.duration.minute }}:{{ behavioral_event.duration.second }}</td>
                             </tr>
                         {% else %}
                             <tr>
