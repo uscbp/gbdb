@@ -22,6 +22,13 @@ HABITAT_CHOICES = (
     ('wild', 'Wild'),
     )
 
+GENDER_CHOICES = (
+    ('',''),
+    ('male','male'),
+    ('female','female'),
+    ('unknown','unknown'),
+)
+
 YESNO_CHOICES = (
     ('', ''),
     ('yes', 'Yes'),
@@ -94,8 +101,8 @@ class BehavioralEventForm(forms.ModelForm):
     video = forms.FileField(required=False)
     primates = forms.ModelMultipleChoiceField(queryset=Primate.objects.all(), widget=forms.SelectMultiple(attrs={"onChange":'populatePrimates()'}), required=False)
     #contexts = forms.ModelMultipleChoiceField(queryset=Context.objects.all(), widget=forms.SelectMultiple(attrs={"onChange":'populateContexts()'}), required=False)
-    #contexts = forms.ModelMultipleChoiceField(queryset=Context.objects.all(), required=False,widget=FilteredSelectMultiple(verbose_name='Contexts',is_stacked=False, attrs={"onChange":'populateContexts()'}))
-    contexts  = make_ajax_field(BehavioralEvent, 'contexts', 'context', show_help_text=True)
+    contexts = forms.ModelMultipleChoiceField(queryset=Context.objects.all(), required=False,widget=FilteredSelectMultiple(verbose_name='Contexts',is_stacked=False, attrs={"onChange":'populateContexts()'}))
+    #contexts  = make_ajax_field(BehavioralEvent, 'contexts', 'context', show_help_text=True)
     ethograms = forms.ModelMultipleChoiceField(queryset=Ethogram.objects.all(), widget=forms.SelectMultiple(attrs={"onChange":'populateEthograms()'}), required=False)
     notes = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=False)
 
@@ -190,6 +197,7 @@ GesturalEventFormSet = inlineformset_factory(BehavioralEvent, GesturalEvent, for
 class PrimateForm(forms.ModelForm):
     name = forms.CharField(widget=forms.TextInput(attrs={'size':'30'}),required=True)
     species = forms.ModelChoiceField(queryset=Species.objects.all(), required=True)
+    gender = forms.ChoiceField(choices=Primate.GENDER_CHOICES, widget=forms.Select(), required=True)
     birth_date = forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=True)
     location_name = forms.CharField(widget=forms.TextInput(attrs={'size':'30'}),required=True)
     location = GeopositionField(required=True)
@@ -203,6 +211,7 @@ class PrimateForm(forms.ModelForm):
 class PrimateSearchForm(forms.Form):
     name = forms.CharField(help_text="Name search", required=False)
     species=forms.ModelMultipleChoiceField(help_text='Species', queryset=Species.objects.all(), required=False)
+    gender=forms.ChoiceField(choices=GENDER_CHOICES, help_text='Gender', required=False)
     birth_date_min=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
     birth_date_max=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
     location_name=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)

@@ -56,9 +56,15 @@ class Primate(models.Model):
         ('captive', 'Captive'),
         ('wild', 'Wild'),
         )
+    GENDER_CHOICES = (
+        ('male', 'male'),
+        ('female', 'female'),
+        ('unknown', 'unknown')
+    )
     name = models.CharField(max_length=100)
     species = models.ForeignKey(Species)
     birth_date = models.DateField()
+    gender = models.CharField(max_length=50, choices=GENDER_CHOICES, default='unknown')
     location_name = models.CharField(max_length=100) #this should be some kind of geo model
     location = GeopositionField()
     habitat = models.CharField(max_length=100, choices=HABITAT_CHOICES, default='wild')
