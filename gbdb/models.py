@@ -56,9 +56,15 @@ class Primate(models.Model):
         ('captive', 'Captive'),
         ('wild', 'Wild'),
         )
+    GENDER_CHOICES = (
+        ('male', 'male'),
+        ('female', 'female'),
+        ('unknown', 'unknown')
+    )
     name = models.CharField(max_length=100)
     species = models.ForeignKey(Species)
     birth_date = models.DateField()
+    gender = models.CharField(max_length=50, choices=GENDER_CHOICES, default='unknown')
     location_name = models.CharField(max_length=100) #this should be some kind of geo model
     location = GeopositionField()
     habitat = models.CharField(max_length=100, choices=HABITAT_CHOICES, default='wild')
@@ -193,6 +199,7 @@ class BehavioralEvent(MPTTModel):
 
     def get_absolute_url(self):
         return reverse('behavioral_event_view', kwargs={'pk': self.pk})
+        #return reverse('non_admin:widget_update', args=(self.pk,))
 
     def segment_video(self, parent_video_name):
         parent_root, parent_ext = os.path.splitext(parent_video_name)
@@ -205,6 +212,8 @@ class BehavioralEvent(MPTTModel):
         end_time_string='%d:%d:%d.%d' % (end_time.hour, end_time.minute, end_time.second, end_time.microsecond)
         orig_filename='%s%s' % (os.path.join(settings.MEDIA_ROOT,parent_root),parent_ext)
         new_path = os.path.join(settings.MEDIA_ROOT, 'videos', 'behavioral_event')
+        if not os.path.exists(new_path):
+            os.mkdir(new_path)
         mp4_filename = os.path.join(new_path, '%d.mp4' % self.id)
         if not os.path.exists(mp4_filename):
             convert_to_mp4(mp4_filename, orig_filename, start_time=start_time_string, duration=duration_string)

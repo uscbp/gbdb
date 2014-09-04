@@ -24,6 +24,11 @@
                     <td class="myerrors" width=10%>{{ form.species.errors }}</td>
                 </tr>
                 <tr valign=top>
+                    <td width=20%>{{ form.gender.label_tag }}</td>
+                    <td>{{ form.gender }}</td>
+                    <td class="myerrors" width=10%>{{ form.gender.errors }}</td>
+                </tr>
+                <tr valign=top>
                     <td>{{ form.birth_date.label_tag }}</td>
                     <td>{{ form.birth_date }}</td>
                     <td class="myerrors">{{ form.birth_date.errors }}</td>
