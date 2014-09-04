@@ -52,6 +52,9 @@
 <div id="detail">
     <h2>Behavioral {% if object.parent %}Sub-{% endif %}Event</h2>
     <table class="tab_panel">
+        <tr valign="top">
+            <td colspan="2">{% if object.parent %}<strong><a href="/gbdb/behavioral_event/{{ object.parent.id }}/">Parent behavioral event</a></strong>{% else %}<strong><a href="/gbdb/observation_session/{{ object.observation_session.id }}/">Observation session</a></strong>{% endif %}</td>
+        </tr>
         {% if not object.video.name %}
             <tr valign="top">
                 <td colspan="2"><strong>Start time:</strong> {{ object.start_time.hour }}:{{ object.start_time.minute }}:{{ object.start_time.second }}.{{ object.start_time.microsecond }}</td>
