@@ -22,7 +22,11 @@
 
         function doneDelete()
         {
-            document.location.href='/gbdb/';
+            {% if not object.parent %}
+                document.location.href='/gbdb/observation_session/{{ object.observation_session.id }}/';
+            {% else %}
+                document.location.href='/gbdb/behavioral_event/{{ object.parent.id }}/';
+            {% endif %}
         }
 
         function initialize() {
