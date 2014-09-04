@@ -22,6 +22,13 @@ HABITAT_CHOICES = (
     ('wild', 'Wild'),
     )
 
+GENDER_CHOICES = (
+    ('',''),
+    ('male','male'),
+    ('female','female'),
+    ('unknown','unknown'),
+)
+
 YESNO_CHOICES = (
     ('', ''),
     ('yes', 'Yes'),
@@ -185,6 +192,7 @@ GesturalEventFormSet = inlineformset_factory(BehavioralEvent, GesturalEvent, for
 class PrimateForm(forms.ModelForm):
     name = forms.CharField(widget=forms.TextInput(attrs={'size':'30'}),required=True)
     species = forms.ModelChoiceField(queryset=Species.objects.all(), required=True)
+    gender = forms.ChoiceField(choices=Primate.GENDER_CHOICES, widget=forms.Select(), required=True)
     birth_date = forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=True)
     location_name = forms.CharField(widget=forms.TextInput(attrs={'size':'30'}),required=True)
     location = GeopositionField(required=True)
@@ -198,6 +206,7 @@ class PrimateForm(forms.ModelForm):
 class PrimateSearchForm(forms.Form):
     name = forms.CharField(help_text="Name search", required=False)
     species=forms.ModelMultipleChoiceField(help_text='Species', queryset=Species.objects.all(), required=False)
+    gender=forms.ChoiceField(choices=GENDER_CHOICES, help_text='Gender', required=False)
     birth_date_min=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
     birth_date_max=forms.DateField(widget=SelectDateWidget(years=range(1950, datetime.date.today().year+10)), required=False)
     location_name=forms.CharField(widget=forms.TextInput(attrs={'size':'30'}), required=False)
