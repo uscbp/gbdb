@@ -12,9 +12,10 @@
             // update form count
             $('#id_sub_behavioral_event-TOTAL_FORMS').attr('value', count+1);
             
-            populatePrimates();
-            populateContexts();
-            populateEthograms();
+            // populatePrimates();
+            // populateContexts();
+            // populateEthograms();
+            //$(this).trigger('initialize');
             
             return false;
         }
@@ -76,7 +77,7 @@
         
         function populateContexts() 
         {
-        	var vals = $("#id_contexts :selected");
+        	var vals = $("#id_contexts");
 	        var count = $('#sub_behavioral_events').children().length;
 	
 			for(var i=0; i < count; i++){
@@ -413,20 +414,38 @@
                 <tr class="even_row" valign=top>
                     <td width=60px>&nbsp;</td>
                     <td>Contexts</td>
-                    <td colspan="4">
-                        <select multiple="multiple" id="id_sub_behavioral_event-<%= idx %>-contexts" name="sub_behavioral_event-<%= idx %>-contexts">
-                            <option value="" selected="selected">---------</option>
-                        </select>
-                    </td>
+					<td colspan="4">
+						<span id="id_sub_behavioral_event-<%= idx %>-contexts-wrapper" class="autocomplete-light-widget sub_behavioral_event-<%= idx %>-contexts multiple" data-autocomplete-placeholder="add another context" 
+							data-autocomplete-choice-selector="[data-value]" data-autocomplete-url="/gbdb/autocomplete/ContextAutocomplete/" data-bootstrap="normal" data-widget-ready="1">
+						<span id="id_sub_behavioral_event-<%= idx %>-contexts-deck" class="deck div"> </span>
+						<input id="id_sub_behavioral_event-<%= idx %>-contexts_text" class=" autocomplete" type="text" value="" name="sub_behavioral_event-<%= idx %>-contexts-autocomplete" autocomplete="off" 
+							placeholder="add another context">
+						<select id="id_sub_behavioral_event-<%= idx %>-contexts" class="value-select" multiple="multiple" name="sub_behavioral_event-<%= idx %>-contexts" style="display:none"> </select>
+						<span class="remove div" style="display:none"> X </span>
+						<span class="choice-template div" style="display:none">
+						<span class="choice div prepend-remove append-option-html"> </span>
+						</span>
+						</span>
+						<div style="clear: both"></div>
+					</td>
                 </tr>
                 <tr class="even_row" valign=top>
                     <td width=60px>&nbsp;</td>
                     <td>Ethograms</td>
                     <td colspan="4">
-                        <select multiple="multiple" id="id_sub_behavioral_event-<%= idx %>-ethograms" name="sub_behavioral_event-<%= idx %>-ethograms">
-                            <option value="" selected="selected">---------</option>
-                        </select>
-                    </td>
+						<span id="id_sub_behavioral_event-<%= idx %>-ethograms-wrapper" class="autocomplete-light-widget sub_behavioral_event-<%= idx %>-ethograms multiple" data-autocomplete-placeholder="add another ethogram" 
+							data-autocomplete-choice-selector="[data-value]" data-autocomplete-url="/gbdb/autocomplete/EthogramAutocomplete/" data-bootstrap="normal" data-widget-ready="1">
+						<span id="id_sub_behavioral_event-<%= idx %>-ethograms-deck" class="deck div"> </span>
+						<input id="id_sub_behavioral_event-<%= idx %>-ethograms_text" class=" autocomplete" type="text" value="" name="sub_behavioral_event-<%= idx %>-ethograms-autocomplete" autocomplete="off" 
+							placeholder="add another ethogram">
+						<select id="id_sub_behavioral_event-<%= idx %>-ethograms" class="value-select" multiple="multiple" name="sub_behavioral_event-<%= idx %>-ethograms" style="display:none"> </select>
+						<span class="remove div" style="display:none"> X </span>
+						<span class="choice-template div" style="display:none">
+						<span class="choice div prepend-remove append-option-html"> </span>
+						</span>
+						</span>
+						<div style="clear: both"></div>
+					</td>
                 </tr>
                 <tr class="even_row" valign=top>
                     <td width=60px>&nbsp;</td>
@@ -468,19 +487,36 @@
                     <td width=60px>&nbsp;</td>
                     <td>Contexts</td>
                     <td colspan="4">
-                        <select multiple="multiple" id="id_sub_gestural_event-<%= idx %>-contexts" name="sub_gestural_event-<%= idx %>-contexts">
-                            <option value="" selected="selected">---------</option>
-                        </select>
-                    </td>
-                </tr>
+						<span id="id_sub_gestural_event-<%= idx %>-contexts-wrapper" class="autocomplete-light-widget sub_gestural_event-<%= idx %>-contexts multiple" data-autocomplete-placeholder="add another context" 
+							data-autocomplete-choice-selector="[data-value]" data-autocomplete-url="/gbdb/autocomplete/ContextAutocomplete/" data-bootstrap="normal" data-widget-ready="1">
+						<span id="id_sub_gestural_event-<%= idx %>-contexts-deck" class="deck div"> </span>
+						<input id="id_sub_gestural_event-<%= idx %>-contexts_text" class=" autocomplete" type="text" value="" name="sub_gestural_event-<%= idx %>-contexts-autocomplete" autocomplete="off" 
+							placeholder="add another context">
+						<select id="id_sub_gestural_event-<%= idx %>-contexts" class="value-select" multiple="multiple" name="sub_gestural_event-<%= idx %>-contexts" style="display:none"> </select>
+						<span class="remove div" style="display:none"> X </span>
+						<span class="choice-template div" style="display:none">
+						<span class="choice div prepend-remove append-option-html"> </span>
+						</span>
+						</span>
+						<div style="clear: both"></div>
+					</td>
                 <tr class="even_row" valign=top>
                     <td width=60px>&nbsp;</td>
                     <td>Ethograms</td>
-                    <td colspan="4">
-                        <select multiple="multiple" id="id_sub_gestural_event-<%= idx %>-ethograms" name="sub_gestural_event-<%= idx %>-ethograms">
-                            <option value="" selected="selected">---------</option>
-                        </select>
-                    </td>
+					<td colspan="4">
+						<span id="id_sub_gestural_event-<%= idx %>-ethograms-wrapper" class="autocomplete-light-widget sub_gestural_event-<%= idx %>-ethograms multiple" data-autocomplete-placeholder="add another ethogram" 
+							data-autocomplete-choice-selector="[data-value]" data-autocomplete-url="/gbdb/autocomplete/EthogramAutocomplete/" data-bootstrap="normal" data-widget-ready="1">
+						<span id="id_sub_gestural_event-<%= idx %>-ethograms-deck" class="deck div"> </span>
+						<input id="id_sub_gestural_event-<%= idx %>-ethograms_text" class=" autocomplete" type="text" value="" name="sub_gestural_event-0-ethograms-autocomplete" autocomplete="off" 
+							placeholder="add another ethogram">
+						<select id="id_sub_gestural_event-<%= idx %>-ethograms" class="value-select" multiple="multiple" name="sub_gestural_event-<%= idx %>-ethograms" style="display:none"> </select>
+						<span class="remove div" style="display:none"> X </span>
+						<span class="choice-template div" style="display:none">
+						<span class="choice div prepend-remove append-option-html"> </span>
+						</span>
+						</span>
+						<div style="clear: both"></div>
+					</td>
                 </tr>
                 <tr class="even_row" valign=top>
                     <td width=60px>&nbsp;</td>

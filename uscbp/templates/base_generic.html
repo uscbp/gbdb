@@ -6,7 +6,8 @@
     <script type="text/javascript" src="{% static 'gbdb/scripts/jquery-1.10.1.js' %}"></script>
     <script type="text/javascript" src="{% static 'gbdb/scripts/commonFunctions.js' %}"></script>
     <script type="text/javascript" src="{% static 'gbdb/scripts/underscore-min.js' %}"></script>
-    {% block extrahead %}{% endblock %}
+    {% include 'autocomplete_light/static.html' %}
+{% block extrahead %}{% endblock %}
 </head>
 <body>
     <table style="width:100%" cellpadding=0 cellspacing=0>

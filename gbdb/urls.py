@@ -1,4 +1,4 @@
-from django.conf.urls import url, patterns
+from django.conf.urls import *
 from gbdb.views.behavioral_event import CreateBehavioralEventView, UpdateBehavioralEventView, BehavioralEventDetailView, DeleteBehavioralEventView, SearchBehavioralEventView
 from gbdb.views.gestural_event import GesturalEventDetailView, DeleteGesturalEventView, UpdateGesturalEventView, CreateGesturalEventView
 from gbdb.views.main import IndexView
@@ -6,9 +6,13 @@ from gbdb.views.observation_session import CreateObservationSessionView, Observa
 from gbdb.views.primate import CreatePrimateView, PrimateDetailView, DeletePrimateView, UpdatePrimateView, SearchPrimateView
 from gbdb.views.gesture import CreateGestureView, GestureDetailView, DeleteGestureView, UpdateGestureView, SearchGestureView
 
-from ajax_select import urls as ajax_select_urls
+import autocomplete_light
+autocomplete_light.autodiscover()
 
 urlpatterns = patterns('',
+                       
+    url(r'^autocomplete/', include('autocomplete_light.urls')),
+                       
     url(r'^behavioral_event/(?P<pk>\d+)/$', BehavioralEventDetailView.as_view(), {}, 'behavioral_event_view'),
     url(r'^behavioral_event/(?P<pk>\d+)/delete/$', DeleteBehavioralEventView.as_view(), {}, 'behavioral_event_delete'),
     url(r'^behavioral_event/(?P<pk>\d+)/edit/$', UpdateBehavioralEventView.as_view(), {}, 'behavioral_event_edit'),
@@ -37,8 +41,6 @@ urlpatterns = patterns('',
     url(r'^gesture/(?P<pk>\d+)/edit/$', UpdateGestureView.as_view(), {}, 'gesture_edit'),
     url(r'^gesture/new/$', CreateGestureView.as_view(), {}, 'gesture_add'),
     url(r'^gesture/search/$', SearchGestureView.as_view(), {}, 'gesture_search'),
-    
-    url(r'^ajax_lookup/(?P<channel>[-\w]+)$', 'ajax_select.views.ajax_lookup', name = 'ajax_lookup'),
-    
+
     url(r'', IndexView.as_view(), {}, 'index'),
 )

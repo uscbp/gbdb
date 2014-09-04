@@ -9,7 +9,7 @@ from geoposition.forms import GeopositionField
 from registration.forms import RegistrationForm
 from registration.models import User
 
-from ajax_select import make_ajax_field
+import autocomplete_light
 
 SEARCH_CHOICES = (
     ('all', 'all'),
@@ -94,18 +94,13 @@ class BehavioralEventForm(forms.ModelForm):
     video = forms.FileField(required=False)
     primates = forms.ModelMultipleChoiceField(queryset=Primate.objects.all(), widget=forms.SelectMultiple(attrs={"onChange":'populatePrimates()'}), required=False)
     #contexts = forms.ModelMultipleChoiceField(queryset=Context.objects.all(), widget=forms.SelectMultiple(attrs={"onChange":'populateContexts()'}), required=False)
-    #contexts = forms.ModelMultipleChoiceField(queryset=Context.objects.all(), required=False,widget=FilteredSelectMultiple(verbose_name='Contexts',is_stacked=False, attrs={"onChange":'populateContexts()'}))
-    contexts  = make_ajax_field(BehavioralEvent, 'contexts', 'context', show_help_text=True)
-    ethograms = forms.ModelMultipleChoiceField(queryset=Ethogram.objects.all(), widget=forms.SelectMultiple(attrs={"onChange":'populateEthograms()'}), required=False)
+    contexts = forms.ModelMultipleChoiceField(queryset=Context.objects.all(), widget=autocomplete_light.MultipleChoiceWidget('ContextAutocomplete'))
+    #ethograms = forms.ModelMultipleChoiceField(queryset=Ethogram.objects.all(), widget=forms.SelectMultiple(attrs={"onChange":'populateEthograms()'}), required=False)
+    ethograms = forms.ModelMultipleChoiceField(queryset=Ethogram.objects.all(), widget=autocomplete_light.MultipleChoiceWidget('EthogramAutocomplete'))
     notes = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=False)
 
     class Meta:
         model=BehavioralEvent
-    
-#     class Media:
-#         css = {'all':['admin/css/widgets.css']}
-#         js = ['/admin/jsi18n/']
-
 
 BaseBehavioralEventFormSet = inlineformset_factory(ObservationSession, BehavioralEvent, form=BehavioralEventForm,
     fk_name='observation_session', extra=0, can_delete=True, can_order=True)
