@@ -11,7 +11,7 @@
             {% csrf_token %}
             <table class="tab_panel">
                 <tr valign=top>
-                    <td width=20%>{{ form.video.label_tag }}</td>
+                    <td width=12%>{{ form.video.label_tag }}</td>
                     <td>{{ form.video }}</td>
                     <td class="myerrors" width=10%>{{ form.video.errors }}</td>
                 </tr>
@@ -42,15 +42,19 @@
                         </div>
                     </td>
                 </tr>
+                <tr>
+                	<td colspan="3">
+                	<br>
+		            Behavioral Events can be added once the Observation Session is saved.
+		            <br>
+		            {{ form.collator }}
+		            <input type="submit" value="Save" />&nbsp;
+		            {% if form.instance.id %}
+		                <input type="button" value="Cancel" onclick="document.location.href='/gbdb/observation_session/{{ form.instance.id }}/';"/>&nbsp;
+		            {% endif %}
+		            </td>
+		        </tr>
             </table>
-            <br>
-            Behavioral Events can be added once the Observation Session is saved.
-            <br>
-            {{ form.collator }}
-            <input type="submit" value="Save" />&nbsp;
-            {% if form.instance.id %}
-                <input type="button" value="Cancel" onclick="document.location.href='/gbdb/observation_session/{{ form.instance.id }}/';"/>&nbsp;
-            {% endif %}
         </form>
     </div>
 {% endblock %}

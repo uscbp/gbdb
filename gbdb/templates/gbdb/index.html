@@ -4,33 +4,7 @@
     <title>GBDB</title>
 {% endblock %}
 {% block content %}
-    <h4>Welcome to the Gesture and Behavior DataBase (GBDB)</h4>
-
-    <ul>
-        <li>Observation Sessions</li>
-        <ul>
-            {% if user.is_authenticated and not user.is_anonymous %}
-                <li><a href="/gbdb/observation_session/new/">Insert</a></li>
-            {% endif %}
-            <li><a href="/gbdb/observation_session/search/">Search</a></li>
-        </ul>
-        <li>Behavioral Events</li>
-        <ul>
-            <li><a href="/gbdb/behavioral_event/search/">Search</a></li>
-        </ul>
-        <li>Primates</li>
-        <ul>
-            {% if user.is_authenticated and not user.is_anonymous %}
-                <li><a href="/gbdb/primate/new/">Insert</a></li>
-            {% endif %}
-            <li><a href="/gbdb/primate/search/">Search</a></li>
-        </ul>
-        <li>Gestures</li>
-        <ul>
-            {% if user.is_authenticated and not user.is_anonymous %}
-                <li><a href="/gbdb/gesture/new/">Insert</a></li>
-            {% endif %}
-            <li><a href="/gbdb/gesture/search/">Search</a></li>
-        </ul>
-    </ul>
+	<div id="list">
+    	<h4>Welcome to the Gesture and Behavior DataBase (GBDB)</h4>
+    </div>
 {% endblock %}

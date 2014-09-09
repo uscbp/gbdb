@@ -17,6 +17,7 @@
 {% endblock %}
 {% block content %}
     <div id="detail">
+    	<h2>Search Behavioral Events</h2>
         <form id="behavioralEventSearchForm" method="post" action="">
             {{ form.media }}
             {% csrf_token %}
@@ -191,6 +192,11 @@
                 <tr>
                     <td colspan=8>&nbsp;</td>
                 </tr>
+                <tr>
+	                <td colspan=8 style="padding:0px">
+	                    <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+	                </td>
+	            </tr>
                 <tr class="section_header">
                     <td colspan=8><h3>Results</h3></td>
                 </tr>
@@ -221,6 +227,11 @@
                         </script>
                     </td>
                 </tr>
+                <tr>
+	                <td colspan=5 style="padding:0px">
+	                    <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
+	                </td>
+	            </tr>
             </table>
         </div>
     </div>

@@ -151,7 +151,7 @@
             <table class="tab_panel">
                 {% if not allow_video %}
                     <tr valign=top>
-                        <td width=300px>{{ form.start_time.label_tag }}*</td>
+                        <td width=12%>{{ form.start_time.label_tag }}*</td>
                         <td>{{ form.start_time }} (relative to start of observation session video)  </td>
                         <td class="myerrors" width=10%>{{ form.start_time.errors }}</td>
                     </tr>
@@ -162,7 +162,7 @@
                     </tr>
                 {% else %}
                     <tr valign=top>
-                        <td width=30%>{{ form.video.label_tag }}*</td>
+                        <td width=12%>{{ form.video.label_tag }}*</td>
                         <td>
                             {{ form.video }}
                             <input type="hidden" id="id_start_time" name="start_time" value="0:0:0">

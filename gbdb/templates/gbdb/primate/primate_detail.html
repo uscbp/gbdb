@@ -14,17 +14,17 @@
             {% csrf_token %}
             <table class="tab_panel">
                 <tr valign=top>
-                    <td width=20%>{{ form.name.label_tag }}</td>
+                    <td width=12%>{{ form.name.label_tag }}</td>
                     <td>{{ form.name }}</td>
                     <td class="myerrors" width=10%>{{ form.name.errors }}</td>
                 </tr>
                 <tr valign=top>
-                    <td width=20%>{{ form.species.label_tag }}</td>
+                    <td>{{ form.species.label_tag }}</td>
                     <td>{{ form.species }}</td>
                     <td class="myerrors" width=10%>{{ form.species.errors }}</td>
                 </tr>
                 <tr valign=top>
-                    <td width=20%>{{ form.gender.label_tag }}</td>
+                    <td>{{ form.gender.label_tag }}</td>
                     <td>{{ form.gender }}</td>
                     <td class="myerrors" width=10%>{{ form.gender.errors }}</td>
                 </tr>

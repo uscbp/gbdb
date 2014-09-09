@@ -5,6 +5,7 @@
 {% endblock %}
 {% block content %}
     <div id="detail">
+    <h2>Search Gestures</h2>
     <form id="gestureSearchForm" method="post" action="">
         {% csrf_token %}
         <table class="tab_panel">
@@ -63,12 +64,22 @@
             <tr>
                 <td colspan=8>&nbsp;</td>
             </tr>
+            <tr>
+                <td colspan=8 style="padding:0px">
+                    <b class="b1f"></b><b class="b2f"></b><b class="b3f"></b><b class="b4f"></b>
+                </td>
+            </tr>
             <tr class="section_header">
                 <td colspan=8><h3>Results</h3></td>
             </tr>
             <tr>
                 <td colspan=8>
                     {% include 'gbdb/gesture/gesture_list_view.html' %}
+                </td>
+            </tr>
+            <tr>
+                <td colspan=5 style="padding:0px">
+                    <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>
                 </td>
             </tr>
         </table>

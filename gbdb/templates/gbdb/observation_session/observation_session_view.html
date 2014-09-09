@@ -63,6 +63,9 @@
             <tr valign="top">
                 <td colspan="2"><strong>Last modified:</strong> {{ object.get_modified_str }}</td>
             </tr>
+            <tr valign="top">
+                <td colspan="2"><strong>Date:</strong> {{ object.date }}</td>
+            </tr>
             {% if object.video.name %}
                 <tr valign="top">
                     <td colspan="2">
@@ -77,13 +80,7 @@
                 </tr>
             {% endif %}
             <tr valign="top">
-                <td colspan="2"><strong>Date:</strong> {{ object.date }}</td>
-            </tr>
-            <tr valign="top">
-                <td colspan="2"><strong>Location name:</strong> {{ object.location_name }}</td>
-            </tr>
-            <tr valign="top">
-                <td colspan="2"><strong>Location:</strong></td>
+                <td colspan="2"><strong>Location: </strong> {{ object.location_name }}</td></td>
             </tr>
             <tr valign="top">
                 <td colspan="2">

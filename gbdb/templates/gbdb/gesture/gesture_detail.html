@@ -13,12 +13,12 @@
             {% csrf_token %}
             <table class="tab_panel">
                 <tr valign=top>
-                    <td width=20%>{{ form.name.label_tag }}</td>
+                    <td width=12%>{{ form.name.label_tag }}</td>
                     <td>{{ form.name }}</td>
                     <td class="myerrors" width=10%>{{ form.name.errors }}</td>
                 </tr>
                 <tr valign=top>
-                    <td width=20%>{{ form.description.label_tag }}</td>
+                    <td>{{ form.description.label_tag }}</td>
                     <td>{{ form.description }}</td>
                     <td class="myerrors" width=10%>{{ form.description.errors }}</td>
                 </tr>
