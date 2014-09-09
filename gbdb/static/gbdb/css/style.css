@@ -63,8 +63,8 @@ h1 {
     color: #0d3f74;
 }
 #detail h3 {
-    font-size: 100%;
-    color: #330099;
+    font-size: 125%;
+    color: #0d3f74;
 }
 #detail dd {
     padding-left: 120px;
@@ -288,15 +288,6 @@ button.btnhov{
 #content {
     margin-left: 160px;
     padding: 0px 20px 0 10px;
-}
-
-/* Detail
----------------------------------------------------------*/
-#detail { font-size: 75%; }
-#detail table {
-    width: 90%;
-    padding: 5px;
-    border-collapse: collapse;
 }
 
 /* Errors

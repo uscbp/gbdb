@@ -54,6 +54,18 @@
     <table class="tab_panel">
         <tr valign="top">
             <td colspan="2">{% if object.parent %}<strong><a href="/gbdb/behavioral_event/{{ object.parent.id }}/">Parent behavioral event</a></strong>{% else %}<strong><a href="/gbdb/observation_session/{{ object.observation_session.id }}/">Observation session</a></strong>{% endif %}</td>
+        	{% if object.video.name %}
+	        	<td>&nbsp;&nbsp;&nbsp;</td>
+	            <td colspan="2" rowspan="7">
+	                <video width="450" height="300" controls>
+	                    <source src="{{ video_url_mp4 }}" type="video/mp4">
+	                    <source src="{{ video_url_ogg }}" type="video/ogg">
+	                    <object data="{{ video_url_mp4 }}" width="450" height="300">
+	                        <embed src="{{ video_url_swf }}" width="450" height="300">
+	                    </object>
+	                </video>
+	            </td>
+            {% endif %}
         </tr>
         {% if not object.video.name %}
             <tr valign="top">
@@ -64,22 +76,11 @@
             </tr>
         {% endif %}
         <tr valign="top">
-            <td colspan="2">
-                <video width="320" height="240" controls>
-                    <source src="{{ video_url_mp4 }}" type="video/mp4">
-                    <source src="{{ video_url_ogg }}" type="video/ogg">
-                    <object data="{{ video_url_mp4 }}" width="320" height="240">
-                        <embed src="{{ video_url_swf }}" width="320" height="240">
-                    </object>
-                </video>
-            </td>
-        </tr>
-        <tr valign="top">
             <td colspan="2"><strong>Location:</strong> {{ object.observation_session.location_name }}</td>
         </tr>
         <tr valign="top">
             <td colspan="2">
-                <div id="map-canvas" style="height:600px"></div>
+                <div id="map-canvas" style="height:200px"></div>
             </td>
         </tr>
         <tr valign="top">
@@ -102,25 +103,25 @@
             {% for sub_behavioral_event in sub_behavioral_events %}
                 <div id="sub_behavioral_event-{{ forloop.counter }}" name="sub_behavioral_event">
                     <table class="tab_panel">
-                        <tr>
+                        <tr class="{% cycle 'even_row' 'odd_row' %}">
                             <td><strong><a href="/gbdb/behavioral_event/{{ sub_behavioral_event.id }}/">Event {{ forloop.counter }}</a></strong></td>
                         </tr>
-                        <tr>
+                        <tr class="{% cycle 'even_row' 'odd_row' %}">
                             <td><strong>Start time:</strong> {{ sub_behavioral_event.start_time.hour }}:{{ sub_behavioral_event.start_time.minute }}:{{ sub_behavioral_event.start_time.second }}.{{ sub_behavioral_event.start_time.microsecond }}</td>
                         </tr>
-                        <tr>
+                        <tr class="{% cycle 'even_row' 'odd_row' %}">
                             <td><strong>Duration:</strong> {{ sub_behavioral_event.duration.hour }}:{{ sub_behavioral_event.duration.minute }}:{{ sub_behavioral_event.duration.second }}.{{ sub_behavioral_event.duration.microsecond }}</td>
                         </tr>
-                        <tr>
+                        <tr class="{% cycle 'even_row' 'odd_row' %}">
                             <td><strong>Primates:</strong> {% for primate in sub_behavioral_event.primates.all %}{% if forloop.counter0 > 0%}, {% endif %}<a href="/gbdb/primate/{{ primate.id }}/">{{ primate.name }}</a>{% endfor %}</td>
                         </tr>
-                        <tr>
+                        <tr class="{% cycle 'even_row' 'odd_row' %}">
                             <td><strong>Contexts:</strong> {% for context in sub_behavioral_event.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}</td>
                         </tr>
-                        <tr>
+                        <tr class="{% cycle 'even_row' 'odd_row' %}">
                             <td><strong>Ethograms:</strong> {% for ethogram in sub_behavioral_event.ethograms.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ ethogram.name }}{% endfor %}</td>
                         </tr>
-                        <tr>
+                        <tr class="{% cycle 'even_row' 'odd_row' %}">
                             <td><strong>Notes:</strong> {{ sub_behavioral_event.notes }}</td>
                         </tr>
                     </table>
@@ -133,37 +134,37 @@
             {% for sub_gestural_event in sub_gestural_events %}
                 <div id="sub_gestural_event-{{ forloop.counter }}" name="sub_gestural_event">
                     <table class="tab_panel">
-                        <tr>
+                        <tr class="{% cycle 'even_row' 'odd_row' %}">
                             <td><strong><a href="/gbdb/gestural_event/{{ sub_gestural_event.id }}/">Event {{ forloop.counter }}</a></strong></td>
                         </tr>
-                        <tr>
+                        <tr class="{% cycle 'even_row' 'odd_row' %}">
                             <td><strong>Start time:</strong> {{ sub_gestural_event.start_time.hour }}:{{ sub_gestural_event.start_time.minute }}:{{ sub_gestural_event.start_time.second }}.{{ sub_gestural_event.start_time.microsecond }}</td>
                         </tr>
-                        <tr>
+                        <tr class="{% cycle 'even_row' 'odd_row' %}">
                             <td><strong>Duration:</strong> {{ sub_gestural_event.duration.hour }}:{{ sub_gestural_event.duration.minute }}:{{ sub_gestural_event.duration.second }}.{{ sub_gestural_event.duration.microsecond }}</td>
                         </tr>
-                        <tr>
+                        <tr class="{% cycle 'even_row' 'odd_row' %}">
                             <td><strong>Contexts:</strong> {% for context in sub_gestural_event.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}</td>
                         </tr>
-                        <tr>
+                        <tr class="{% cycle 'even_row' 'odd_row' %}">
                             <td><strong>Ethograms:</strong> {% for ethogram in sub_gestural_event.ethograms.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ ethogram.name }}{% endfor %}</td>
                         </tr>
-                        <tr>
+                        <tr class="{% cycle 'even_row' 'odd_row' %}">
                             <td><strong>Signaller</strong> <a href="/gbdb/primate/{{ sug_gestural_event.signaller.id }}/">{{ sub_gestural_event.signaller }}</a></td>
                         </tr>
-                        <tr>
+                        <tr class="{% cycle 'even_row' 'odd_row' %}">
                             <td><strong>Recipient</strong> <a href="/gbdb/primate/{{ sug_gestural_event.recipient.id }}/">{{ sub_gestural_event.recipient }}</a></td>
                         </tr>
-                        <tr>
+                        <tr class="{% cycle 'even_row' 'odd_row' %}">
                             <td><strong>Gesture</strong> <a href="/gbdb/gesture/{{ sug_gestural_event.gesture.id }}/">{{ sub_gestural_event.gesture }}</a></td>
                         </tr>
-                        <tr>
+                        <tr class="{% cycle 'even_row' 'odd_row' %}">
                             <td><strong>Recipient response</strong> {{ sub_gestural_event.recipient_response }}</td>
                         </tr>
                         <tr>
                             <td><strong>Goal met</strong> {{ sub_gestural_event.goal_met }}</td>
                         </tr>
-                        <tr>
+                        <tr class="{% cycle 'even_row' 'odd_row' %}">
                             <td><strong>Notes:</strong> {{ sub_gestural_event.notes }}</td>
                         </tr>
                     </table>
