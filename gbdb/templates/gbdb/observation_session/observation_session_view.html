@@ -53,6 +53,18 @@
         <table class="tab_panel">
             <tr valign="top">
                 <td colspan="2"><strong>Collator:</strong> {{ object.get_collator_str }}</td>
+                {% if object.video.name %}
+                <td>&nbsp;&nbsp;&nbsp;</td>
+                <td colspan="2" rowspan="7">
+                        <video width="450" height="300" controls>
+                            <source src="{{ video_url_mp4 }}" type="video/mp4">
+                            <source src="{{ video_url_ogg }}" type="video/ogg">
+                            <object data="{{ video_url_mp4 }}" width="450" height="300">
+                                <embed src="{{ video_url_swf }}" width="450" height="300">
+                            </object>
+                        </video>
+                    </td>
+                {% endif %}
             </tr>
             <tr valign="top">
                 <td colspan="2"><strong>Created:</strong> {{ object.get_created_str }}</td>
@@ -65,26 +77,12 @@
             </tr>
             <tr valign="top">
                 <td colspan="2"><strong>Date:</strong> {{ object.date }}</td>
-            </tr>
-            {% if object.video.name %}
-                <tr valign="top">
-                    <td colspan="2">
-                        <video width="320" height="240" controls>
-                            <source src="{{ video_url_mp4 }}" type="video/mp4">
-                            <source src="{{ video_url_ogg }}" type="video/ogg">
-                            <object data="{{ video_url_mp4 }}" width="320" height="240">
-                                <embed src="{{ video_url_swf }}" width="320" height="240">
-                            </object>
-                        </video>
-                    </td>
-                </tr>
-            {% endif %}
             <tr valign="top">
                 <td colspan="2"><strong>Location: </strong> {{ object.location_name }}</td></td>
             </tr>
             <tr valign="top">
                 <td colspan="2">
-                    <div id="map-canvas" style="height:600px"></div>
+                    <div id="map-canvas" style="height:200px"></div>
                 </td>
             </tr>
             <tr valign="top">
@@ -98,28 +96,28 @@
             {% for behavioral_event in behavioral_events %}
                 <div id="behavioral_event-{{ forloop.counter }}" name="behavioral_event">
                     <table class="tab_panel">
-                        <tr>
+                        <tr class="{% cycle 'even_row' 'odd_row' %}">
                             <td><strong><a href="/gbdb/behavioral_event/{{ behavioral_event.id }}/">Event {{ forloop.counter }}</a></strong></td>
                         </tr>
                         {% if not behavioral_event.video.name %}
-                            <tr>
+                            <tr class="{% cycle 'even_row' 'odd_row' %}">
                                 <td><strong>Start time:</strong> {{ behavioral_event.start_time.hour }}:{{ behavioral_event.start_time.minute }}:{{ behavioral_event.start_time.second }}</td>
                             </tr>
-                            <tr>
+                            <tr class="{% cycle 'even_row' 'odd_row' %}">
                                 <td><strong>Duration:</strong> {{ behavioral_event.duration.hour }}:{{ behavioral_event.duration.minute }}:{{ behavioral_event.duration.second }}</td>
                             </tr>
                         {% else %}
-                            <tr>
+                            <tr class="{% cycle 'even_row' 'odd_row' %}">
                                 <td><strong>Video:</strong> {{ behavioral_event.video }}</td>
                             </tr>
                         {% endif %}
-                        <tr>
+                        <tr class="{% cycle 'even_row' 'odd_row' %}">
                             <td><strong>Contexts:</strong> {% for context in behavioral_event.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}</td>
                         </tr>
-                        <tr>
+                        <tr class="{% cycle 'even_row' 'odd_row' %}">
                             <td><strong>Ethograms:</strong> {% for ethogram in behavioral_event.ethograms.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ ethogram.name }}{% endfor %}</td>
                         </tr>
-                        <tr>
+                        <tr class="{% cycle 'even_row' 'odd_row' %}">
                             <td><strong>Notes:</strong> {{ behavioral_event.notes }}</td>
                         </tr>
                     </table>
