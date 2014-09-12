@@ -81,6 +81,7 @@ class CreateBehavioralEventView(EditBehavioralEventMixin, CreateView):
         context['primates'] = Primate.objects.all()
         context['signallers'] = context['recipients'] = Primate.objects.all()
         context['gestures'] = Gesture.objects.all()
+        print(self.request.POST)
         return context
 
 

@@ -9,14 +9,35 @@
             var tmplMarkup = $('#sub_behavioral_event-template').html();
             var compiledTmpl = _.template(tmplMarkup, { idx : count });
             $('#sub_behavioral_events').append(compiledTmpl);
-            // update form count
             $('#id_sub_behavioral_event-TOTAL_FORMS').attr('value', count+1);
-            
-            // populatePrimates();
-            // populateContexts();
-            // populateEthograms();
-            //$(this).trigger('initialize');
-            
+
+            widget=$('#id_sub_behavioral_event-'+count+'-contexts-wrapper').yourlabsWidget();
+            autocomplete=$('#id_sub_behavioral_event-'+count+'-contexts_text').yourlabsAutocomplete();
+            autocomplete.choiceSelector='[data-value]';
+            autocomplete.hilightClass='hilight';
+            autocomplete.initialize();
+            widget.initialize();
+            widget.input.bind('selectChoice', function(e, choice) {
+                var main_widget = $('#id_contexts-wrapper').yourlabsWidget();
+
+                main_widget.selectChoice(choice);
+                $(this).focus();
+            });
+
+            widget=$('#id_sub_behavioral_event-'+count+'-ethograms-wrapper').yourlabsWidget();
+            autocomplete=$('#id_sub_behavioral_event-'+count+'-ethograms_text').yourlabsAutocomplete();
+            autocomplete.choiceSelector='[data-value]';
+            autocomplete.hilightClass='hilight';
+            autocomplete.initialize();
+            widget.initialize();
+            widget.input.bind('selectChoice', function(e, choice) {
+                var main_widget = $('#id_ethograms-wrapper').yourlabsWidget();
+
+                main_widget.selectChoice(choice);
+                $(this).focus();
+            });
+             populatePrimates();
+
             return false;
         }
 
@@ -29,10 +50,34 @@
             // update form count
             $('#id_sub_gestural_event-TOTAL_FORMS').attr('value', count+1);
 
-			populatePrimates();
-            populateContexts();
-            populateEthograms();
-            
+            widget=$('#id_sub_gestural_event-'+count+'-contexts-wrapper').yourlabsWidget();
+            autocomplete=$('#id_sub_gestural_event-'+count+'-contexts_text').yourlabsAutocomplete();
+            autocomplete.choiceSelector='[data-value]';
+            autocomplete.hilightClass='hilight';
+            autocomplete.initialize();
+            widget.initialize();
+            widget.input.bind('selectChoice', function(e, choice) {
+                var main_widget = $('#id_contexts-wrapper').yourlabsWidget();
+
+                main_widget.selectChoice(choice);
+                $(this).focus();
+            });
+
+            widget=$('#id_sub_gestural_event-'+count+'-ethograms-wrapper').yourlabsWidget();
+            autocomplete=$('#id_sub_gestural_event-'+count+'-ethograms_text').yourlabsAutocomplete();
+            autocomplete.choiceSelector='[data-value]';
+            autocomplete.hilightClass='hilight';
+            autocomplete.initialize();
+            widget.initialize();
+            widget.input.bind('selectChoice', function(e, choice) {
+                var main_widget = $('#id_ethograms-wrapper').yourlabsWidget();
+
+                main_widget.selectChoice(choice);
+                $(this).focus();
+            });
+
+            populatePrimates();
+
             return false;
         }
 
@@ -75,55 +120,6 @@
 
         }
         
-        function populateContexts() 
-        {
-        	var vals = $("#id_contexts");
-	        var count = $('#sub_behavioral_events').children().length;
-	
-			for(var i=0; i < count; i++){
-			var sel = $("#id_sub_behavioral_event-" + i + "-contexts");
-			sel.empty();
-			vals.map(function(i, el) {
-				sel.append('<option value="">' + $(el).text() + '</option>');
-				});
-			}
-			
-			var count = $('#sub_gestural_events').children().length;
-	
-			for(var i=0; i < count; i++){
-			var sel = $("#id_sub_gestural_event-" + i + "-contexts");
-			sel.empty();
-			vals.map(function(i, el) {
-				sel.append('<option value="">' + $(el).text() + '</option>');
-				});
-			}
-        }
-        
-        function populateEthograms() 
-        {
-        	var vals = $("#id_ethograms :selected");
-	        var count = $('#sub_behavioral_events').children().length;
-	
-			for(var i=0; i < count; i++){
-			var sel = $("#id_sub_behavioral_event-" + i + "-ethograms");
-			sel.empty();
-			vals.map(function(i, el) {
-				sel.append('<option value="">' + $(el).text() + '</option>');
-				});
-			}
-			
-			var count = $('#sub_gestural_events').children().length;
-	
-			for(var i=0; i < count; i++){
-			var sel = $("#id_sub_gestural_event-" + i + "-ethograms");
-			sel.empty();
-			vals.map(function(i, el) {
-				sel.append('<option value="">' + $(el).text() + '</option>');
-				});
-			}
-        }
-        
-
         function setGesture(gestureID, gestureName, gesturalEventIdx)
         {
             var gestureElem=document.createElement('option');
@@ -140,6 +136,41 @@
                 }
             }
         }
+
+        $(document).ready(function() {
+            {% for sub_behavioral_event_form in sub_behavioral_event_formset.forms %}
+                widget=$('#id_sub_behavioral_event-{{ forloop.counter0 }}-contexts-wrapper').yourlabsWidget();
+                widget.input.bind('selectChoice', function(e, choice) {
+                    var main_widget = $('#id_contexts-wrapper').yourlabsWidget();
+
+                    main_widget.selectChoice(choice);
+                    $(this).focus();
+                });
+                widget=$('#id_sub_behavioral_event-{{ forloop.counter0 }}-ethograms-wrapper').yourlabsWidget();
+                widget.input.bind('selectChoice', function(e, choice) {
+                    var main_widget = $('#id_ethograms-wrapper').yourlabsWidget();
+
+                    main_widget.selectChoice(choice);
+                    $(this).focus();
+                });
+            {% endfor %}
+            {% for sub_gestural_event_form in sub_gestural_event_formset.forms %}
+                widget=$('#id_sub_gestural_event-{{ forloop.counter0 }}-contexts-wrapper').yourlabsWidget();
+                widget.input.bind('selectChoice', function(e, choice) {
+                    var main_widget = $('#id_contexts-wrapper').yourlabsWidget();
+
+                    main_widget.selectChoice(choice);
+                    $(this).focus();
+                });
+                widget=$('#id_sub_gestural_event-{{ forloop.counter0 }}-ethograms-wrapper').yourlabsWidget();
+                widget.input.bind('selectChoice', function(e, choice) {
+                    var main_widget = $('#id_ethograms-wrapper').yourlabsWidget();
+
+                    main_widget.selectChoice(choice);
+                    $(this).focus();
+                });
+            {% endfor %}
+        });
     </script>
 {% endblock %}
 {% block content %}
@@ -239,16 +270,13 @@
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td width=60px>&nbsp;</td>
                                                     <td>Contexts</td>
-                                                    <td colspan="4">
-                                                        {{ sub_behavioral_event_form.contexts }}
+                                                    <td colspan="4">{{ sub_behavioral_event_form.contexts }}
                                                     </td>
                                                 </tr>
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td width=60px>&nbsp;</td>
                                                     <td>Ethograms</td>
-                                                    <td colspan="4">
-                                                        {{ sub_behavioral_event_form.ethograms }}
-                                                    </td>
+                                                    <td colspan="4">{{ sub_behavioral_event_form.ethograms }}</td>
                                                 </tr>
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td width=60px>&nbsp;</td>
@@ -306,16 +334,12 @@
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td width=60px>&nbsp;</td>
                                                     <td>Contexts</td>
-                                                    <td colspan="4">
-                                                        {{ sub_gestural_event_form.contexts }}
-                                                    </td>
+                                                    <td colspan="4">{{ sub_gestural_event_form.contexts }}</td>
                                                 </tr>
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td width=60px>&nbsp;</td>
                                                     <td>Ethograms</td>
-                                                    <td colspan="4">
-                                                        {{ sub_gestural_event_form.ethograms }}
-                                                    </td>
+                                                    <td colspan="4">{{ sub_gestural_event_form.ethograms }}</td>
                                                 </tr>
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td width=60px>&nbsp;</td>
@@ -415,16 +439,19 @@
                     <td width=60px>&nbsp;</td>
                     <td>Contexts</td>
 					<td colspan="4">
-						<span id="id_sub_behavioral_event-<%= idx %>-contexts-wrapper" class="autocomplete-light-widget sub_behavioral_event-<%= idx %>-contexts multiple" data-autocomplete-placeholder="add another context" 
-							data-autocomplete-choice-selector="[data-value]" data-autocomplete-url="/gbdb/autocomplete/ContextAutocomplete/" data-bootstrap="normal" data-widget-ready="1">
-						<span id="id_sub_behavioral_event-<%= idx %>-contexts-deck" class="deck div"> </span>
-						<input id="id_sub_behavioral_event-<%= idx %>-contexts_text" class=" autocomplete" type="text" value="" name="sub_behavioral_event-<%= idx %>-contexts-autocomplete" autocomplete="off" 
-							placeholder="add another context">
-						<select id="id_sub_behavioral_event-<%= idx %>-contexts" class="value-select" multiple="multiple" name="sub_behavioral_event-<%= idx %>-contexts" style="display:none"> </select>
-						<span class="remove div" style="display:none"> X </span>
-						<span class="choice-template div" style="display:none">
-						<span class="choice div prepend-remove append-option-html"> </span>
-						</span>
+						<span id="id_sub_behavioral_event-<%= idx %>-contexts-wrapper"
+                              class="autocomplete-light-widget sub_behavioral_event-<%= idx %>-contexts multiple"
+                              data-autocomplete-placeholder="add another context" data-bootstrap="normal">
+                            <span id="id_sub_behavioral_event-<%= idx %>-contexts-deck" class="deck div"> </span>
+                            <input id="id_sub_behavioral_event-<%= idx %>-contexts_text" class=" autocomplete"
+                                   type="text" value="" name="sub_behavioral_event-<%= idx %>-contexts-autocomplete"
+                                   autocomplete="off" data-autocomplete-url="/gbdb/autocomplete/ContextAutocomplete/">
+                            <select id="id_sub_behavioral_event-<%= idx %>-contexts" class="value-select"
+                                    multiple="multiple" name="sub_behavioral_event-<%= idx %>-contexts" style="display:none"> </select>
+                            <span class="remove div" style="display:none"> X </span>
+                            <span class="choice-template div" style="display:none">
+                                <span class="choice div prepend-remove append-option-html"> </span>
+						    </span>
 						</span>
 						<div style="clear: both"></div>
 					</td>
@@ -433,16 +460,19 @@
                     <td width=60px>&nbsp;</td>
                     <td>Ethograms</td>
                     <td colspan="4">
-						<span id="id_sub_behavioral_event-<%= idx %>-ethograms-wrapper" class="autocomplete-light-widget sub_behavioral_event-<%= idx %>-ethograms multiple" data-autocomplete-placeholder="add another ethogram" 
-							data-autocomplete-choice-selector="[data-value]" data-autocomplete-url="/gbdb/autocomplete/EthogramAutocomplete/" data-bootstrap="normal" data-widget-ready="1">
-						<span id="id_sub_behavioral_event-<%= idx %>-ethograms-deck" class="deck div"> </span>
-						<input id="id_sub_behavioral_event-<%= idx %>-ethograms_text" class=" autocomplete" type="text" value="" name="sub_behavioral_event-<%= idx %>-ethograms-autocomplete" autocomplete="off" 
-							placeholder="add another ethogram">
-						<select id="id_sub_behavioral_event-<%= idx %>-ethograms" class="value-select" multiple="multiple" name="sub_behavioral_event-<%= idx %>-ethograms" style="display:none"> </select>
-						<span class="remove div" style="display:none"> X </span>
-						<span class="choice-template div" style="display:none">
-						<span class="choice div prepend-remove append-option-html"> </span>
-						</span>
+						<span id="id_sub_behavioral_event-<%= idx %>-ethograms-wrapper"
+                              class="autocomplete-light-widget sub_behavioral_event-<%= idx %>-ethograms multiple"
+                              data-autocomplete-placeholder="add another context" data-bootstrap="normal">
+                            <span id="id_sub_behavioral_event-<%= idx %>-ethograms-deck" class="deck div"> </span>
+                            <input id="id_sub_behavioral_event-<%= idx %>-ethograms_text" class=" autocomplete"
+                                   type="text" value="" name="sub_behavioral_event-<%= idx %>-ethograms-autocomplete"
+                                   autocomplete="off" data-autocomplete-url="/gbdb/autocomplete/EthogramAutocomplete/">
+                            <select id="id_sub_behavioral_event-<%= idx %>-ethograms" class="value-select"
+                                    multiple="multiple" name="sub_behavioral_event-<%= idx %>-ethograms" style="display:none"> </select>
+                            <span class="remove div" style="display:none"> X </span>
+                            <span class="choice-template div" style="display:none">
+                                <span class="choice div prepend-remove append-option-html"> </span>
+						    </span>
 						</span>
 						<div style="clear: both"></div>
 					</td>
@@ -487,16 +517,19 @@
                     <td width=60px>&nbsp;</td>
                     <td>Contexts</td>
                     <td colspan="4">
-						<span id="id_sub_gestural_event-<%= idx %>-contexts-wrapper" class="autocomplete-light-widget sub_gestural_event-<%= idx %>-contexts multiple" data-autocomplete-placeholder="add another context" 
-							data-autocomplete-choice-selector="[data-value]" data-autocomplete-url="/gbdb/autocomplete/ContextAutocomplete/" data-bootstrap="normal" data-widget-ready="1">
-						<span id="id_sub_gestural_event-<%= idx %>-contexts-deck" class="deck div"> </span>
-						<input id="id_sub_gestural_event-<%= idx %>-contexts_text" class=" autocomplete" type="text" value="" name="sub_gestural_event-<%= idx %>-contexts-autocomplete" autocomplete="off" 
-							placeholder="add another context">
-						<select id="id_sub_gestural_event-<%= idx %>-contexts" class="value-select" multiple="multiple" name="sub_gestural_event-<%= idx %>-contexts" style="display:none"> </select>
-						<span class="remove div" style="display:none"> X </span>
-						<span class="choice-template div" style="display:none">
-						<span class="choice div prepend-remove append-option-html"> </span>
-						</span>
+						<span id="id_sub_gestural_event-<%= idx %>-contexts-wrapper"
+                              class="autocomplete-light-widget sub_gestural_event-<%= idx %>-contexts multiple"
+                              data-autocomplete-placeholder="add another context" data-bootstrap="normal">
+                            <span id="id_sub_gestural_event-<%= idx %>-contexts-deck" class="deck div"> </span>
+                            <input id="id_sub_gestural_event-<%= idx %>-contexts_text" class=" autocomplete"
+                                   type="text" value="" name="sub_gestural_event-<%= idx %>-contexts-autocomplete"
+                                   autocomplete="off" data-autocomplete-url="/gbdb/autocomplete/ContextAutocomplete/">
+                            <select id="id_sub_gestural_event-<%= idx %>-contexts" class="value-select"
+                                    multiple="multiple" name="sub_gestural_event-<%= idx %>-contexts" style="display:none"> </select>
+                            <span class="remove div" style="display:none"> X </span>
+                            <span class="choice-template div" style="display:none">
+                                <span class="choice div prepend-remove append-option-html"> </span>
+						    </span>
 						</span>
 						<div style="clear: both"></div>
 					</td>
@@ -504,16 +537,19 @@
                     <td width=60px>&nbsp;</td>
                     <td>Ethograms</td>
 					<td colspan="4">
-						<span id="id_sub_gestural_event-<%= idx %>-ethograms-wrapper" class="autocomplete-light-widget sub_gestural_event-<%= idx %>-ethograms multiple" data-autocomplete-placeholder="add another ethogram" 
-							data-autocomplete-choice-selector="[data-value]" data-autocomplete-url="/gbdb/autocomplete/EthogramAutocomplete/" data-bootstrap="normal" data-widget-ready="1">
-						<span id="id_sub_gestural_event-<%= idx %>-ethograms-deck" class="deck div"> </span>
-						<input id="id_sub_gestural_event-<%= idx %>-ethograms_text" class=" autocomplete" type="text" value="" name="sub_gestural_event-0-ethograms-autocomplete" autocomplete="off" 
-							placeholder="add another ethogram">
-						<select id="id_sub_gestural_event-<%= idx %>-ethograms" class="value-select" multiple="multiple" name="sub_gestural_event-<%= idx %>-ethograms" style="display:none"> </select>
-						<span class="remove div" style="display:none"> X </span>
-						<span class="choice-template div" style="display:none">
-						<span class="choice div prepend-remove append-option-html"> </span>
-						</span>
+						<span id="id_sub_gestural_event-<%= idx %>-ethograms-wrapper"
+                              class="autocomplete-light-widget sub_gestural_event-<%= idx %>-ethograms multiple"
+                              data-autocomplete-placeholder="add another context" data-bootstrap="normal">
+                            <span id="id_sub_gestural_event-<%= idx %>-ethograms-deck" class="deck div"> </span>
+                            <input id="id_sub_gestural_event-<%= idx %>-ethograms_text" class=" autocomplete"
+                                   type="text" value="" name="sub_gestural_event-<%= idx %>-ethograms-autocomplete"
+                                   autocomplete="off" data-autocomplete-url="/gbdb/autocomplete/EthogramAutocomplete/">
+                            <select id="id_sub_gestural_event-<%= idx %>-ethograms" class="value-select"
+                                    multiple="multiple" name="sub_gestural_event-<%= idx %>-ethograms" style="display:none"> </select>
+                            <span class="remove div" style="display:none"> X </span>
+                            <span class="choice-template div" style="display:none">
+                                <span class="choice div prepend-remove append-option-html"> </span>
+						    </span>
 						</span>
 						<div style="clear: both"></div>
 					</td>
