@@ -228,7 +228,7 @@ class BehavioralEvent(MPTTModel):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         rename_files = getattr(self, 'RENAME_FILES', None)
         if rename_files and self.video.name:
-            super(ObservationSession, self).save(force_insert, force_update)
+            super(BehavioralEvent, self).save(force_insert, force_update)
             force_insert, force_update = False, True
 
             for field_name, options in rename_files.iteritems():
