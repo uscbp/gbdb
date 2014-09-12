@@ -98,7 +98,7 @@ class UpdateBehavioralEventView(EditBehavioralEventMixin,UpdateView):
         context['ethograms']=Ethogram.objects.all()
         context['sub_behavioral_event_formset']=SubBehavioralEventFormSet(self.request.POST or None, self.request.FILES or None,
             prefix='sub_behavioral_event', instance=self.object,
-            queryset=BehavioralEvent.objects.filter(parent=self.object))
+            queryset=BehavioralEvent.objects.filter(parent=self.object,gesturalevent__isnull=True))
         context['sub_gestural_event_formset']=GesturalEventFormSet(self.request.POST or None, self.request.FILES or None,
             prefix='sub_gestural_event', instance=self.object,
             queryset=GesturalEvent.objects.filter(parent=self.object))
