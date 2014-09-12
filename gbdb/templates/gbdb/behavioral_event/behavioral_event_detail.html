@@ -97,24 +97,24 @@
 	        var count = $('#sub_behavioral_events').children().length;
 	
 			for(var i=0; i < count; i++){
-			var sel = $("#id_sub_behavioral_event-" + i + "-primates");
-			sel.empty();
-			vals.map(function(i, el) {
-				sel.append('<option value="">' + $(el).text() + '</option>');
-				});
+                var sel = $("#id_sub_behavioral_event-" + i + "-primates");
+                sel.empty();
+                vals.map(function(i, el) {
+                    sel.append('<option value="'+el.value+'">' + $(el).text() + '</option>');
+                    });
 			}
 			
 			var count = $('#sub_gestural_events').children().length;
 	
 			for(var i=0; i < count; i++){
-			var selsignaller = $("#id_sub_gestural_event-" + i + "-signaller");
-			var selrecipient = $("#id_sub_gestural_event-" + i + "-recipient");
-			selsignaller.empty();
-			selrecipient.empty();
-			vals.map(function(i, el) {
-				selsignaller.append('<option value="">' + $(el).text() + '</option>');
-				selrecipient.append('<option value="">' + $(el).text() + '</option>');
-				});
+                var selsignaller = $("#id_sub_gestural_event-" + i + "-signaller");
+                var selrecipient = $("#id_sub_gestural_event-" + i + "-recipient");
+                selsignaller.empty();
+                selrecipient.empty();
+                vals.map(function(i, el) {
+                    selsignaller.append('<option value="'+el.value+'">' + $(el).text() + '</option>');
+                    selrecipient.append('<option value="'+el.value+'">' + $(el).text() + '</option>');
+                    });
 			}
 			
 

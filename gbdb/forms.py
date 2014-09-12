@@ -100,9 +100,7 @@ class BehavioralEventForm(forms.ModelForm):
     duration = forms.TimeField(widget=TimeInput() ,required=False)
     video = forms.FileField(required=False)
     primates = forms.ModelMultipleChoiceField(queryset=Primate.objects.all(), widget=forms.SelectMultiple(attrs={"onChange":'populatePrimates()'}), required=False)
-    #contexts = forms.ModelMultipleChoiceField(queryset=Context.objects.all(), widget=forms.SelectMultiple(attrs={"onChange":'populateContexts()'}), required=False)
     contexts = forms.ModelMultipleChoiceField(queryset=Context.objects.all(), widget=autocomplete_light.MultipleChoiceWidget('ContextAutocomplete'))
-    #ethograms = forms.ModelMultipleChoiceField(queryset=Ethogram.objects.all(), widget=forms.SelectMultiple(attrs={"onChange":'populateEthograms()'}), required=False)
     ethograms = forms.ModelMultipleChoiceField(queryset=Ethogram.objects.all(), widget=autocomplete_light.MultipleChoiceWidget('EthogramAutocomplete'))
     notes = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=False)
 
@@ -112,8 +110,13 @@ class BehavioralEventForm(forms.ModelForm):
 BaseBehavioralEventFormSet = inlineformset_factory(ObservationSession, BehavioralEvent, form=BehavioralEventForm,
     fk_name='observation_session', extra=0, can_delete=True, can_order=True)
 
+class SubBehavioralEventForm(BehavioralEventForm):
+    primates = forms.ModelMultipleChoiceField(queryset=Primate.objects.all(), widget=forms.SelectMultiple(), required=False)
 
-SubBehavioralEventFormSet = inlineformset_factory(BehavioralEvent, BehavioralEvent, form=BehavioralEventForm,
+    class Meta:
+        model=BehavioralEvent
+
+SubBehavioralEventFormSet = inlineformset_factory(BehavioralEvent, BehavioralEvent, form=SubBehavioralEventForm,
     fk_name='parent', extra=0, can_delete=True, can_order=True)
 
 
