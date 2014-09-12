@@ -18,7 +18,11 @@ def convert_to_mp4(mp4_filename, orig_filename, start_time=None, duration=None):
         cmds.extend(['-ss', start_time])
     if duration is not None:
         cmds.extend(['-t', duration])
-    cmds.extend(['-vcodec', 'libx264', mp4_filename])
+    ext=os.path.splitext(orig_filename)[1]
+    if ext.lower() == '.mov':
+        cmds.extend(['-vcodec', 'libx264', '-strict', '-2', mp4_filename])
+    else:
+        cmds.extend(['-vcodec', 'libx264', mp4_filename])
     subprocess.call(cmds)
 
 def convert_to_ogg(ogg_filename, orig_filename, start_time=None, end_time=None):
