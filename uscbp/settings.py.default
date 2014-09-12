@@ -127,6 +127,7 @@ TEMPLATE_DIRS = (
     #'/var/www/bodb/bodb/templates',
     os.path.join(PROJECT_PATH, '../uscbp/templates/'),
     os.path.join(PROJECT_PATH, 'templates/'),
+    os.path.join(PROJECT_PATH, 'autocomplete_light/templates/'),
     )
 
 INSTALLED_APPS = (

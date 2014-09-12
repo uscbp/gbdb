@@ -76,7 +76,7 @@ class Primate(models.Model):
         app_label='gbdb'
         
     def __unicode__(self):
-        return self.name
+        return '%s (%s)' % (self.name,self.species)
         
     def get_absolute_url(self):
         return reverse('primate_view', kwargs={'pk': self.pk})
@@ -151,20 +151,21 @@ class ObservationSession(models.Model):
             for field_name, options in rename_files.iteritems():
                 field = getattr(self, field_name)
                 file_name = force_unicode(field)
-                name, ext = os.path.splitext(file_name)
-                keep_ext = options.get('keep_ext', True)
-                final_dest = options['dest']
-                if callable(final_dest):
-                    final_name = final_dest(self, file_name)
-                else:
-                    final_name = os.path.join(final_dest, '%s' % (self.pk,))
-                    if keep_ext:
-                        final_name += ext
-                if file_name != final_name:
-                    field.storage.delete(final_name)
-                    field.storage.save(final_name, field)
-                    field.storage.delete(file_name)
-                    setattr(self, field_name, final_name)
+                if len(file_name):
+                    name, ext = os.path.splitext(file_name)
+                    keep_ext = options.get('keep_ext', True)
+                    final_dest = options['dest']
+                    if callable(final_dest):
+                        final_name = final_dest(self, file_name)
+                    else:
+                        final_name = os.path.join(final_dest, '%s' % (self.pk,))
+                        if keep_ext:
+                            final_name += ext
+                    if file_name != final_name:
+                        field.storage.delete(final_name)
+                        field.storage.save(final_name, field)
+                        field.storage.delete(file_name)
+                        setattr(self, field_name, final_name)
 
         super(ObservationSession,self).save(force_insert=force_insert, force_update=force_update, using=using,
             update_fields=update_fields)
@@ -231,26 +232,27 @@ class BehavioralEvent(MPTTModel):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         rename_files = getattr(self, 'RENAME_FILES', None)
         if rename_files and self.video.name:
-            super(ObservationSession, self).save(force_insert, force_update)
+            super(BehavioralEvent, self).save(force_insert, force_update)
             force_insert, force_update = False, True
 
             for field_name, options in rename_files.iteritems():
                 field = getattr(self, field_name)
                 file_name = force_unicode(field)
-                name, ext = os.path.splitext(file_name)
-                keep_ext = options.get('keep_ext', True)
-                final_dest = options['dest']
-                if callable(final_dest):
-                    final_name = final_dest(self, file_name)
-                else:
-                    final_name = os.path.join(final_dest, '%s' % (self.pk,))
-                    if keep_ext:
-                        final_name += ext
-                if file_name != final_name:
-                    field.storage.delete(final_name)
-                    field.storage.save(final_name, field)
-                    field.storage.delete(file_name)
-                    setattr(self, field_name, final_name)
+                if len(file_name):
+                    name, ext = os.path.splitext(file_name)
+                    keep_ext = options.get('keep_ext', True)
+                    final_dest = options['dest']
+                    if callable(final_dest):
+                        final_name = final_dest(self, file_name)
+                    else:
+                        final_name = os.path.join(final_dest, '%s' % (self.pk,))
+                        if keep_ext:
+                            final_name += ext
+                    if file_name != final_name:
+                        field.storage.delete(final_name)
+                        field.storage.save(final_name, field)
+                        field.storage.delete(file_name)
+                        setattr(self, field_name, final_name)
 
         super(BehavioralEvent,self).save(force_insert=force_insert, force_update=force_update, using=using,
             update_fields=update_fields)
