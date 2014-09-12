@@ -231,6 +231,8 @@
                     </td>
                 </tr>
             </table>
+            {{ sub_behavioral_event_formset.management_form }}
+            {{ sub_gestural_event_formset.management_form }}
             {% if not form.instance.id or not form.instance.parent %}
                 <br>
                 <h3>Behavioral Sub-Events{% if not form.instance.id or form.instance.observation_session.collator == user %} <a href="#" onclick="return addSubBehavioralEventForm();">Add new</a>{% endif %}</h3>
@@ -239,7 +241,6 @@
                     <table class="tab_panel">
                         <tr>
                             <td>
-                                {{ sub_behavioral_event_formset.management_form }}
                                 <div class="myerrors">
                                     {{ sub_behavioral_event_formset.management_form.errors }}
                                 </div>
@@ -303,7 +304,6 @@
                     <table class="tab_panel">
                         <tr>
                             <td>
-                                {{ sub_gestural_event_formset.management_form }}
                                 <div class="myerrors">
                                     {{ sub_gestural_event_formset.management_form.errors }}
                                 </div>
