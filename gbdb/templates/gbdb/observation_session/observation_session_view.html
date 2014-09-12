@@ -19,12 +19,12 @@
             document.location.href='/gbdb/';
         }
 
-        function addBehavioralEvent(id, start_time, duration, contexts, ethograms, notes)
+        function addBehavioralEvent(id, start_time, duration, primates, contexts, ethograms, notes)
         {
             var count = $('#behavioral_events').children().length;
             var tmplMarkup = $('#behavioral_event-template').html();
             var compiledTmpl = _.template(tmplMarkup, { idx : count+1, id: id, start_time: start_time,
-                duration: duration, notes: notes, contexts: contexts, ethograms: ethograms});
+                duration: duration, notes: notes, primates: primates, contexts: contexts, ethograms: ethograms});
             $('#behavioral_events').append(compiledTmpl);
         }
 
@@ -112,6 +112,9 @@
                             </tr>
                         {% endif %}
                         <tr class="{% cycle 'even_row' 'odd_row' %}">
+                            <td><strong>Primates:</strong> {% for primate in behavioral_event.primates.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ primate }}{% endfor %}</td>
+                        </tr>
+                        <tr class="{% cycle 'even_row' 'odd_row' %}">
                             <td><strong>Contexts:</strong> {% for context in behavioral_event.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}</td>
                         </tr>
                         <tr class="{% cycle 'even_row' 'odd_row' %}">
@@ -143,6 +146,9 @@
                         <td><strong>Duration:</strong> <%= duration %></td>
                     </tr>
                 <% } %>
+                <tr>
+                    <td><strong>Primates:</strong> <%= primates %></td>
+                </tr>
                 <tr>
                     <td><strong>Contexts:</strong> <%= contexts %></td>
                 </tr>

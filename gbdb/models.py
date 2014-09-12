@@ -72,7 +72,7 @@ class Primate(models.Model):
         app_label='gbdb'
         
     def __unicode__(self):
-        return self.name
+        return '%s (%s)' % (self.name,self.species)
         
     def get_absolute_url(self):
         return reverse('primate_view', kwargs={'pk': self.pk})

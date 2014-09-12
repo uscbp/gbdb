@@ -6,7 +6,7 @@
     <script type="text/javascript">
 
         {% if ispopup %}
-            opener.addBehavioralEvent({{ object.id }}, '{{ object.start_time.hour }}:{{ object.start_time.minute }}:{{ object.start_time.second }}.{{ object.start_time.microsecond }}', '{{ object.duration.hour }}:{{ object.duration.minute }}:{{ object.duration.second }}.{{ object.duration.microsecond }}', '{% for context in object.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}', '{% for ethogram in object.ethograms.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ ethogram.name }}{% endfor %}', '{{ object.notes }}');
+            opener.addBehavioralEvent({{ object.id }}, '{{ object.start_time.hour }}:{{ object.start_time.minute }}:{{ object.start_time.second }}.{{ object.start_time.microsecond }}', '{{ object.duration.hour }}:{{ object.duration.minute }}:{{ object.duration.second }}.{{ object.duration.microsecond }}', '{% for primate in object.primates.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ primate }}{% endfor %}', '{% for context in object.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}', '{% for ethogram in object.ethograms.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ ethogram.name }}{% endfor %}', '{{ object.notes }}');
             self.close()
         {% endif %}
 
@@ -84,7 +84,7 @@
             </td>
         </tr>
         <tr valign="top">
-            <td colspan="2"><strong>Primates:</strong> {% for primate in object.primates.all %}{% if forloop.counter0 > 0%}, {% endif %}<a href="/gbdb/primate/{{ primate.id }}/">{{ primate.name }}</a>{% endfor %}</td>
+            <td colspan="2"><strong>Primates:</strong> {% for primate in object.primates.all %}{% if forloop.counter0 > 0%}, {% endif %}<a href="/gbdb/primate/{{ primate.id }}/">{{ primate }}</a>{% endfor %}</td>
         </tr>
         <tr valign="top">
             <td colspan="2"><strong>Contexts:</strong> {% for context in object.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}</td>
@@ -113,7 +113,7 @@
                             <td><strong>Duration:</strong> {{ sub_behavioral_event.duration.hour }}:{{ sub_behavioral_event.duration.minute }}:{{ sub_behavioral_event.duration.second }}.{{ sub_behavioral_event.duration.microsecond }}</td>
                         </tr>
                         <tr class="{% cycle 'even_row' 'odd_row' %}">
-                            <td><strong>Primates:</strong> {% for primate in sub_behavioral_event.primates.all %}{% if forloop.counter0 > 0%}, {% endif %}<a href="/gbdb/primate/{{ primate.id }}/">{{ primate.name }}</a>{% endfor %}</td>
+                            <td><strong>Primates:</strong> {% for primate in sub_behavioral_event.primates.all %}{% if forloop.counter0 > 0%}, {% endif %}<a href="/gbdb/primate/{{ primate.id }}/">{{ primate }}</a>{% endfor %}</td>
                         </tr>
                         <tr class="{% cycle 'even_row' 'odd_row' %}">
                             <td><strong>Contexts:</strong> {% for context in sub_behavioral_event.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}</td>
