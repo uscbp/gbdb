@@ -94,7 +94,7 @@ class CreateBehavioralEventView(EditBehavioralEventMixin, CreateView):
 class UpdateBehavioralEventView(EditBehavioralEventMixin,UpdateView):
 
     def get_form(self, form_class):
-        form=super(CreateBehavioralEventView,self).get_form(form_class)
+        form=super(UpdateBehavioralEventView,self).get_form(form_class)
         if self.object.parent is None:
             observation_session=ObservationSession.objects.get(id=self.object.observation_session.id)
             if observation_session.video is None or not observation_session.video.name:
