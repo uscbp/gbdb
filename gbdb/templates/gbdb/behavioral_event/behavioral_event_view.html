@@ -63,7 +63,7 @@
 	            </td>
             {% endif %}
         </tr>
-        {% if not object.video.name %}
+        {% if object.start_time %}
             <tr valign="top">
                 <td colspan="2"><strong>Start time:</strong> {{ object.start_time.hour }}:{{ object.start_time.minute }}:{{ object.start_time.second }}.{{ object.start_time.microsecond }}</td>
             </tr>
