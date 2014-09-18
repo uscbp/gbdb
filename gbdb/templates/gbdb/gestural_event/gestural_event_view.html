@@ -2,6 +2,7 @@
 {% load staticfiles %}
 {% block extrahead %}
     <title>GBDB - View Gestural Sub-Event</title>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
     <script type="text/javascript">
 
         function deleteGesturalEvent()
@@ -23,6 +24,23 @@
         {% endif %}
         }
 
+        function initialize() {
+            var map = new google.maps.Map(
+                    document.getElementById('map-canvas'), {
+                        center: new google.maps.LatLng({{ object.observation_session.location.latitude }}, {{ object.observation_session.location.longitude }}),
+                        zoom: 13,
+                        mapTypeId: google.maps.MapTypeId.HYBRID
+                    });
+
+            var marker = new google.maps.Marker({
+                position: new google.maps.LatLng({{ object.observation_session.location.latitude }}, {{ object.observation_session.location.longitude }}),
+                map: map,
+                title: '{{ object.observation_session.location_name }}'
+            });
+
+        }
+        google.maps.event.addDomListener(window, 'load', initialize);
+
     </script>
 {% endblock %}
 {% block content %}
@@ -31,12 +49,6 @@
         <table class="tab_panel">
             <tr valign="top">
                 <td colspan="2">{% if object.parent %}<strong><a href="/gbdb/behavioral_event/{{ object.parent.id }}/">Parent behavioral event</a></strong>{% else %}<strong><a href="/gbdb/observation_session/{{ object.observation_session.id }}/">Observation session</a></strong>{% endif %}</td>
-            </tr>
-            <tr valign="top">
-                <td colspan="2"><strong>Start time:</strong> {{ object.start_time.hour }}:{{ object.start_time.minute }}:{{ object.start_time.second }}.{{ object.start_time.microsecond }}</td>
-            </tr>
-            <tr valign="top">
-                <td colspan="2"><strong>Duration:</strong> {{ object.duration.hour }}:{{ object.duration.minute }}:{{ object.duration.second }}.{{ object.duration.microsecond }}</td>
             </tr>
             {% if video_url_mp4 %}
                 <tr valign="top">
@@ -47,6 +59,22 @@
                     </td>
                 </tr>
             {% endif %}
+            {% if not object.video.name %}
+                <tr valign="top">
+                    <td colspan="2"><strong>Start time:</strong> {{ object.start_time.hour }}:{{ object.start_time.minute }}:{{ object.start_time.second }}.{{ object.start_time.microsecond }}</td>
+                </tr>
+                <tr valign="top">
+                    <td colspan="2"><strong>Duration:</strong> {{ object.duration.hour }}:{{ object.duration.minute }}:{{ object.duration.second }}.{{ object.duration.microsecond }}</td>
+                </tr>
+            {% endif %}
+            <tr valign="top">
+                <td colspan="2"><strong>Location:</strong> {{ object.observation_session.location_name }}</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2">
+                    <div id="map-canvas" style="height:200px"></div>
+                </td>
+            </tr>
             <tr valign="top">
                 <td colspan="2"><strong>Contexts:</strong> {% for context in object.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}</td>
             </tr>
