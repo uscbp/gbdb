@@ -131,27 +131,27 @@
     <script type="text/html" id="behavioral_event-template">
         <div id="behavioral_event-<%= idx %>" name="behavioral_event">
             <table class="tab_panel">
-                <tr>
+                <tr class="<%= getTRTag(idx) %>">
                     <td><strong><a href="/gbdb/behavioral_event/<%= id %>/">Event <%= idx %></a></strong></td>
                 </tr>
                 <% if(start_time.length>0) { %>
-                    <tr>
+                    <tr class="<%= getTRTag(idx) %>">
                         <td><strong>Start time:</strong> <%= start_time %></td>
                     </tr>
-                    <tr>
+                    <tr class="<%= getTRTag(idx) %>">
                         <td><strong>Duration:</strong> <%= duration %></td>
                     </tr>
                 <% } %>
-                <tr>
+                <tr class="<%= getTRTag(idx) %>">
                     <td><strong>Primates:</strong> <%= primates %></td>
                 </tr>
-                <tr>
+                <tr class="<%= getTRTag(idx) %>">
                     <td><strong>Contexts:</strong> <%= contexts %></td>
                 </tr>
-                <tr>
+                <tr class="<%= getTRTag(idx) %>">
                     <td><strong>Ethograms:</strong> <%= ethograms %></td>
                 </tr>
-                <tr>
+                <tr class="<%= getTRTag(idx) %>">
                     <td><strong>Notes:</strong> <%= notes %></td>
                 </tr>
             </table>
