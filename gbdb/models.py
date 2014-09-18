@@ -281,6 +281,8 @@ class BehavioralEvent(MPTTModel):
             else:
                 parent_video_name=os.path.join('videos','behavioral_event','%d.mp4' % self.parent.id)
             self.segment_video(parent_video_name)
+            self.video.name=os.path.join('videos','behavioral_event','%d.mp4' % self.id)
+            self.save()
 
         
 class BodyPart(models.Model):
