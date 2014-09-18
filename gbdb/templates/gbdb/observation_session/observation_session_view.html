@@ -53,15 +53,11 @@
         <table class="tab_panel">
             <tr valign="top">
                 <td colspan="2"><strong>Collator:</strong> {{ object.get_collator_str }}</td>
-                {% if object.video.name %}
-                <td>&nbsp;&nbsp;&nbsp;</td>
-                <td colspan="2" rowspan="7">
+                {% if video_url_mp4 %}
+                    <td>&nbsp;&nbsp;&nbsp;</td>
+                    <td colspan="2" rowspan="7">
                         <video width="450" height="300" controls>
                             <source src="{{ video_url_mp4 }}" type="video/mp4">
-                            <source src="{{ video_url_ogg }}" type="video/ogg">
-                            <object data="{{ video_url_mp4 }}" width="450" height="300">
-                                <embed src="{{ video_url_swf }}" width="450" height="300">
-                            </object>
                         </video>
                     </td>
                 {% endif %}

@@ -19,29 +19,35 @@ def convert_to_mp4(mp4_filename, orig_filename, start_time=None, duration=None):
     if duration is not None:
         cmds.extend(['-t', duration])
     ext=os.path.splitext(orig_filename)[1]
+    cmds.extend(['-vcodec', 'libx264'])
     if ext.lower() == '.mov':
-        cmds.extend(['-vcodec', 'libx264', '-strict', '-2', mp4_filename])
-    else:
-        cmds.extend(['-vcodec', 'libx264', mp4_filename])
+        cmds.extend(['-strict', '-2'])
+    cmds.append(mp4_filename)
+    print('converting to mp4')
+    print(cmds)
     subprocess.call(cmds)
 
-def convert_to_ogg(ogg_filename, orig_filename, start_time=None, end_time=None):
-    cmds=['ffmpeg2theora', orig_filename]
-    if start_time is not None:
-        cmds.extend(['-s',start_time])
-    if end_time is not None:
-        cmds.extend(['-e',end_time])
-    cmds.extend(['-o', ogg_filename])
-    subprocess.call(cmds)
+#def convert_to_ogg(ogg_filename, orig_filename, start_time=None, end_time=None):
+#    cmds=['avconv', '-i', orig_filename]
+#    if start_time is not None:
+#        cmds.extend(['-ss',start_time])
+#    if end_time is not None:
+#        cmds.extend(['-t',end_time])
+#    cmds.append(ogg_filename)
+#    print('converting to ogg')
+#    print(cmds)
+#    subprocess.call(cmds)
 
-def convert_to_swf(swf_filename, orig_filename, start_time=None, duration=None):
-    cmds=['avconv', '-i', orig_filename]
-    if start_time is not None:
-        cmds.extend(['-ss', start_time])
-    if duration is not None:
-        cmds.extend(['-t', duration])
-    cmds.extend(['-ar', '44100', swf_filename])
-    subprocess.call(cmds)
+#def convert_to_swf(swf_filename, orig_filename, start_time=None, duration=None):
+#    cmds=['avconv', '-i', orig_filename]
+#    if start_time is not None:
+#        cmds.extend(['-ss', start_time])
+#    if duration is not None:
+#        cmds.extend(['-t', duration])
+#    cmds.extend(['-ar', '44100', swf_filename])
+#    print('converting to swf')
+#    print(cmds)
+#    subprocess.call(cmds)
 
 class Species(models.Model):
     genus_name = models.CharField(max_length=100)
@@ -176,12 +182,12 @@ class ObservationSession(models.Model):
             mp4_filename='%s.mp4' % root
             if not os.path.exists(mp4_filename):
                 convert_to_mp4(mp4_filename, orig_filename)
-            ogg_filename='%s.ogg' % root
-            if not os.path.exists(ogg_filename):
-                convert_to_ogg(ogg_filename, orig_filename)
-            swf_filename='%s.swf' % root
-            if not os.path.exists(swf_filename):
-                convert_to_swf(swf_filename, orig_filename)
+#            ogg_filename='%s.ogg' % root
+#            if not os.path.exists(ogg_filename):
+#                convert_to_ogg(ogg_filename, orig_filename)
+#            swf_filename='%s.swf' % root
+#            if not os.path.exists(swf_filename):
+#                convert_to_swf(swf_filename, orig_filename)
         
         
 class BehavioralEvent(MPTTModel):
@@ -222,12 +228,12 @@ class BehavioralEvent(MPTTModel):
         mp4_filename = os.path.join(new_path, '%d.mp4' % self.id)
         if not os.path.exists(mp4_filename):
             convert_to_mp4(mp4_filename, orig_filename, start_time=start_time_string, duration=duration_string)
-        ogg_filename = os.path.join(new_path, '%d.ogg' % self.id)
-        if not os.path.exists(ogg_filename):
-            convert_to_ogg(ogg_filename, mp4_filename, start_time=start_time_string, end_time=end_time_string)
-        swf_filename = os.path.join(new_path, '%d.swf' % self.id)
-        if not os.path.exists(swf_filename):
-            convert_to_swf(swf_filename, orig_filename, start_time=start_time_string, duration=duration_string)
+#        ogg_filename = os.path.join(new_path, '%d.ogg' % self.id)
+#        if not os.path.exists(ogg_filename):
+#            convert_to_ogg(ogg_filename, mp4_filename, start_time=start_time_string, end_time=end_time_string)
+#        swf_filename = os.path.join(new_path, '%d.swf' % self.id)
+#        if not os.path.exists(swf_filename):
+#            convert_to_swf(swf_filename, orig_filename, start_time=start_time_string, duration=duration_string)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         rename_files = getattr(self, 'RENAME_FILES', None)
@@ -263,12 +269,12 @@ class BehavioralEvent(MPTTModel):
             mp4_filename='%s.mp4' % root
             if not os.path.exists(mp4_filename):
                 convert_to_mp4(mp4_filename, orig_filename)
-            ogg_filename='%s.ogg' % root
-            if not os.path.exists(ogg_filename):
-                convert_to_ogg(ogg_filename, orig_filename)
-            swf_filename='%s.swf' % root
-            if not os.path.exists(swf_filename):
-                convert_to_swf(swf_filename, orig_filename)
+#            ogg_filename='%s.ogg' % root
+#            if not os.path.exists(ogg_filename):
+#                convert_to_ogg(ogg_filename, orig_filename)
+#            swf_filename='%s.swf' % root
+#            if not os.path.exists(swf_filename):
+#                convert_to_swf(swf_filename, orig_filename)
         else:
             if self.parent is None or self.parent.video.name is None:
                 self.segment_video(self.observation_session.video.name)

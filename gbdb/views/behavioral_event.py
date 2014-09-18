@@ -139,13 +139,13 @@ class BehavioralEventDetailView(DetailView):
         if self.object.video.name:
             root,ext=os.path.splitext(self.object.video.name)
             context['video_url_mp4'] = ''.join(['http://', get_current_site(self.request).domain, os.path.join('/media/','%s.mp4' % root)])
-            context['video_url_ogg'] = ''.join(['http://', get_current_site(self.request).domain, os.path.join('/media/','%s.ogg' % root)])
-            context['video_url_swf'] = ''.join(['http://', get_current_site(self.request).domain, os.path.join('/media/','%s.swf' % root)])
+            #context['video_url_ogg'] = ''.join(['http://', get_current_site(self.request).domain, os.path.join('/media/','%s.ogg' % root)])
+            #context['video_url_swf'] = ''.join(['http://', get_current_site(self.request).domain, os.path.join('/media/','%s.swf' % root)])
         else:
             file_root=os.path.join('videos','behavioral_event')
             context['video_url_mp4'] = ''.join(['http://', get_current_site(self.request).domain, os.path.join('/media',file_root,'%d.mp4' % self.object.id)])
-            context['video_url_ogg'] = ''.join(['http://', get_current_site(self.request).domain, os.path.join('/media',file_root,'%d.ogg' % self.object.id)])
-            context['video_url_swf'] = ''.join(['http://', get_current_site(self.request).domain, os.path.join('/media',file_root,'%d.swf' % self.object.id)])
+            #context['video_url_ogg'] = ''.join(['http://', get_current_site(self.request).domain, os.path.join('/media',file_root,'%d.ogg' % self.object.id)])
+            #context['video_url_swf'] = ''.join(['http://', get_current_site(self.request).domain, os.path.join('/media',file_root,'%d.swf' % self.object.id)])
         return context
 
 

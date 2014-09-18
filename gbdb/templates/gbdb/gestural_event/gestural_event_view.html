@@ -38,17 +38,15 @@
             <tr valign="top">
                 <td colspan="2"><strong>Duration:</strong> {{ object.duration.hour }}:{{ object.duration.minute }}:{{ object.duration.second }}.{{ object.duration.microsecond }}</td>
             </tr>
-            <tr valign="top">
-                <td colspan="2">
-                    <video width="320" height="240" controls>
-                        <source src="{{ video_url_mp4 }}" type="video/mp4">
-                        <source src="{{ video_url_ogg }}" type="video/ogg">
-                        <object data="{{ video_url_mp4 }}" width="320" height="240">
-                            <embed src="{{ video_url_swf }}" width="320" height="240">
-                        </object>
-                    </video>
-                </td>
-            </tr>
+            {% if video_url_mp4 %}
+                <tr valign="top">
+                    <td colspan="2">
+                        <video width="320" height="240" controls>
+                            <source src="{{ video_url_mp4 }}" type="video/mp4">
+                        </video>
+                    </td>
+                </tr>
+            {% endif %}
             <tr valign="top">
                 <td colspan="2"><strong>Contexts:</strong> {% for context in object.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}</td>
             </tr>
