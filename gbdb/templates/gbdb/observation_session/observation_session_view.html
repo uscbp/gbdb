@@ -19,12 +19,12 @@
             document.location.href='/gbdb/';
         }
 
-        function addBehavioralEvent(id, start_time, duration, primates, contexts, ethograms, notes)
+        function addBehavioralEvent(id, start_time, duration, video, primates, contexts, ethograms, notes)
         {
             var count = $('#behavioral_events').children().length;
             var tmplMarkup = $('#behavioral_event-template').html();
             var compiledTmpl = _.template(tmplMarkup, { idx : count+1, id: id, start_time: start_time,
-                duration: duration, notes: notes, primates: primates, contexts: contexts, ethograms: ethograms});
+                duration: duration, video: video, notes: notes, primates: primates, contexts: contexts, ethograms: ethograms});
             $('#behavioral_events').append(compiledTmpl);
         }
 
@@ -95,17 +95,16 @@
                         <tr class="{% cycle 'even_row' 'odd_row' %}">
                             <td><strong><a href="/gbdb/behavioral_event/{{ behavioral_event.id }}/">Event {{ forloop.counter }}</a></strong></td>
                         </tr>
-                        {% if not behavioral_event.video.name %}
+                        {% if behavioral_event.start_time %}
                             <tr class="{% cycle 'even_row' 'odd_row' %}">
                                 <td><strong>Start time:</strong> {{ behavioral_event.start_time.hour }}:{{ behavioral_event.start_time.minute }}:{{ behavioral_event.start_time.second }}</td>
                             </tr>
                             <tr class="{% cycle 'even_row' 'odd_row' %}">
                                 <td><strong>Duration:</strong> {{ behavioral_event.duration.hour }}:{{ behavioral_event.duration.minute }}:{{ behavioral_event.duration.second }}</td>
                             </tr>
-                        {% else %}
-                            <tr class="{% cycle 'even_row' 'odd_row' %}">
-                                <td><strong>Video:</strong> {{ behavioral_event.video }}</td>
-                            </tr>
+                        <tr class="{% cycle 'even_row' 'odd_row' %}">
+                            <td><strong>Video:</strong> {{ behavioral_event.video }}</td>
+                        </tr>
                         {% endif %}
                         <tr class="{% cycle 'even_row' 'odd_row' %}">
                             <td><strong>Primates:</strong> {% for primate in behavioral_event.primates.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ primate }}{% endfor %}</td>
@@ -142,6 +141,9 @@
                         <td><strong>Duration:</strong> <%= duration %></td>
                     </tr>
                 <% } %>
+                <tr class="<%= getTRTag(idx) %>">
+                    <td><strong>Video:</strong> <%= video %></td>
+                </tr>
                 <tr class="<%= getTRTag(idx) %>">
                     <td><strong>Primates:</strong> <%= primates %></td>
                 </tr>
