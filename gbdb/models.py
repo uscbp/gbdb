@@ -220,7 +220,7 @@ class BehavioralEvent(MPTTModel):
                                            self.duration.microsecond)
         td = datetime.date.today()
         end_time=(datetime.datetime.combine(td, self.start_time)+datetime.timedelta(self.duration.hour,self.duration.minute,self.duration.second,self.duration.microsecond)).time()
-        end_time_string='%d:%d:%d.%d' % (end_time.hour, end_time.minute, end_time.second, end_time.microsecond)
+        #end_time_string='%d:%d:%d.%d' % (end_time.hour, end_time.minute, end_time.second, end_time.microsecond)
         orig_filename='%s%s' % (os.path.join(settings.MEDIA_ROOT,parent_root),parent_ext)
         new_path = os.path.join(settings.MEDIA_ROOT, 'videos', 'behavioral_event')
         if not os.path.exists(new_path):
@@ -276,10 +276,11 @@ class BehavioralEvent(MPTTModel):
 #            if not os.path.exists(swf_filename):
 #                convert_to_swf(swf_filename, orig_filename)
         else:
-            if self.parent is None or self.parent.video.name is None:
-                self.segment_video(self.observation_session.video.name)
+            if self.parent is None:
+                parent_video_name=os.path.join('videos','observation_session','%d.mp4' % self.observation_session.id)
             else:
-                self.segment_video(self.parent.video.name)
+                parent_video_name=os.path.join('videos','behavioral_event','%d.mp4' % self.parent.id)
+            self.segment_video(parent_video_name)
 
         
 class BodyPart(models.Model):
