@@ -136,10 +136,7 @@ class BehavioralEventDetailView(DetailView):
         context['sub_behavioral_events']=BehavioralEvent.objects.filter(parent=self.object,gesturalevent__isnull=True)
         context['sub_gestural_events']=GesturalEvent.objects.filter(parent=self.object)
         context['ispopup']='_popup' in self.request.GET
-        root,ext=os.path.splitext(self.object.video.name)
-        context['video_url_mp4'] = ''.join(['http://', get_current_site(self.request).domain, os.path.join('/media/','%s.mp4' % root)])
-        #context['video_url_ogg'] = ''.join(['http://', get_current_site(self.request).domain, os.path.join('/media/','%s.ogg' % root)])
-        #context['video_url_swf'] = ''.join(['http://', get_current_site(self.request).domain, os.path.join('/media/','%s.swf' % root)])
+        context['video_url_mp4'] = self.object.video_url_mp4()
         return context
 
 

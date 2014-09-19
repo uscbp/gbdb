@@ -1,3 +1,4 @@
+from django.contrib.sites.models import get_current_site
 import os
 import subprocess
 import datetime
@@ -182,13 +183,7 @@ class ObservationSession(models.Model):
             mp4_filename='%s.mp4' % root
             if not os.path.exists(mp4_filename):
                 convert_to_mp4(mp4_filename, orig_filename)
-#            ogg_filename='%s.ogg' % root
-#            if not os.path.exists(ogg_filename):
-#                convert_to_ogg(ogg_filename, orig_filename)
-#            swf_filename='%s.swf' % root
-#            if not os.path.exists(swf_filename):
-#                convert_to_swf(swf_filename, orig_filename)
-        
+
         
 class BehavioralEvent(MPTTModel):
     observation_session=models.ForeignKey(ObservationSession, null=True, blank=True)
@@ -205,12 +200,12 @@ class BehavioralEvent(MPTTModel):
     RENAME_FILES = {
         'video': {'dest': 'videos/behavioral_event', 'keep_ext': True}
     }
+
     class Meta:
         app_label='gbdb'
 
     def get_absolute_url(self):
         return reverse('behavioral_event_view', kwargs={'pk': self.pk})
-        #return reverse('non_admin:widget_update', args=(self.pk,))
 
     def segment_video(self, parent_video_name):
         parent_root, parent_ext = os.path.splitext(parent_video_name)
@@ -218,9 +213,6 @@ class BehavioralEvent(MPTTModel):
                                              self.start_time.microsecond)
         duration_string = '%d:%d:%d.%d' % (self.duration.hour, self.duration.minute, self.duration.second,
                                            self.duration.microsecond)
-        td = datetime.date.today()
-        end_time=(datetime.datetime.combine(td, self.start_time)+datetime.timedelta(self.duration.hour,self.duration.minute,self.duration.second,self.duration.microsecond)).time()
-        #end_time_string='%d:%d:%d.%d' % (end_time.hour, end_time.minute, end_time.second, end_time.microsecond)
         orig_filename='%s%s' % (os.path.join(settings.MEDIA_ROOT,parent_root),parent_ext)
         new_path = os.path.join(settings.MEDIA_ROOT, 'videos', 'behavioral_event')
         if not os.path.exists(new_path):
@@ -228,12 +220,9 @@ class BehavioralEvent(MPTTModel):
         mp4_filename = os.path.join(new_path, '%d.mp4' % self.id)
         if not os.path.exists(mp4_filename):
             convert_to_mp4(mp4_filename, orig_filename, start_time=start_time_string, duration=duration_string)
-#        ogg_filename = os.path.join(new_path, '%d.ogg' % self.id)
-#        if not os.path.exists(ogg_filename):
-#            convert_to_ogg(ogg_filename, mp4_filename, start_time=start_time_string, end_time=end_time_string)
-#        swf_filename = os.path.join(new_path, '%d.swf' % self.id)
-#        if not os.path.exists(swf_filename):
-#            convert_to_swf(swf_filename, orig_filename, start_time=start_time_string, duration=duration_string)
+
+    def video_url_mp4(self):
+        return ''.join(['http://', get_current_site(None).domain, os.path.join('/media/videos/behavioral_event','%d.mp4' % self.id)])
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         rename_files = getattr(self, 'RENAME_FILES', None)
@@ -269,12 +258,6 @@ class BehavioralEvent(MPTTModel):
             mp4_filename='%s.mp4' % root
             if not os.path.exists(mp4_filename):
                 convert_to_mp4(mp4_filename, orig_filename)
-#            ogg_filename='%s.ogg' % root
-#            if not os.path.exists(ogg_filename):
-#                convert_to_ogg(ogg_filename, orig_filename)
-#            swf_filename='%s.swf' % root
-#            if not os.path.exists(swf_filename):
-#                convert_to_swf(swf_filename, orig_filename)
         else:
             if self.parent is None:
                 parent_video_name=os.path.join('videos','observation_session','%d.mp4' % self.observation_session.id)
