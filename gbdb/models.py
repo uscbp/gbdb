@@ -191,7 +191,7 @@ class BehavioralEvent(MPTTModel):
     type = models.CharField(max_length=45, blank=False, null=False, default='generic')
     start_time = models.TimeField(blank=True, null=True)
     duration = models.TimeField(blank=True, null=True)
-    video = models.FileField(upload_to='videos/behavioral_event/%Y/%m/%d',  blank=True, null=True)
+    video = models.FileField(upload_to='videos/behavioral_event/temp',  blank=True, null=True)
     primates = models.ManyToManyField(Primate)
     contexts = models.ManyToManyField(Context)
     ethograms = models.ManyToManyField(Ethogram)
