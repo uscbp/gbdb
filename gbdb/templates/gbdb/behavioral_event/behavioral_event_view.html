@@ -6,7 +6,7 @@
     <script type="text/javascript">
 
         {% if ispopup %}
-            opener.addBehavioralEvent({{ object.id }}, {% if object.start_time %}'{{ object.start_time.hour }}:{{ object.start_time.minute }}:{{ object.start_time.second }}.{{ object.start_time.microsecond }}'{% else %}''{% endif %}, {% if object.duration %}'{{ object.duration.hour }}:{{ object.duration.minute }}:{{ object.duration.second }}.{{ object.duration.microsecond }}'{% else %}''{% endif %},'{{ object.video.name }}', '{% for primate in object.primates.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ primate }}{% endfor %}', '{% for context in object.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}', '{% for ethogram in object.ethograms.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ ethogram.name }}{% endfor %}', '{{ object.notes }}');
+            opener.addBehavioralEvent({{ object.id }}, {% if object.start_time %}'{{ object.start_time.hour }}:{{ object.start_time.minute }}:{{ object.start_time.second }}.{{ object.start_time.microsecond }}'{% else %}''{% endif %}, {% if object.duration %}'{{ object.duration.hour }}:{{ object.duration.minute }}:{{ object.duration.second }}.{{ object.duration.microsecond }}'{% else %}''{% endif %},'/videos/behavioral_event/{{ object.id }}.mp4', '{% for primate in object.primates.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ primate }}{% endfor %}', '{% for context in object.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}', '{% for ethogram in object.ethograms.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ ethogram.name }}{% endfor %}', '{{ object.notes }}');
             self.close()
         {% endif %}
 

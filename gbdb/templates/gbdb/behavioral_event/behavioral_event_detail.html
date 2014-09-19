@@ -137,6 +137,14 @@
             }
         }
 
+        function save()
+        {
+            document.getElementById('savingMsg').style.display = 'block';
+            document.getElementById('savingOver').style.display = 'block';
+            document.getElementById('behavioralEventForm').submit();
+
+        }
+
         $(document).ready(function() {
             {% for sub_behavioral_event_form in sub_behavioral_event_formset.forms %}
                 widget=$('#id_sub_behavioral_event-{{ forloop.counter0 }}-contexts-wrapper').yourlabsWidget();
@@ -405,7 +413,7 @@
             {{ form.observation_session }}
             {{ form.parent }}
             {{ form.collator }}
-            <input type="submit" value="Save" />&nbsp;
+            <input type="button" value="Save" onclick="save();"/>&nbsp;
             {% if form.instance.id %}
                 <input type="button" value="Cancel" onclick="document.location.href='/gbdb/behavioral_event/{{ form.instance.id }}/';"/>&nbsp;
             {% endif %}
