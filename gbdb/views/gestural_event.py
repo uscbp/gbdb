@@ -60,6 +60,4 @@ class GesturalEventDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(GesturalEventDetailView, self).get_context_data(**kwargs)
         context['ispopup']='_popup' in self.request.GET
-        root,ext=os.path.splitext(self.object.video.name)
-        context['video_url_mp4'] = self.object.video_mp4_url()
         return context

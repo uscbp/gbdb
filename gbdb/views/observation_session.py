@@ -56,9 +56,6 @@ class ObservationSessionDetailView(DetailView):
         context = super(ObservationSessionDetailView, self).get_context_data(**kwargs)
         context['behavioral_events'] = BehavioralEvent.objects.filter(observation_session=self.object, parent__isnull=True)
         context['site_url']='http://%s' % get_current_site(self.request)
-        if self.object.video.name:
-            root,ext=os.path.splitext(self.object.video.name)
-            context['video_url_mp4'] = ''.join(['http://', get_current_site(self.request).domain, os.path.join('/media/','%s.mp4' % root)])
         return context
 
 

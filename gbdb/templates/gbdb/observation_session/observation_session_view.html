@@ -2,6 +2,8 @@
 {% load staticfiles %}
 {% block extrahead %}
     <title>GBDB - View Observation Session</title>
+    <link href="{% static 'gbdb/scripts/video-js/video-js.css' %}" rel="stylesheet">
+    <script src="{% static 'gbdb/scripts/video-js/video.js' %}"></script>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
     <script type="text/javascript">
         function deleteObservationSession()
@@ -19,13 +21,18 @@
             document.location.href='/gbdb/';
         }
 
-        function addBehavioralEvent(id, start_time, duration, video, primates, contexts, ethograms, notes)
+        function addBehavioralEvent(id, start_time, duration, start_time_seconds, end_time_seconds, video, primates, contexts, ethograms, notes)
         {
             var count = $('#behavioral_events').children().length;
             var tmplMarkup = $('#behavioral_event-template').html();
             var compiledTmpl = _.template(tmplMarkup, { idx : count+1, id: id, start_time: start_time,
-                duration: duration, video: video, notes: notes, primates: primates, contexts: contexts, ethograms: ethograms});
+                duration: duration, start_time_seconds:start_time_seconds, end_time_seconds:end_time_seconds, video: video, notes: notes, primates: primates, contexts: contexts, ethograms: ethograms});
             $('#behavioral_events').append(compiledTmpl);
+            {% if not object.video.name %}
+                videojs("behavioral_event_"+(count+1)+"_video", {}, function(){
+                    // Player (this) is initialized and ready.
+                });
+            {% endif %}
         }
 
         function initialize() {
@@ -41,10 +48,28 @@
                 map: map,
                 title: '{{ object.location_name }}'
             });
-
         }
         google.maps.event.addDomListener(window, 'load', initialize);
 
+        function playClip(start_time, end_time)
+        {
+            videojs("observation_session_video").currentTime(start_time);
+            function stopClip(){
+                if(this.currentTime()>=end_time)
+                {
+                    this.pause();
+                    this.off('timeupdate',stopClip);
+                }
+            }
+            videojs("observation_session_video").on("timeupdate",stopClip);
+            videojs("observation_session_video").play();
+            return false;
+        }
+
+        $(document).ready(function()
+        {
+            videojs.options.flash.swf = "{{ site_url }}/static/gbdb/scripts/video-js/video-js.swf";
+        });
     </script>
 {% endblock %}
 {% block content %}
@@ -53,11 +78,13 @@
         <table class="tab_panel">
             <tr valign="top">
                 <td><strong>Collator:</strong> {{ object.get_collator_str }}</td>
-                {% if video_url_mp4 %}
+                {% if object.video.name %}
                     <td>&nbsp;&nbsp;&nbsp;</td>
                     <td colspan="2" rowspan="8">
-                        <video width="450" height="300" controls>
-                            <source src="{{ video_url_mp4 }}" type="video/mp4">
+                        <video id="observation_session_video" class="video-js vjs-default-skin" controls preload="all"
+                               width="450" height="300" data-setup='{}'>
+                            <source id="observation_session_video_source" src="{{ object.video_url_mp4 }}" type="video/mp4">
+                            <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
                         </video>
                     </td>
                 {% endif %}
@@ -95,9 +122,16 @@
                         <tr class="{% cycle 'even_row' 'odd_row' %}">
                             <td width=30%><strong><a href="/gbdb/behavioral_event/{{ behavioral_event.id }}/">Event {{ forloop.counter }}</a></strong></td>
                             <td rowspan="7">
-                                <video width="225" height="150" controls>
-                                    <source src="{{ behavioral_event.video_url_mp4 }}" type="video/mp4">
-                                </video>
+                                {% if object.video_url_mp4 %}
+                                    <a href="" onclick="return playClip({{ behavioral_event.start_time_seconds }},{{ behavioral_event.end_time_seconds }});">Play clip</a>
+                                {% else %}
+                                    <video id="behavioral_event_{{ forloop.counter0 }}_video"
+                                           class="video-js vjs-default-skin" preload="all" width="225" height="150"
+                                           controls data-setup='{}'>
+                                            <source src="{{ behavioral_event.video_url_mp4 }}" type="video/mp4">
+                                        <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
+                                    </video>
+                                {% endif %}
                             </td>
                         </tr>
                         {% if behavioral_event.start_time %}
@@ -135,9 +169,16 @@
                 <tr class="<%= getTRTag(idx) %>">
                     <td width=30%><strong><a href="/gbdb/behavioral_event/<%= id %>/">Event <%= idx %></a></strong></td>
                     <td rowspan="7">
-                        <video width="225" height="150" controls>
-                            <source src="{{ site_url }}/media/<%= video %>" type="video/mp4">
-                        </video>
+                        {% if object.video.name %}
+                            <a href="" onclick="return playClip(<%= start_time_seconds %>,<%= end_time_seconds %>);">Play clip</a>
+                        {% else %}
+                            <video id="behavioral_event_<%= idx %>_video"
+                                   class="video-js vjs-default-skin" preload="all" width="225" height="150"
+                                   controls data-setup='{}'>
+                                <source src="{{ site_url }}/media/<%= video %>" type="video/mp4">
+                                <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
+                            </video>
+                        {% endif %}
                     </td>
                 </tr>
                 <% if(start_time.length>0) { %>

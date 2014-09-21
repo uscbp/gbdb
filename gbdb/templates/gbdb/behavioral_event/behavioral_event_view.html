@@ -2,12 +2,14 @@
 {% load staticfiles %}
 {% block extrahead %}
     <title>GBDB - View Behavioral {% if object.parent %}Sub-{% endif %}Event</title>
+    <link href="{% static 'gbdb/scripts/video-js/video-js.css' %}" rel="stylesheet">
+    <script src="{% static 'gbdb/scripts/video-js/video.js' %}"></script>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
     <script type="text/javascript">
 
         {% if ispopup %}
-            opener.addBehavioralEvent({{ object.id }}, {% if object.start_time %}'{{ object.start_time.hour }}:{{ object.start_time.minute }}:{{ object.start_time.second }}.{{ object.start_time.microsecond }}'{% else %}''{% endif %}, {% if object.duration %}'{{ object.duration.hour }}:{{ object.duration.minute }}:{{ object.duration.second }}.{{ object.duration.microsecond }}'{% else %}''{% endif %},'/videos/behavioral_event/{{ object.id }}.mp4', '{% for primate in object.primates.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ primate }}{% endfor %}', '{% for context in object.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}', '{% for ethogram in object.ethograms.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ ethogram.name }}{% endfor %}', '{{ object.notes }}');
-            self.close()
+            opener.addBehavioralEvent({{ object.id }}, {% if object.start_time %}'{{ object.start_time.hour }}:{{ object.start_time.minute }}:{{ object.start_time.second }}.{{ object.start_time.microsecond }}'{% else %}''{% endif %}, {% if object.duration %}'{{ object.duration.hour }}:{{ object.duration.minute }}:{{ object.duration.second }}.{{ object.duration.microsecond }}'{% else %}''{% endif %},{{ object.start_time_seconds }},{{ object.end_time_seconds }},'/videos/behavioral_event/{{ object.id }}.mp4', '{% for primate in object.primates.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ primate }}{% endfor %}', '{% for context in object.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}', '{% for ethogram in object.ethograms.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ ethogram.name }}{% endfor %}', '{{ object.notes }}');
+            self.close();
         {% endif %}
 
         function deleteBehavioralEvent()
@@ -42,9 +44,40 @@
                 map: map,
                 title: '{{ object.observation_session.location_name }}'
             });
-
         }
         google.maps.event.addDomListener(window, 'load', initialize);
+
+        function playClip(start_time, end_time)
+        {
+            videojs("behavioral_event_video").currentTime(start_time);
+            function stopClip(){
+                if(this.currentTime()>=end_time)
+                {
+                    this.pause();
+                    this.off('timeupdate',stopClip);
+                }
+            }
+            videojs("behavioral_event_video").on("timeupdate",stopClip);
+            videojs("behavioral_event_video").play();
+            return false;
+        }
+
+        $(document).ready(function()
+        {
+            videojs.options.flash.swf = "{{ site_url }}/static/gbdb/scripts/video-js/video-js.swf";
+            {% if not object.video.name %}
+                videojs("behavioral_event_video").on("loadedmetadata",function(){
+                    this.on("timeupdate",function(){
+                        if(this.currentTime()>={{ object.end_time_seconds }})
+                            this.pause();
+                    });
+                    this.on("play",function(){
+                        if(this.currentTime()<{{ object.start_time_seconds }})
+                            this.currentTime({{ object.start_time_seconds }});
+                    });
+                });
+            {% endif %}
+        });
 
     </script>
 {% endblock %}
@@ -54,13 +87,13 @@
     <table class="tab_panel">
         <tr valign="top">
             <td>{% if object.parent %}<strong><a href="/gbdb/behavioral_event/{{ object.parent.id }}/">Parent behavioral event</a></strong>{% else %}<strong><a href="/gbdb/observation_session/{{ object.observation_session.id }}/">Observation session</a></strong>{% endif %}</td>
-        	{% if video_url_mp4 %}
-	        	<td rowspan="7">
-	                <video width="450" height="300" controls>
-	                    <source src="{{ video_url_mp4 }}" type="video/mp4">
-	                </video>
-	            </td>
-            {% endif %}
+            <td rowspan="7">
+                <video id="behavioral_event_video" class="video-js vjs-default-skin" controls preload="auto"
+                       width="450" height="300" data-setup='{}'>
+                    <source src="{{ object.video_url_mp4 }}" type="video/mp4">
+                    <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
+                </video>
+            </td>
         </tr>
         {% if object.start_time %}
             <tr valign="top">
@@ -101,9 +134,15 @@
                         <tr class="{% cycle 'even_row' 'odd_row' %}">
                             <td width=30%><strong><a href="/gbdb/behavioral_event/{{ sub_behavioral_event.id }}/">Event {{ forloop.counter }}</a></strong></td>
                             <td rowspan="7">
-                                <video width="225" height="150" controls>
-                                    <source src="{{ sub_behavioral_event.video_url_mp4 }}" type="video/mp4">
-                                </video>
+                                {% if object.video_url_mp4 %}
+                                    <a href="" onclick="return playClip({{ sub_behavioral_event.start_time_seconds }},{{ sub_behavioral_event.end_time_seconds }});">Play clip</a>
+                                {% else %}
+                                    <video id="behavioral_subevent_{{ forloop.counter0 }}_video" class="video-js vjs-default-skin" controls preload="auto"
+                                           width="225" height="150" data-setup='{}'>
+                                        <source src="{{ sub_behavioral_event.video_url_mp4 }}" type="video/mp4">
+                                        <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
+                                    </video>
+                                {% endif %}
                             </td>
                         </tr>
                         <tr class="{% cycle 'even_row' 'odd_row' %}">
@@ -137,9 +176,15 @@
                         <tr class="{% cycle 'even_row' 'odd_row' %}">
                             <td width=30%><strong><a href="/gbdb/gestural_event/{{ sub_gestural_event.id }}/">Event {{ forloop.counter }}</a></strong></td>
                             <td rowspan="11">
-                                <video width="225" height="150" controls>
-                                    <source src="{{ sub_behavioral_event.video_url_mp4 }}" type="video/mp4">
-                                </video>
+                                {% if object.video_url_mp4 %}
+                                    <a href="" onclick="return playClip({{ sub_gestural_event.start_time_seconds }},{{ sub_gestural_event.end_time_seconds }});">Play clip</a>
+                                {% else %}
+                                    <video id="gestural_subevent_{{ forloop.counter0 }}_video" class="video-js vjs-default-skin" controls preload="auto"
+                                           width="225" height="150" data-setup='{}'>
+                                        <source src="{{ sub_gestural_event.video_url_mp4 }}" type="video/mp4">
+                                        <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
+                                    </video>
+                                {% endif %}
                             </td>
                         </tr>
                         <tr class="{% cycle 'even_row' 'odd_row' %}">
