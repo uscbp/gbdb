@@ -32,6 +32,15 @@
                     <td>{{ form.start_time }}</td>
                     <td class="myerrors" width=10%>{{ form.start_time.errors }}</td>
                 </tr>
+                {% if not form.instance.parent.video.name %}
+                    <tr valign=top>
+                        <td>{{ form.relative_to.label_tag }}</td>
+                        <td>{{ form.relative_to }}</td>
+                        <td class="myerrors">{{ form.relative_to.errors }}</td>
+                    </tr>
+                {% else %}
+                    <input id="id_relative_to" name="relative_to" type="hidden" value="behavioral_event"/>
+                {% endif %}
                 <tr valign=top>
                     <td>{{ form.duration.label_tag }}*</td>
                     <td>{{ form.duration }}</td>

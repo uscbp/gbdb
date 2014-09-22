@@ -189,11 +189,16 @@ class ObservationSession(models.Model):
 
         
 class BehavioralEvent(MPTTModel):
+    RELATIVE_TO_CHOICES = (
+        ('behavioral_event', 'behavioral event'),
+        ('observation_session', 'observation session'),
+    )
     observation_session=models.ForeignKey(ObservationSession, null=True, blank=True)
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
     type = models.CharField(max_length=45, blank=False, null=False, default='generic')
     start_time = models.TimeField(blank=True, null=True)
     duration = models.TimeField(blank=True, null=True)
+    relative_to = models.CharField(max_length=100, choices=RELATIVE_TO_CHOICES, default='observation_session')
     video = models.FileField(upload_to='videos/behavioral_event/temp',  blank=True, null=True)
     primates = models.ManyToManyField(Primate)
     contexts = models.ManyToManyField(Context)
@@ -255,6 +260,9 @@ class BehavioralEvent(MPTTModel):
 
     def start_time_seconds(self):
         if self.start_time:
+            if self.parent is not None:
+                if self.parent.video.name is None or not len(self.parent.video.name) and  self.relative_to=='behavioral_event':
+                    return self.parent.start_time_seconds()+self.start_time.hour*60*60+self.start_time.minute*60+self.start_time.second
             return self.start_time.hour*60*60+self.start_time.minute*60+self.start_time.second
         return 0
 
@@ -275,7 +283,7 @@ class GesturalEvent(BehavioralEvent):
     CHOICES = (
         ('yes', 'Yes'),
         ('no', 'No'),
-        )
+    )
     signaller = models.ForeignKey('Primate', related_name='signaller', null=True)
     recipient = models.ForeignKey('Primate', related_name='recipient', null=True)
     gesture = models.ForeignKey('Gesture', related_name='gesture', null=True)
