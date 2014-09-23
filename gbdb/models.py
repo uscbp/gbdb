@@ -20,8 +20,9 @@ def convert_to_mp4(mp4_filename, orig_filename, start_time=None, duration=None):
         cmds.extend(['-t', duration])
     ext=os.path.splitext(orig_filename)[1]
     cmds.extend(['-vcodec', 'libx264'])
-    if ext.lower() == '.mov':
-        cmds.extend(['-strict', '-2'])
+    #this is does not get called on behavioral event chop
+    #if ext.lower() == '.mov':
+    cmds.extend(['-strict', '-2'])
     cmds.append(mp4_filename)
     print('converting to mp4')
     print(cmds)
