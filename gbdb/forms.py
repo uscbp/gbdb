@@ -98,6 +98,7 @@ class BehavioralEventForm(forms.ModelForm):
     parent=forms.ModelChoiceField(queryset=BehavioralEvent.objects.all(),widget=forms.HiddenInput, required=False)
     start_time = forms.TimeField(widget=TimeInput(), required=False)
     duration = forms.TimeField(widget=TimeInput() ,required=False)
+    relative_to = forms.ChoiceField(choices=BehavioralEvent.RELATIVE_TO_CHOICES, help_text='Time relative to', required=True)
     video = forms.FileField(required=False)
     primates = forms.ModelMultipleChoiceField(queryset=Primate.objects.all(), widget=forms.SelectMultiple(attrs={"onChange":'populatePrimates()'}), required=False)
     contexts = forms.ModelMultipleChoiceField(queryset=Context.objects.all(), widget=autocomplete_light.MultipleChoiceWidget('ContextAutocomplete'))
@@ -107,14 +108,17 @@ class BehavioralEventForm(forms.ModelForm):
     class Meta:
         model=BehavioralEvent
 
+
 BaseBehavioralEventFormSet = inlineformset_factory(ObservationSession, BehavioralEvent, form=BehavioralEventForm,
     fk_name='observation_session', extra=0, can_delete=True, can_order=True)
+
 
 class SubBehavioralEventForm(BehavioralEventForm):
     primates = forms.ModelMultipleChoiceField(queryset=Primate.objects.all(), widget=forms.SelectMultiple(), required=False)
 
     class Meta:
         model=BehavioralEvent
+
 
 SubBehavioralEventFormSet = inlineformset_factory(BehavioralEvent, BehavioralEvent, form=SubBehavioralEventForm,
     fk_name='parent', extra=0, can_delete=True, can_order=True)

@@ -137,6 +137,14 @@
             }
         }
 
+        function save()
+        {
+            document.getElementById('savingMsg').style.display = 'block';
+            document.getElementById('savingOver').style.display = 'block';
+            document.getElementById('behavioralEventForm').submit();
+
+        }
+
         $(document).ready(function() {
             {% for sub_behavioral_event_form in sub_behavioral_event_formset.forms %}
                 widget=$('#id_sub_behavioral_event-{{ forloop.counter0 }}-contexts-wrapper').yourlabsWidget();
@@ -183,9 +191,23 @@
                 {% if not allow_video %}
                     <tr valign=top>
                         <td width=12%>{{ form.start_time.label_tag }}*</td>
-                        <td>{{ form.start_time }} (relative to start of observation session video)  </td>
+                        <td>{{ form.start_time }}{% if not form.instance.parent %} (relative to start of observation session video){% endif %}</td>
                         <td class="myerrors" width=10%>{{ form.start_time.errors }}</td>
                     </tr>
+                    {% if form.instance.parent %}
+                        {% if not form.instance.parent.video.name %}
+                            <tr valign=top>
+                                <td>{{ form.relative_to.label_tag }}</td>
+                                <td>{{ form.relative_to }}</td>
+                                <td class="myerrors">{{ form.relative_to.errors }}</td>
+                            </tr>
+                        {% else %}
+                            <input id="id_relative_to" name="relative_to" type="hidden" value="behavioral_event"/>
+                        {% endif %}
+
+                    {% else %}
+                        <input id="id_relative_to" name="relative_to" type="hidden" value="observation_session"/>
+                    {% endif %}
                     <tr valign=top>
                         <td>{{ form.duration.label_tag }}*</td>
                         <td>{{ form.duration }}</td>
@@ -262,6 +284,17 @@
                                                     </td>
                                                 </tr>
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                                    <td style="width:60px">&nbsp;</td>
+                                                    <td style="width:120px">Relative to</td>
+                                                    <td colspan="4">
+                                                        {% if not allow_video %}
+                                                            {{ sub_behavioral_event_form.relative_to }}
+                                                        {% else %}
+                                                            <input id="id_sub_behavioral_event-{{ forloop.counter0 }}-relative_to" name="sub_behavioral_event-{{ forloop.counter0 }}-relative_to" value="behavioral_event" type="hidden"/>
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td width=60px>&nbsp;</td>
                                                     <td style="width:120px">Duration</td>
                                                     <td colspan="4">
@@ -329,6 +362,17 @@
                                                     <td style="width:120px">Start time</td>
                                                     <td colspan="4">
                                                         {{ sub_gestural_event_form.start_time }} (Relative to the start of the {% if allow_video %}behavioral event{% else %}observation session{% endif %} video)
+                                                    </td>
+                                                </tr>
+                                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                                                    <td style="width:60px">&nbsp;</td>
+                                                    <td style="width:120px">Relative to</td>
+                                                    <td colspan="4">
+                                                        {% if not allow_video %}
+                                                            {{ sub_gestural_event_form.relative_to }}
+                                                        {% else %}
+                                                            <input id="id_sub_gestural_event-{{ forloop.counter0 }}-relative_to" name="sub_gestural_event-{{ forloop.counter0 }}-relative_to" value="behavioral_event" type="hidden"/>
+                                                        {% endif %}
                                                     </td>
                                                 </tr>
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
@@ -405,7 +449,7 @@
             {{ form.observation_session }}
             {{ form.parent }}
             {{ form.collator }}
-            <input type="submit" value="Save" />&nbsp;
+            <input type="button" value="Save" onclick="save();"/>&nbsp;
             {% if form.instance.id %}
                 <input type="button" value="Cancel" onclick="document.location.href='/gbdb/behavioral_event/{{ form.instance.id }}/';"/>&nbsp;
             {% endif %}
@@ -424,6 +468,20 @@
                     <td style="width:120px">Start time</td>
                     <td colspan="4">
                         <input id="id_sub_behavioral_event-<%= idx %>-start_time" name="sub_behavioral_event-<%= idx %>-start_time" type="text" /> (Relative to the start of the {% if allow_video %}behavioral event{% else %}observation session{% endif %} video)
+                    </td>
+                </tr>
+                <tr class="<%= getTRTag(idx) %>" valign=top>
+                    <td style="width:60px">&nbsp;</td>
+                    <td style="width:120px">Relative to</td>
+                    <td colspan="4">
+                        {% if not allow_video %}
+                            <select id="id_sub_behavioral_event-<%= idx %>-relative_to" name="sub_behavioral_event-<%= idx %>-relative_to">
+                                <option value="behavioral_event">behavioral event</option>
+                                <option value="observation_session">observation session</option>
+                            </select>
+                        {% else %}
+                            <input id="id_sub_behavioral_event-<%= idx %>-relative_to" name="sub_behavioral_event-<%= idx %>-relative_to" value="behavioral_event" type="hidden"/>
+                        {% endif %}
                     </td>
                 </tr>
                 <tr class="<%= getTRTag(idx) %>" valign=top>
@@ -513,6 +571,19 @@
                         <input id="id_sub_gestural_event-<%= idx %>-start_time" name="sub_gestural_event-<%= idx %>-start_time" type="text" /> (Relative to the start of the {% if allow_video %}behavioral event{% else %}observation session{% endif %} video)
                     </td>
                 </tr>
+                <tr class="<%= getTRTag(idx) %>" valign=top>
+                    <td style="width:60px">&nbsp;</td>
+                    <td style="width:120px">Relative to</td>
+                    <td colspan="4">
+                        {% if not allow_video %}
+                            <select id="id_sub_gestural_event-<%= idx %>-relative_to" name="sub_gestural_event-<%= idx %>-relative_to">
+                                <option value="behavioral_event">behavioral event</option>
+                                <option value="observation_session">observation session</option>
+                            </select>
+                        {% else %}
+                            <input id="id_sub_gestural_event-<%= idx %>-relative_to" name="sub_gestural_event-<%= idx %>-relative_to" value="behavioral_event" type="hidden"/>
+                        {% endif %}
+                    </td>
                 <tr class="<%= getTRTag(idx) %>" valign=top>
                     <td width=60px>&nbsp;</td>
                     <td style="width:120px">Duration</td>

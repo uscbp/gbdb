@@ -1,3 +1,4 @@
+from django.contrib.sites.models import get_current_site
 import os
 import subprocess
 import datetime
@@ -128,6 +129,9 @@ class ObservationSession(models.Model):
     class Meta:
         app_label='gbdb'
 
+    def video_url_mp4(self):
+        return ''.join(['http://', get_current_site(None).domain, os.path.join('/media/videos/observation_session','%d.mp4' % self.id)])
+
     def get_absolute_url(self):
         return reverse('observation_session_view', kwargs={'pk': self.pk})
 
@@ -183,21 +187,20 @@ class ObservationSession(models.Model):
             mp4_filename='%s.mp4' % root
             if not os.path.exists(mp4_filename):
                 convert_to_mp4(mp4_filename, orig_filename)
-#            ogg_filename='%s.ogg' % root
-#            if not os.path.exists(ogg_filename):
-#                convert_to_ogg(ogg_filename, orig_filename)
-#            swf_filename='%s.swf' % root
-#            if not os.path.exists(swf_filename):
-#                convert_to_swf(swf_filename, orig_filename)
-        
+
         
 class BehavioralEvent(MPTTModel):
+    RELATIVE_TO_CHOICES = (
+        ('behavioral_event', 'behavioral event'),
+        ('observation_session', 'observation session'),
+    )
     observation_session=models.ForeignKey(ObservationSession, null=True, blank=True)
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
     type = models.CharField(max_length=45, blank=False, null=False, default='generic')
     start_time = models.TimeField(blank=True, null=True)
     duration = models.TimeField(blank=True, null=True)
-    video = models.FileField(upload_to='videos/behavioral_event/%Y/%m/%d',  blank=True, null=True)
+    relative_to = models.CharField(max_length=100, choices=RELATIVE_TO_CHOICES, default='observation_session')
+    video = models.FileField(upload_to='videos/behavioral_event/temp',  blank=True, null=True)
     primates = models.ManyToManyField(Primate)
     contexts = models.ManyToManyField(Context)
     ethograms = models.ManyToManyField(Ethogram)
@@ -206,35 +209,20 @@ class BehavioralEvent(MPTTModel):
     RENAME_FILES = {
         'video': {'dest': 'videos/behavioral_event', 'keep_ext': True}
     }
+
     class Meta:
         app_label='gbdb'
 
     def get_absolute_url(self):
         return reverse('behavioral_event_view', kwargs={'pk': self.pk})
-        #return reverse('non_admin:widget_update', args=(self.pk,))
 
-    def segment_video(self, parent_video_name):
-        parent_root, parent_ext = os.path.splitext(parent_video_name)
-        start_time_string = '%d:%d:%d.%d' % (self.start_time.hour, self.start_time.minute, self.start_time.second,
-                                             self.start_time.microsecond)
-        duration_string = '%d:%d:%d.%d' % (self.duration.hour, self.duration.minute, self.duration.second,
-                                           self.duration.microsecond)
-        td = datetime.date.today()
-        end_time=(datetime.datetime.combine(td, self.start_time)+datetime.timedelta(self.duration.hour,self.duration.minute,self.duration.second,self.duration.microsecond)).time()
-        #end_time_string='%d:%d:%d.%d' % (end_time.hour, end_time.minute, end_time.second, end_time.microsecond)
-        orig_filename='%s%s' % (os.path.join(settings.MEDIA_ROOT,parent_root),parent_ext)
-        new_path = os.path.join(settings.MEDIA_ROOT, 'videos', 'behavioral_event')
-        if not os.path.exists(new_path):
-            os.mkdir(new_path)
-        mp4_filename = os.path.join(new_path, '%d.mp4' % self.id)
-        if not os.path.exists(mp4_filename):
-            convert_to_mp4(mp4_filename, orig_filename, start_time=start_time_string, duration=duration_string)
-#        ogg_filename = os.path.join(new_path, '%d.ogg' % self.id)
-#        if not os.path.exists(ogg_filename):
-#            convert_to_ogg(ogg_filename, mp4_filename, start_time=start_time_string, end_time=end_time_string)
-#        swf_filename = os.path.join(new_path, '%d.swf' % self.id)
-#        if not os.path.exists(swf_filename):
-#            convert_to_swf(swf_filename, orig_filename, start_time=start_time_string, duration=duration_string)
+    def video_url_mp4(self):
+        if self.video.name:
+            return ''.join(['http://', get_current_site(None).domain, os.path.join('/media/videos/behavioral_event','%d.mp4' % self.id)])
+        elif self.parent:
+            return self.parent.video_url_mp4()
+        else:
+            return self.observation_session.video_url_mp4()
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         rename_files = getattr(self, 'RENAME_FILES', None)
@@ -270,21 +258,17 @@ class BehavioralEvent(MPTTModel):
             mp4_filename='%s.mp4' % root
             if not os.path.exists(mp4_filename):
                 convert_to_mp4(mp4_filename, orig_filename)
-#            ogg_filename='%s.ogg' % root
-#            if not os.path.exists(ogg_filename):
-#                convert_to_ogg(ogg_filename, orig_filename)
-#            swf_filename='%s.swf' % root
-#            if not os.path.exists(swf_filename):
-#                convert_to_swf(swf_filename, orig_filename)
-        else:
-            if self.parent is None:
-                parent_video_name=os.path.join('videos','observation_session','%d.mp4' % self.observation_session.id)
-            else:
-                parent_video_name=os.path.join('videos','behavioral_event','%d.mp4' % self.parent.id)
-            self.segment_video(parent_video_name)
-            self.video.name=os.path.join('videos','behavioral_event','%d.mp4' % self.id)
-            self.save()
 
+    def start_time_seconds(self):
+        if self.start_time:
+            if self.parent is not None:
+                if self.parent.video.name is None or not len(self.parent.video.name) and  self.relative_to=='behavioral_event':
+                    return self.parent.start_time_seconds()+self.start_time.hour*60*60+self.start_time.minute*60+self.start_time.second
+            return self.start_time.hour*60*60+self.start_time.minute*60+self.start_time.second
+        return 0
+
+    def end_time_seconds(self):
+        return self.start_time_seconds()+self.duration.hour*60*60+self.duration.minute*60+self.duration.second
         
 class BodyPart(models.Model):
     name = models.CharField(max_length=100)
@@ -300,7 +284,7 @@ class GesturalEvent(BehavioralEvent):
     CHOICES = (
         ('yes', 'Yes'),
         ('no', 'No'),
-        )
+    )
     signaller = models.ForeignKey('Primate', related_name='signaller', null=True)
     recipient = models.ForeignKey('Primate', related_name='recipient', null=True)
     gesture = models.ForeignKey('Gesture', related_name='gesture', null=True)

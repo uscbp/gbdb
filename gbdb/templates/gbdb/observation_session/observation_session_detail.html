@@ -2,6 +2,13 @@
 {% load staticfiles %}
 {% block extrahead %}
     <title>GBDB - {% if form.instance.id%}Edit{% else %}Add{% endif %} Observation Session</title>
+    <script type="text/javascript">
+        function save(){
+            document.getElementById('savingMsg').style.display = 'block';
+            document.getElementById('savingOver').style.display = 'block';
+            document.getElementById('observationSessionForm').submit();
+        }
+    </script>
 {% endblock %}
 {% block content %}
     <div id="detail">
@@ -48,7 +55,7 @@
 		            Behavioral Events can be added once the Observation Session is saved.
 		            <br>
 		            {{ form.collator }}
-		            <input type="submit" value="Save" />&nbsp;
+		            <input type="button" value="Save" onclick="save()"/>&nbsp;
 		            {% if form.instance.id %}
 		                <input type="button" value="Cancel" onclick="document.location.href='/gbdb/observation_session/{{ form.instance.id }}/';"/>&nbsp;
 		            {% endif %}
