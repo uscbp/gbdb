@@ -4,6 +4,7 @@
     <title>GBDB - View Behavioral {% if object.parent %}Sub-{% endif %}Event</title>
     <link href="{% static 'gbdb/scripts/video-js/video-js.css' %}" rel="stylesheet">
     <script src="{% static 'gbdb/scripts/video-js/video.js' %}"></script>
+    <script src="{% static 'gbdb/scripts/video-framebyframe.js' %}"></script>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
     <script type="text/javascript">
 
@@ -86,6 +87,19 @@
                     this.on("play",playBehavioralEventClip);
                 });
             {% endif %}
+            videojs('behavioral_event_video', {
+                plugins: {
+                    framebyframe: {
+                        fps: 30,
+                        steps: [
+                            { text: '-5', step: -5 },
+                            { text: '-1', step: -1 },
+                            { text: '+1', step: 1 },
+                            { text: '+5', step: 5 },
+                        ]
+                    }
+                }
+            });
         });
         google.maps.event.addDomListener(window, 'load', initialize);
 

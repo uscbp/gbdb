@@ -4,6 +4,7 @@
     <title>GBDB - View Observation Session</title>
     <link href="{% static 'gbdb/scripts/video-js/video-js.css' %}" rel="stylesheet">
     <script src="{% static 'gbdb/scripts/video-js/video.js' %}"></script>
+    <script src="{% static 'gbdb/scripts/video-framebyframe.js' %}"></script>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
     <script type="text/javascript">
         function deleteObservationSession()
@@ -69,6 +70,19 @@
         $(document).ready(function()
         {
             videojs.options.flash.swf = "{{ site_url }}/static/gbdb/scripts/video-js/video-js.swf";
+            videojs('observation_session_video', {
+                plugins: {
+                    framebyframe: {
+                        fps: 30,
+                        steps: [
+                            { text: '-5', step: -5 },
+                            { text: '-1', step: -1 },
+                            { text: '+1', step: 1 },
+                            { text: '+5', step: 5 },
+                        ]
+                    }
+                }
+            });
         });
     </script>
 {% endblock %}
