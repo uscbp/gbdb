@@ -12,6 +12,7 @@ autocomplete_light.autodiscover()
 urlpatterns = patterns('',
                        
     url(r'^autocomplete/', include('autocomplete_light.urls')),
+    url(r'^timeline/', include('timelinejs.urls')),
                        
     url(r'^behavioral_event/(?P<pk>\d+)/$', BehavioralEventDetailView.as_view(), {}, 'behavioral_event_view'),
     url(r'^behavioral_event/(?P<pk>\d+)/delete/$', DeleteBehavioralEventView.as_view(), {}, 'behavioral_event_delete'),

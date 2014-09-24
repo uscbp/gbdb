@@ -22,8 +22,8 @@ def convert_to_mp4(mp4_filename, orig_filename, start_time=None, duration=None):
     ext=os.path.splitext(orig_filename)[1]
     cmds.extend(['-vcodec', 'libx264'])
     #this is does not get called on behavioral event chop
-    #if ext.lower() == '.mov':
-    cmds.extend(['-strict', '-2'])
+    if ext.lower() == '.mov':
+        cmds.extend(['-strict', '-2'])
     cmds.append(mp4_filename)
     print('converting to mp4')
     print(cmds)
@@ -187,6 +187,20 @@ class ObservationSession(models.Model):
             mp4_filename='%s.mp4' % root
             if not os.path.exists(mp4_filename):
                 convert_to_mp4(mp4_filename, orig_filename)
+                
+    def to_dict(self):
+        d = {}
+        d['startDate'] = self.date.strftime('%Y,%m,%d')
+        d['type'] = "default"
+        d['headline'] = "Observation Session"
+        d['text'] = "timeline"
+        d['asset'] = {'media': "", 'credit': "", 'caption': "" }
+        events = []
+        for e in self.behavioralevent_set.all():
+            events.append(dict([(attr, getattr(e, attr)) for attr in [f.name for f in e._meta.fields]]))
+        d['date'] = [ e.to_dict() for e in self.behavioralevent_set.all()]
+        timeline = {'timeline': d}
+        return timeline
 
         
 class BehavioralEvent(MPTTModel):
@@ -269,6 +283,18 @@ class BehavioralEvent(MPTTModel):
 
     def end_time_seconds(self):
         return self.start_time_seconds()+self.duration.hour*60*60+self.duration.minute*60+self.duration.second
+    
+    def to_dict(self):
+        d = {}
+        #start_datetime = datetime.datetime(0,0,0, self.start_time.hour, self.start_time.minute, self.start_time.second)
+        start_datetime = datetime.datetime.combine(self.observation_session.date, self.start_time)
+        end_datetime = start_datetime + datetime.timedelta(hours=self.duration.hour, minutes=self.duration.minute, seconds=self.duration.second)
+        d['startDate'] = start_datetime.strftime('%Y,%m,%d,%H,%M,%S')
+        d['endDate'] = end_datetime.strftime('%Y,%m,%d,%H,%M,%S')
+        d['headline'] = "event"
+        d['text'] = ""
+        d['asset'] = {'media': "", 'credit': "", 'caption': "" }
+        return d
         
 class BodyPart(models.Model):
     name = models.CharField(max_length=100)

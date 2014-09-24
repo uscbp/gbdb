@@ -8,6 +8,7 @@ from django.views.generic import CreateView, UpdateView, DeleteView, DetailView,
 from gbdb.forms import ObservationSessionForm, ObservationSessionSearchForm
 from gbdb.models import ObservationSession, BehavioralEvent
 from gbdb.search import runObservationSessionSearch
+from timelinejs.views import JSONResponseMixin
 
 class EditObservationSessionMixin():
     model=ObservationSession
@@ -56,6 +57,7 @@ class ObservationSessionDetailView(DetailView):
         context = super(ObservationSessionDetailView, self).get_context_data(**kwargs)
         context['behavioral_events'] = BehavioralEvent.objects.filter(observation_session=self.object, parent__isnull=True)
         context['site_url']='http://%s' % get_current_site(self.request)
+        context['timeline']=self.object
         return context
 
 
