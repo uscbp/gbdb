@@ -291,7 +291,7 @@ class BehavioralEvent(MPTTModel):
         end_datetime = start_datetime + datetime.timedelta(hours=self.duration.hour, minutes=self.duration.minute, seconds=self.duration.second)
         d['startDate'] = start_datetime.strftime('%Y,%m,%d,%H,%M,%S')
         d['endDate'] = end_datetime.strftime('%Y,%m,%d,%H,%M,%S')
-        d['headline'] = "event"
+        d['headline'] = "Behavioral Event"
         d['text'] = ""
         d['asset'] = {'media': "", 'credit': "", 'caption': "" }
         return d
