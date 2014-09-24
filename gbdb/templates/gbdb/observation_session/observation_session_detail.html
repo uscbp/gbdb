@@ -21,8 +21,13 @@
                     <td class="myerrors">{{ form.date.errors }}</td>
                 </tr>
                 <tr valign=top>
+                    <td align=top>Saved locations</td>
+                    <td>{{ form.saved_locations }}</td>
+                    <td class="myerrors">{{ form.saved_locations.errors }}</td>
+                </tr>
+                <tr valign=top>
                     <td valign=top>{{ form.location_name.label_tag }}*</td>
-                    <td>{{ form.location_name }}</td>
+                    <td>{{ form.location_name }} <a href="" onclick="return createSavedLocation();">Save location</a></td>
                     <td class="myerrors">{{ form.location_name.errors }}</td>
                 </tr>
                 <tr valign=top>

@@ -1443,5 +1443,77 @@
         "fields": {
             "name": "bottom "
         }
+    },
+    {
+        "model": "gbdb.SavedLocation",
+        "pk": 1,
+        "fields": {
+            "name": "Budongo Forest Reserve",
+            "latitude": 1.47,
+            "longitude": 31.34
+        }
+    },
+    {
+        "model": "gbdb.SavedLocation",
+        "pk": 2,
+        "fields": {
+            "name": "Bossou, Guinea",
+            "latitude": 5.38,
+            "longitude": 8.30
+        }
+    },
+    {
+        "model": "gbdb.SavedLocation",
+        "pk": 3,
+        "fields": {
+            "name": "Tai Forest, Cote de Ivore",
+            "latitude": 5.41,
+            "longitude": 6.56
+        }
+    },
+    {
+        "model": "gbdb.SavedLocation",
+        "pk": 4,
+        "fields": {
+            "name": "Gombe, Tanzania",
+            "latitude": 4.42,
+            "longitude": 29.37
+        }
+    },
+    {
+        "model": "gbdb.SavedLocation",
+        "pk": 5,
+        "fields": {
+            "name": "Kibale",
+            "latitude": 0.29,
+            "longitude": 30.22
+        }
+    },
+    {
+        "model": "gbdb.SavedLocation",
+        "pk": 6,
+        "fields": {
+            "name": "Mahale, Tanzania",
+            "latitude": 6.15,
+            "longitude": 29.56
+        }
+    },
+    {
+        "model": "gbdb.SavedLocation",
+        "pk": 7,
+        "fields": {
+            "name": "Mbeli Bai, Nouabale-Ndoki National Park, Republic of Congo",
+            "latitude": 2.43,
+            "longitude": 16.43
+        }
+    },
+    {
+        "model": "gbdb.SavedLocation",
+        "pk": 8,
+        "fields": {
+            "name": "Salonga National Park, Democratic Republic of Congo",
+            "latitude": 2.26,
+            "longitude": 20.54
+        }
     }
 ]

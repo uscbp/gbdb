@@ -348,3 +348,15 @@ class Gesture(models.Model):
 
     def get_absolute_url(self):
         return reverse('gesture_view', kwargs={'pk': self.pk})
+
+
+class SavedLocation(models.Model):
+    name = models.CharField(max_length=100) #this should be some kind of geo model
+    latitude = models.DecimalField(max_digits=10, decimal_places=5)
+    longitude = models.DecimalField(max_digits=10, decimal_places=5)
+
+    class Meta:
+        app_label='gbdb'
+
+    def __unicode__(self):
+        return self.name

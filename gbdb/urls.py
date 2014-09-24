@@ -1,6 +1,7 @@
 from django.conf.urls import *
 from gbdb.views.behavioral_event import CreateBehavioralEventView, UpdateBehavioralEventView, BehavioralEventDetailView, DeleteBehavioralEventView, SearchBehavioralEventView
 from gbdb.views.gestural_event import GesturalEventDetailView, DeleteGesturalEventView, UpdateGesturalEventView, CreateGesturalEventView
+from gbdb.views.location import SavedLocationDetailView, CreateSavedLocationView
 from gbdb.views.main import IndexView
 from gbdb.views.observation_session import CreateObservationSessionView, ObservationSessionDetailView, DeleteObservationSessionView, UpdateObservationSessionView, SearchObservationSessionView
 from gbdb.views.primate import CreatePrimateView, PrimateDetailView, DeletePrimateView, UpdatePrimateView, SearchPrimateView
@@ -42,6 +43,9 @@ urlpatterns = patterns('',
     url(r'^gesture/(?P<pk>\d+)/edit/$', UpdateGestureView.as_view(), {}, 'gesture_edit'),
     url(r'^gesture/new/$', CreateGestureView.as_view(), {}, 'gesture_add'),
     url(r'^gesture/search/$', SearchGestureView.as_view(), {}, 'gesture_search'),
+
+    url(r'^saved_location/$', SavedLocationDetailView.as_view(), {}, 'saved_location_view'),
+    url(r'^saved_location/new/$', CreateSavedLocationView.as_view(), {}, 'saved_location_add'),
 
     url(r'', IndexView.as_view(), {}, 'index'),
 )

@@ -33,3 +33,54 @@ function getTRTag(idx)
     else
         return 'odd_row';
 }
+
+function populateLocation()
+{
+    var location_id=document.getElementById('id_saved_locations').value;
+    var data={'id':location_id};
+    var args={type:"GET", url:"/gbdb/saved_location/", data: data, complete: donePopulateLocation };
+    $.ajax(args)
+}
+
+function donePopulateLocation(res, status)
+{
+    var txt = res.responseText;
+    var data = eval('('+txt+')');
+    if (status=="success")
+    {
+        document.getElementById('id_location_name').value=data.name;
+        document.getElementById('id_location_0').value=data.latitude;
+        document.getElementById('id_location_1').value=data.longitude;
+    }
+}
+
+function createSavedLocation()
+{
+    var name=document.getElementById('id_location_name').value;
+    var latitude=document.getElementById('id_location_0').value;
+    var longitude=document.getElementById('id_location_1').value;
+    if(name.length>0 && latitude.length>0 && longitude.length>0)
+    {
+        var data={'name':name, 'latitude':latitude, 'longitude':longitude};
+        var args={type:"POST", url:"/gbdb/saved_location/new/", data: data, complete: doneCreateSavedLocation };
+        $.ajax(args);
+    }
+    return false;
+}
+
+function doneCreateSavedLocation(res, status)
+{
+    var txt = res.responseText;
+    var data = eval('('+txt+')');
+    if (status=="success")
+    {
+        alert('Location saved');
+        var locElem=document.createElement('option');
+        locElem.value=data.id;
+        locElem.innerHTML=data.name;
+        locElem.selected='selected';
+        var selectElem=document.getElementById('id_saved_locations');
+        selectElem.appendChild(locElem);
+    }
+    return false;
+}
