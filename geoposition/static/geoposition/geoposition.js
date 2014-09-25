@@ -3,7 +3,6 @@ if (jQuery != undefined) {
         'jQuery': jQuery,
     }
 }
-
 (function($) {
 
     $(document).ready(function() {
@@ -153,6 +152,7 @@ if (jQuery != undefined) {
             if ($latitudeField.val() && $longitudeField.val()) {
                 google.maps.event.trigger(marker, 'dragend');
             }
+            globalMarker=marker;
 
             circle = new google.maps.Circle({
                 map: map,

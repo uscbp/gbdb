@@ -1,3 +1,5 @@
+var globalMarker;
+
 function deleteInlineForm(prefix, idx){
     document.getElementById('id_'+prefix+'-'+idx+'-DELETE').value='on';
     document.getElementById(prefix+'-'+idx).style.display='none';
@@ -51,6 +53,10 @@ function donePopulateLocation(res, status)
         document.getElementById('id_location_name').value=data.name;
         document.getElementById('id_location_0').value=data.latitude;
         document.getElementById('id_location_1').value=data.longitude;
+        var center = new google.maps.LatLng(parseFloat(data.latitude), parseFloat(data.longitude));
+        globalMarker.setPosition(center);
+        map.setCenter(center);
+        map.setZoom(15);
     }
 }
 
