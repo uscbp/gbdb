@@ -26,8 +26,13 @@ class CreateSavedLocationView(JSONResponseMixin,BaseCreateView):
             if 'name' in self.request.POST and len(self.request.POST['name']) and 'latitude' in self.request.POST and \
                len(self.request.POST['latitude']) and 'longitude' in self.request.POST and \
                len(self.request.POST['longitude']):
-                location=SavedLocation(name=self.request.POST['name'], latitude=float(self.request.POST['latitude']),
-                    longitude=float(self.request.POST['longitude']))
+                if not SavedLocation.objects.filter(name=self.request.POST['name']).count():
+                    location=SavedLocation(name=self.request.POST['name'], latitude=float(self.request.POST['latitude']),
+                        longitude=float(self.request.POST['longitude']))
+                else:
+                    location=SavedLocation.objects.get(name=self.request.POST['name'])
+                    location.latitude=float(self.request.POST['latitude'])
+                    location.longitude=float(self.request.POST['longitude'])
                 location.save()
                 context = {'id': location.id, 'name': location.name}
         return context
