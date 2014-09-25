@@ -5,6 +5,7 @@
     <link href="{% static 'gbdb/scripts/video-js/video-js.css' %}" rel="stylesheet">
     <script src="{% static 'gbdb/scripts/video-js/video.js' %}"></script>
     <script src="{% static 'gbdb/scripts/video-framebyframe.js' %}"></script>
+    <script src="{% static 'gbdb/scripts/timeline.js' %}"></script>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
     <script type="text/javascript">
         function deleteObservationSession()
@@ -66,7 +67,7 @@
             videojs("observation_session_video").play();
             return false;
         }
-
+        
         $(document).ready(function()
         {
             videojs.options.flash.swf = "{{ site_url }}/static/gbdb/scripts/video-js/video-js.swf";
@@ -83,7 +84,50 @@
                     }
                 }
             });
-        });
+            
+            console.log(videojs("observation_session_video").duration());
+            
+            videojs("observation_session_video").on("loadedmetadata", function(){
+            var options = {
+					'height':100,
+					'width':this.width(),
+					'numberOfTracks':2,
+					'cursorHeight':30,
+					'periodShape':'bubble',
+					'scaleHeight':30,
+					'scaleBackgroundColor':'#000', 
+					'backgroundColor':'#EAE5E1',
+					'scaleColor':'#EAE5E1',
+					'trackSeparatorColor':'#EAE5E1', 
+					'textColor':'#EAE5E1',
+					'cursorColor':'#f00',
+					'scaleFactor':2, 
+					};
+            
+					timeline = new Timeline('observation_session_video', 'observation_session_timeline', this.duration(), options);
+					{% for behavioral_event in behavioral_events %}
+						var id = timeline.addPeriod('{{behavioral_event.start_time_seconds}}', '{{behavioral_event.end_time_seconds}}', 
+							'#'+Math.floor(Math.random()*16777215).toString(16), 2, 'Event {{ forloop.counter }}');
+						{% for child in behavioral_event.children.all %}
+						var id = timeline.addPeriod('{{child.start_time_seconds}}', '{{child.end_time_seconds}}', 
+							'#'+Math.floor(Math.random()*16777215).toString(16), 1, 'Subevent {{ forloop.counter }}');
+						{% endfor %}
+					{% endfor %}
+				});
+				
+				videojs("observation_session_video").on("loadedmetadata", function(){
+					var time = $(this).get(0).currentTime;
+					var active_data = [];
+					for(var i=0; i<periods.length-1; i++){
+						if(time > periods[i].time_in && time < periods[i+1].time_out){
+							active_data.push(periods[i].content);
+							
+						}
+					}
+				 	$('#context_data').html(active_data.join('<br /><br />'));
+				});
+				
+		});
     </script>
 {% endblock %}
 {% block content %}
@@ -100,6 +144,7 @@
                             <source id="observation_session_video_source" src="{{ object.video_url_mp4 }}" type="video/mp4">
                             <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
                         </video>
+                        <div id="observation_session_timeline"></div>
                     </td>
                 {% endif %}
             </tr>
@@ -170,6 +215,8 @@
                         </tr>
                     </table>
                 </div>
+
+			</script>
             {% endfor %}
         </div>
         {% if user == object.collator %}
@@ -218,6 +265,8 @@
             </table>
         </div>
     </script>  
+{% comment %}
 {% load timeline %}
 {% timeline %}  
+{% endcomment %}
 {% endblock %}
