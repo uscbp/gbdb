@@ -1,4 +1,4 @@
-{% extends "base_generic.html" %}
+
 {% load staticfiles %}
 {% block extrahead %}
     <title>GBDB - {% if form.instance.id%}Edit{% else %}Add{% endif %} Behavioral {% if form.instance.id and form.instance.parent %}Sub-{% endif %}Event</title>

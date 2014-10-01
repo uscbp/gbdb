@@ -233,13 +233,13 @@
                             <td><strong>Ethograms:</strong> {% for ethogram in sub_gestural_event.ethograms.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ ethogram.name }}{% endfor %}</td>
                         </tr>
                         <tr class="{% cycle 'even_row' 'odd_row' %}">
-                            <td><strong>Signaller</strong> <a href="/gbdb/primate/{{ sug_gestural_event.signaller.id }}/">{{ sub_gestural_event.signaller }}</a></td>
+                            <td><strong>Signaller</strong> <a href="/gbdb/primate/{{ sub_gestural_event.signaller.id }}/">{{ sub_gestural_event.signaller }}</a></td>
                         </tr>
                         <tr class="{% cycle 'even_row' 'odd_row' %}">
-                            <td><strong>Recipient</strong> <a href="/gbdb/primate/{{ sug_gestural_event.recipient.id }}/">{{ sub_gestural_event.recipient }}</a></td>
+                            <td><strong>Recipient</strong> <a href="/gbdb/primate/{{ sub_gestural_event.recipient.id }}/">{{ sub_gestural_event.recipient }}</a></td>
                         </tr>
                         <tr class="{% cycle 'even_row' 'odd_row' %}">
-                            <td><strong>Gesture</strong> <a href="/gbdb/gesture/{{ sug_gestural_event.gesture.id }}/">{{ sub_gestural_event.gesture }}</a></td>
+                            <td><strong>Gesture</strong> <a href="/gbdb/gesture/{{ sub_gestural_event.gesture.id }}/">{{ sub_gestural_event.gesture }}</a></td>
                         </tr>
                         <tr class="{% cycle 'even_row' 'odd_row' %}">
                             <td><strong>Recipient response</strong> {{ sub_gestural_event.recipient_response }}</td>

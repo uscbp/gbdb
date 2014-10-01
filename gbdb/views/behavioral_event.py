@@ -49,13 +49,15 @@ class EditBehavioralEventMixin():
             for sub_gestural_event_form in sub_gestural_event_formset.deleted_forms:
                 if sub_gestural_event_form.instance.id:
                     sub_gestural_event_form.instance.delete()
-
+                    
+            return redirect(self.object.observation_session.get_absolute_url())
+        
             url=self.get_success_url()
             if '_popup' in self.request.GET:
                 url+='?_popup=1'
-            return redirect(url)
-        else:
-            return self.render_to_response(self.get_context_data(form=form))
+                return redirect(self.object.observation_session.get_absolute_url())
+            else:
+                return self.render_to_response(self.get_context_data(form=form))
 
 
 class CreateBehavioralEventView(EditBehavioralEventMixin, CreateView):
