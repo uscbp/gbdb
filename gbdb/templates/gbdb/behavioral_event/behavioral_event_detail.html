@@ -1,4 +1,3 @@
-
 {% load staticfiles %}
 {% block extrahead %}
     <title>GBDB - {% if form.instance.id%}Edit{% else %}Add{% endif %} Behavioral {% if form.instance.id and form.instance.parent %}Sub-{% endif %}Event</title>
@@ -144,6 +143,27 @@
             document.getElementById('behavioralEventForm').submit();
 
         }
+        
+        function submitBehavioralEventForm(url, obs_id)
+	    {
+	        //document.getElementById('savingMsg').style.display = 'block';
+            //document.getElementById('savingOver').style.display = 'block';
+	        var frm = $('#behavioralEventForm');
+	        console.log(url);
+	        $.ajax({
+	            type: frm.attr('method'),
+	            url: url,
+	            data: frm.serialize(),
+	            success: doneSubmitBehavioralEventForm(obs_id),
+	            error: function(data) {
+	                alert("Something went wrong!");
+	            }
+	        });
+	    }
+	    
+	    function doneSubmitBehavioralEventForm(obs_id){
+	    	document.location.href='/gbdb/observation_session/'.concat(obs_id.toString(), '/');
+	    }
 
         $(document).ready(function() {
             {% for sub_behavioral_event_form in sub_behavioral_event_formset.forms %}
@@ -449,9 +469,11 @@
             {{ form.observation_session }}
             {{ form.parent }}
             {{ form.collator }}
-            <input type="button" value="Save" onclick="save();"/>&nbsp;
             {% if form.instance.id %}
-                <input type="button" value="Cancel" onclick="document.location.href='/gbdb/behavioral_event/{{ form.instance.id }}/';"/>&nbsp;
+            	<input type="button" value="Save" onclick="submitBehavioralEventForm('/gbdb/behavioral_event/{{ object.id }}/edit/', '{{ object.observation_session.id }}');"/>&nbsp;
+                <input type="button" value="Cancel" onclick="document.getElementById('context_data').innerHTML='';"/>&nbsp;
+            {% else %}
+            	<input type="button" value="Save" onclick="submitBehavioralEventForm('/gbdb/behavioral_event/new/?observation_session={{ form.initial.observation_session.id }}', '{{ form.initial.observation_session.id }}');"/>&nbsp;
             {% endif %}
         </form>
     </div>
@@ -557,7 +579,7 @@
         </div>
     </script>
     <script type="text/html" id="sub_gestural_event-template">
-        <div id="sub_gestural_event-0" name="sub_gestural_event">
+        <div id="sub_gestural_event-<%= idx %>" name="sub_gestural_event">
             <input type=hidden id="id_sub_gestural_event-<%= idx %>-DELETE" name="sub_gestural_event-<%= idx %>-DELETE"/>
             <input id="id_sub_gestural_event-<%= idx %>-observation_session" name="sub_gestural_event-<%= idx %>-observation_session" type="hidden" />
             <input id="id_sub_gestural_event-<%= idx %>-parent" name="sub_gestural_event-<%= idx %>-parent" type="hidden" />

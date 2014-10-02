@@ -9,11 +9,36 @@ from gbdb.forms import ObservationSessionForm, ObservationSessionSearchForm
 from gbdb.models import ObservationSession, BehavioralEvent
 from gbdb.search import runObservationSessionSearch
 from timelinejs.views import JSONResponseMixin
+import json
+from django.http import HttpResponse
 
 class EditObservationSessionMixin():
     model=ObservationSession
     form_class=ObservationSessionForm
     template_name='gbdb/observation_session/observation_session_detail.html'
+    
+    def render_to_json_response(self, context, **response_kwargs):
+        data = json.dumps(context)
+        response_kwargs['content_type'] = 'application/json'
+        return HttpResponse(data, **response_kwargs)
+    
+    def form_invalid(self, form):
+        response = super(EditObservationSessionMixin, self).form_invalid(form)
+        if self.request.is_ajax():
+            return self.render_to_json_response(form.errors, status=400)
+        else:
+            return response
+
+    def form_valid(self, form):
+        
+        if self.request.is_ajax():
+            self.object = form.save();
+            data = {
+#                 'pk': self.object.pk,
+#                 'start_time': self.object.start_time,
+#                 'duration': self.object.duration,
+            }
+            return self.render_to_json_response(data)
 
     def form_valid(self, form):
         context = self.get_context_data()
@@ -34,6 +59,7 @@ class CreateObservationSessionView(EditObservationSessionMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(CreateObservationSessionView,self).get_context_data(**kwargs)
+        context['template_ext'] = 'base_generic.html'
         return context
 
 
@@ -41,6 +67,7 @@ class UpdateObservationSessionView(EditObservationSessionMixin,UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(UpdateObservationSessionView,self).get_context_data(**kwargs)
+        context['template_ext'] = 'empty_base.html'
         return context
 
 
@@ -55,7 +82,12 @@ class ObservationSessionDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(ObservationSessionDetailView, self).get_context_data(**kwargs)
-        context['behavioral_events'] = BehavioralEvent.objects.filter(observation_session=self.object, parent__isnull=True)
+        event_list = []
+        behavioral_events = BehavioralEvent.objects.filter(observation_session=self.object, parent__isnull=True).order_by('start_time');
+        for behavioral_event in behavioral_events:
+            event_list.append([behavioral_event, BehavioralEvent.objects.filter(parent=behavioral_event).order_by('start_time')])
+        #context['behavioral_events'] = BehavioralEvent.objects.filter(observation_session=self.object, parent__isnull=True)
+        context['behavioral_events'] = event_list
         context['site_url']='http://%s' % get_current_site(self.request)
         context['timeline']=self.object
         return context

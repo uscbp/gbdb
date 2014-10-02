@@ -1,7 +1,30 @@
-
+{% extends template_ext %}
 {% load staticfiles %}
 {% block extrahead %}
     <title>GBDB - {% if form.instance.id%}Edit{% else %}Add{% endif %} Observation Session</title>
+    <script type="text/javascript">
+    
+    function submitObservationSessionForm(url, obs_id)
+	    {
+	        //document.getElementById('savingMsg').style.display = 'block';
+            //document.getElementById('savingOver').style.display = 'block';
+	        var frm = $('#observationSessionForm');
+	        $.ajax({
+	            type: frm.attr('method'),
+	            url: url,
+	            data: frm.serialize(),
+	            success: doneSubmitObservationSession(obs_id),
+	            error: function(data) {
+	                alert("Something went wrong!");
+	            }
+	        });
+	    }
+	    
+	    function doneSubmitObservationSession(obs_id){
+	    	document.location.href='/gbdb/observation_session/'.concat(obs_id.toString(), '/');
+	    }
+	    
+	</script>
 {% endblock %}
 {% block content %}
     <div id="detail">
@@ -53,9 +76,11 @@
 		            Behavioral Events can be added once the Observation Session is saved.
 		            <br>
 		            {{ form.collator }}
-		            <input type="submit" value="Save" />&nbsp;
 		            {% if form.instance.id %}
-		                <input type="button" value="Cancel" onclick="document.location.href='/gbdb/observation_session/{{ form.instance.id }}/';"/>&nbsp;
+		            	<input type="button" value="Save" onclick="submitObservationSessionForm('/gbdb/observation_session/{{ object.id }}/edit/', '{{ object.id }}');"/>&nbsp;
+		                <input type="button" value="Cancel" onclick="document.getElementById('context_data').innerHTML='';"/>&nbsp;
+		            {% else %}
+		            	<input type="submit" value="Save" />&nbsp;
 		            {% endif %}
 		            </td>
 		        </tr>

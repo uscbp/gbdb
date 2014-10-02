@@ -6,58 +6,83 @@ from django.views.generic import CreateView, UpdateView, DetailView, DeleteView,
 from gbdb.forms import BehavioralEventForm, SubBehavioralEventFormSet, GesturalEventFormSet, BehavioralEventSearchForm
 from gbdb.models import BehavioralEvent, ObservationSession, GesturalEvent, Context, Ethogram, Primate, Gesture
 from gbdb.search import runBehavioralEventSearch
+import json
+from django.http import HttpResponse
 
-class EditBehavioralEventMixin():
+class EditBehavioralEventMixin(object):
     model=BehavioralEvent
     form_class=BehavioralEventForm
     template_name='gbdb/behavioral_event/behavioral_event_detail.html'
+    
+    def render_to_json_response(self, context, **response_kwargs):
+        data = json.dumps(context)
+        response_kwargs['content_type'] = 'application/json'
+        return HttpResponse(data, **response_kwargs)
+    
+    def form_invalid(self, form):
+        response = super(EditBehavioralEventMixin, self).form_invalid(form)
+        if self.request.is_ajax():
+            return self.render_to_json_response(form.errors, status=400)
+        else:
+            return response
 
     def form_valid(self, form):
-        context = self.get_context_data()
-        sub_behavioral_event_formset = context['sub_behavioral_event_formset']
-        sub_gestural_event_formset = context['sub_gestural_event_formset']
-
-        if sub_behavioral_event_formset.is_valid() and sub_gestural_event_formset.is_valid():
-            self.object = form.save(commit=False)
-            self.object.save()
-            form.save_m2m()
-
-            # save sub-events
-            sub_behavioral_event_formset.instance = self.object
-            for sub_behavioral_event_form in sub_behavioral_event_formset.forms:
-                if not sub_behavioral_event_form in sub_behavioral_event_formset.deleted_forms:
-                    behavioral_event=sub_behavioral_event_form.save(commit=False)
-                    behavioral_event.parent=self.object
-                    behavioral_event.observation_session=self.object.observation_session
-                    behavioral_event.save()
-                    sub_behavioral_event_form.save_m2m()
-
-            # delete removed sub-events
-            for sub_behavioral_event_form in sub_behavioral_event_formset.deleted_forms:
-                if sub_behavioral_event_form.instance.id:
-                    sub_behavioral_event_form.instance.delete()
-
-            sub_gestural_event_formset.instance=self.object
-            for sub_gestural_event_form in sub_gestural_event_formset.forms:
-                if not sub_gestural_event_form in sub_gestural_event_formset.deleted_forms:
-                    gestural_event=sub_gestural_event_form.save(commit=False)
-                    gestural_event.parent=self.object
-                    gestural_event.observation_session=self.object.observation_session
-                    gestural_event.save()
-                    sub_gestural_event_form.save_m2m()
-
-            for sub_gestural_event_form in sub_gestural_event_formset.deleted_forms:
-                if sub_gestural_event_form.instance.id:
-                    sub_gestural_event_form.instance.delete()
-                    
-            return redirect(self.object.observation_session.get_absolute_url())
         
-            url=self.get_success_url()
-            if '_popup' in self.request.GET:
-                url+='?_popup=1'
+        if self.request.is_ajax():
+            self.object = form.save();
+            data = {
+#                 'pk': self.object.pk,
+#                 'start_time': self.object.start_time,
+#                 'duration': self.object.duration,
+            }
+            return self.render_to_json_response(data)
+        
+        else:
+            context = self.get_context_data()
+            sub_behavioral_event_formset = context['sub_behavioral_event_formset']
+            sub_gestural_event_formset = context['sub_gestural_event_formset']
+    
+            if sub_behavioral_event_formset.is_valid() and sub_gestural_event_formset.is_valid():
+                self.object = form.save(commit=False)
+                self.object.save()
+                form.save_m2m()
+    
+                # save sub-events
+                sub_behavioral_event_formset.instance = self.object
+                for sub_behavioral_event_form in sub_behavioral_event_formset.forms:
+                    if not sub_behavioral_event_form in sub_behavioral_event_formset.deleted_forms:
+                        behavioral_event=sub_behavioral_event_form.save(commit=False)
+                        behavioral_event.parent=self.object
+                        behavioral_event.observation_session=self.object.observation_session
+                        behavioral_event.save()
+                        sub_behavioral_event_form.save_m2m()
+    
+                # delete removed sub-events
+                for sub_behavioral_event_form in sub_behavioral_event_formset.deleted_forms:
+                    if sub_behavioral_event_form.instance.id:
+                        sub_behavioral_event_form.instance.delete()
+    
+                sub_gestural_event_formset.instance=self.object
+                for sub_gestural_event_form in sub_gestural_event_formset.forms:
+                    if not sub_gestural_event_form in sub_gestural_event_formset.deleted_forms:
+                        gestural_event=sub_gestural_event_form.save(commit=False)
+                        gestural_event.parent=self.object
+                        gestural_event.observation_session=self.object.observation_session
+                        gestural_event.save()
+                        sub_gestural_event_form.save_m2m()
+    
+                for sub_gestural_event_form in sub_gestural_event_formset.deleted_forms:
+                    if sub_gestural_event_form.instance.id:
+                        sub_gestural_event_form.instance.delete()
+                        
                 return redirect(self.object.observation_session.get_absolute_url())
-            else:
-                return self.render_to_response(self.get_context_data(form=form))
+            
+                url=self.get_success_url()
+                if '_popup' in self.request.GET:
+                    url+='?_popup=1'
+                    return redirect(self.object.observation_session.get_absolute_url())
+                else:
+                    return self.render_to_response(self.get_context_data(form=form))
 
 
 class CreateBehavioralEventView(EditBehavioralEventMixin, CreateView):
