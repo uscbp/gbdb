@@ -20,7 +20,6 @@ class CreateSavedLocationView(JSONResponseMixin,BaseCreateView):
     model = SavedLocation
 
     def get_context_data(self, **kwargs):
-        print('getting context data')
         context={'msg':u'No POST data sent.' }
         if self.request.is_ajax():
             if 'name' in self.request.POST and len(self.request.POST['name']) and 'latitude' in self.request.POST and \
