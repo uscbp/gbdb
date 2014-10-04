@@ -170,6 +170,30 @@
 				});
 				
 		});
+        function submitBehavioralEventForm(url, obs_id)
+        {
+            document.getElementById('savingMsg').style.display = 'block';
+            document.getElementById('savingOver').style.display = 'block';
+            var frm = $('#behavioralEventForm');
+            console.log(url);
+            $.ajax({
+                type: frm.attr('method'),
+                url: url,
+                data: frm.serialize(),
+                success: doneSubmitBehavioralEventForm
+            });
+        }
+
+        function doneSubmitBehavioralEventForm(data, status){
+            if (status=="success")
+            {
+                addBehavioralEvent(data.id, data.start_time, data.duration, data.start_time_seconds,
+                        data.end_time_seconds, data.video, data.primates, data.contexts, data.ethograms, data.notes);
+                $('#context_data').empty();
+                document.getElementById('savingMsg').style.display = 'none';
+                document.getElementById('savingOver').style.display = 'none';
+            }
+        }
     </script>
 {% endblock %}
 {% block content %}
@@ -255,7 +279,7 @@
                     {% if user == object.collator %}
 			        <input type="button" value="Edit" onclick="displayEdit('/gbdb/behavioral_event/{{behavioral_event.0.id}}/edit/')"/>&nbsp;
 			        <input type="button" value="Delete" onclick="deleteBehavioralEvent('/gbdb/behavioral_event/{{behavioral_event.0.id}}/delete/')"/>&nbsp;
-			    {% endif %}
+			        {% endif %}
                 </div>
 
         <div id="sub_behavioral_events_list">
@@ -379,12 +403,12 @@
                 </div>
             {% endfor %}
         </div>
-        {% endcomment %}
 
 			</script>
+			{% endcomment %}
             {% endfor %}
         </div>
-        
+
     </div>
     
     <div class='video_panel'>
@@ -406,17 +430,19 @@
             <table class="tab_panel">
                 <tr class="<%= getTRTag(idx) %>">
                     <td width=30%><strong><a href="/gbdb/behavioral_event/<%= id %>/">Event <%= idx %></a></strong></td>
-                    <td rowspan="7">
-                        {% if object.video.name %}
-                            <a href="" onclick="return playClip(<%= start_time_seconds %>,<%= end_time_seconds %>);">Play clip</a>
-                        {% else %}
-                            <video id="behavioral_event_<%= idx %>_video"
-                                   class="video-js vjs-default-skin" preload="all" width="225" height="150"
-                                   controls data-setup='{}'>
-                                <source src="{{ site_url }}/media/<%= video %>" type="video/mp4">
-                                <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
-                            </video>
-                        {% endif %}
+                </tr>
+                <tr class="<%= getTRTag(idx) %>">
+                    <td>
+                    {% if object.video.name %}
+                        <a href="" onclick="return playClip(<%= start_time_seconds %>,<%= end_time_seconds %>);">Play clip</a>
+                    {% else %}
+                        <video id="behavioral_event_<%= idx %>_video"
+                               class="video-js vjs-default-skin" preload="all" width="225" height="150"
+                               controls data-setup='{}'>
+                            <source src="{{ site_url }}/media/<%= video %>" type="video/mp4">
+                            <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
+                        </video>
+                    {% endif %}
                     </td>
                 </tr>
                 <% if(start_time.length>0) { %>
@@ -440,6 +466,10 @@
                     <td><strong>Notes:</strong> <%= notes %></td>
                 </tr>
             </table>
+            {% if user == object.collator %}
+                <input type="button" value="Edit" onclick="displayEdit('/gbdb/behavioral_event/<%= id %>/edit/')"/>&nbsp;
+                <input type="button" value="Delete" onclick="deleteBehavioralEvent('/gbdb/behavioral_event/<%= id %>/delete/')"/>&nbsp;
+            {% endif %}
         </div>
     </script>  
 {% comment %}

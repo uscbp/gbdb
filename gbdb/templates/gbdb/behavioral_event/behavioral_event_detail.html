@@ -143,27 +143,6 @@
             document.getElementById('behavioralEventForm').submit();
 
         }
-        
-        function submitBehavioralEventForm(url, obs_id)
-	    {
-	        //document.getElementById('savingMsg').style.display = 'block';
-            //document.getElementById('savingOver').style.display = 'block';
-	        var frm = $('#behavioralEventForm');
-	        console.log(url);
-	        $.ajax({
-	            type: frm.attr('method'),
-	            url: url,
-	            data: frm.serialize(),
-	            success: doneSubmitBehavioralEventForm(obs_id),
-	            error: function(data) {
-	                alert("Something went wrong!");
-	            }
-	        });
-	    }
-	    
-	    function doneSubmitBehavioralEventForm(obs_id){
-	    	document.location.href='/gbdb/observation_session/'.concat(obs_id.toString(), '/');
-	    }
 
         $(document).ready(function() {
             {% for sub_behavioral_event_form in sub_behavioral_event_formset.forms %}

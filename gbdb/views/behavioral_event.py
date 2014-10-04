@@ -31,10 +31,24 @@ class EditBehavioralEventMixin(object):
         if self.request.is_ajax():
             self.object = form.save();
             data = {
-#                 'pk': self.object.pk,
-#                 'start_time': self.object.start_time,
-#                 'duration': self.object.duration,
+                 'id': self.object.id,
+                 'start_time': '',
+                 'duration': '',
+                 'start_time_seconds': self.object.start_time_seconds(),
+                 'end_time_seconds': self.object.end_time_seconds(),
+                 'video': '/videos/behavioral_event/{{ object.id }}.mp4',
+                 'primates': ', '.join([primate.__str__() for primate in self.object.primates.all()]),
+                 'contexts': ', '.join([context.name for context in self.object.contexts.all()]),
+                 'ethograms': ', '.join([ethogram.name for ethogram in self.object.ethograms.all()]),
+                 'notes': self.object.notes
             }
+
+            if self.object.start_time:
+                data['start_time']='%d:%d:%d.%d' % (self.object.start_time.hour,self.object.start_time.minute,
+                                                    self.object.start_time.second,self.object.start_time.microsecond)
+            if self.object.duration:
+                data['duration']='%d:%d:%d.%d' % (self.object.duration.hour,self.object.duration.minute,
+                                                  self.object.duration.second,self.object.duration.microsecond)
             return self.render_to_json_response(data)
         
         else:
@@ -75,7 +89,7 @@ class EditBehavioralEventMixin(object):
                     if sub_gestural_event_form.instance.id:
                         sub_gestural_event_form.instance.delete()
                         
-                return redirect(self.object.observation_session.get_absolute_url())
+                #return redirect(self.object.observation_session.get_absolute_url())
             
                 url=self.get_success_url()
                 if '_popup' in self.request.GET:
