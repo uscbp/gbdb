@@ -1,3 +1,5 @@
+from django.views.generic.detail import BaseDetailView
+from django.views.generic.edit import BaseDeleteView
 from django.contrib.sites.models import get_current_site
 import os
 from django.contrib.auth.decorators import login_required
@@ -8,6 +10,7 @@ from gbdb.models import BehavioralEvent, ObservationSession, GesturalEvent, Cont
 from gbdb.search import runBehavioralEventSearch
 import json
 from django.http import HttpResponse
+from uscbp.views import JSONResponseMixin
 
 class EditBehavioralEventMixin(object):
     model=BehavioralEvent
@@ -27,76 +30,111 @@ class EditBehavioralEventMixin(object):
             return response
 
     def form_valid(self, form):
-        
-        if self.request.is_ajax():
-            self.object = form.save();
-            data = {
-                 'id': self.object.id,
-                 'start_time': '',
-                 'duration': '',
-                 'start_time_seconds': self.object.start_time_seconds(),
-                 'end_time_seconds': self.object.end_time_seconds(),
-                 'video': '/videos/behavioral_event/{{ object.id }}.mp4',
-                 'primates': ', '.join([primate.__str__() for primate in self.object.primates.all()]),
-                 'contexts': ', '.join([context.name for context in self.object.contexts.all()]),
-                 'ethograms': ', '.join([ethogram.name for ethogram in self.object.ethograms.all()]),
-                 'notes': self.object.notes
-            }
 
-            if self.object.start_time:
-                data['start_time']='%d:%d:%d.%d' % (self.object.start_time.hour,self.object.start_time.minute,
-                                                    self.object.start_time.second,self.object.start_time.microsecond)
-            if self.object.duration:
-                data['duration']='%d:%d:%d.%d' % (self.object.duration.hour,self.object.duration.minute,
-                                                  self.object.duration.second,self.object.duration.microsecond)
-            return self.render_to_json_response(data)
-        
-        else:
-            context = self.get_context_data()
-            sub_behavioral_event_formset = context['sub_behavioral_event_formset']
-            sub_gestural_event_formset = context['sub_gestural_event_formset']
-    
-            if sub_behavioral_event_formset.is_valid() and sub_gestural_event_formset.is_valid():
-                self.object = form.save(commit=False)
-                self.object.save()
-                form.save_m2m()
-    
-                # save sub-events
-                sub_behavioral_event_formset.instance = self.object
-                for sub_behavioral_event_form in sub_behavioral_event_formset.forms:
-                    if not sub_behavioral_event_form in sub_behavioral_event_formset.deleted_forms:
-                        behavioral_event=sub_behavioral_event_form.save(commit=False)
-                        behavioral_event.parent=self.object
-                        behavioral_event.observation_session=self.object.observation_session
-                        behavioral_event.save()
-                        sub_behavioral_event_form.save_m2m()
-    
-                # delete removed sub-events
-                for sub_behavioral_event_form in sub_behavioral_event_formset.deleted_forms:
-                    if sub_behavioral_event_form.instance.id:
-                        sub_behavioral_event_form.instance.delete()
-    
-                sub_gestural_event_formset.instance=self.object
-                for sub_gestural_event_form in sub_gestural_event_formset.forms:
-                    if not sub_gestural_event_form in sub_gestural_event_formset.deleted_forms:
-                        gestural_event=sub_gestural_event_form.save(commit=False)
-                        gestural_event.parent=self.object
-                        gestural_event.observation_session=self.object.observation_session
-                        gestural_event.save()
-                        sub_gestural_event_form.save_m2m()
-    
-                for sub_gestural_event_form in sub_gestural_event_formset.deleted_forms:
-                    if sub_gestural_event_form.instance.id:
-                        sub_gestural_event_form.instance.delete()
-                        
-                #return redirect(self.object.observation_session.get_absolute_url())
-            
-                url=self.get_success_url()
-                if '_popup' in self.request.GET:
-                    url+='?_popup=1'
-                    return redirect(self.object.observation_session.get_absolute_url())
-                else:
-                    return self.render_to_response(self.get_context_data(form=form))
+        context = self.get_context_data()
+        sub_behavioral_event_formset = context['sub_behavioral_event_formset']
+        sub_gestural_event_formset = context['sub_gestural_event_formset']
+
+        if sub_behavioral_event_formset.is_valid() and sub_gestural_event_formset.is_valid():
+            self.object = form.save(commit=False)
+            self.object.save()
+            form.save_m2m()
+
+            # save sub-events
+            sub_behavioral_event_formset.instance = self.object
+            for sub_behavioral_event_form in sub_behavioral_event_formset.forms:
+                if not sub_behavioral_event_form in sub_behavioral_event_formset.deleted_forms:
+                    behavioral_event=sub_behavioral_event_form.save(commit=False)
+                    behavioral_event.parent=self.object
+                    behavioral_event.observation_session=self.object.observation_session
+                    behavioral_event.save()
+                    sub_behavioral_event_form.save_m2m()
+
+            # delete removed sub-events
+            for sub_behavioral_event_form in sub_behavioral_event_formset.deleted_forms:
+                if sub_behavioral_event_form.instance.id:
+                    sub_behavioral_event_form.instance.delete()
+
+            sub_gestural_event_formset.instance=self.object
+            for sub_gestural_event_form in sub_gestural_event_formset.forms:
+                if not sub_gestural_event_form in sub_gestural_event_formset.deleted_forms:
+                    gestural_event=sub_gestural_event_form.save(commit=False)
+                    gestural_event.parent=self.object
+                    gestural_event.observation_session=self.object.observation_session
+                    gestural_event.save()
+                    sub_gestural_event_form.save_m2m()
+
+            for sub_gestural_event_form in sub_gestural_event_formset.deleted_forms:
+                if sub_gestural_event_form.instance.id:
+                    sub_gestural_event_form.instance.delete()
+
+            if self.request.is_ajax():
+                data = {
+                     'id': self.object.id,
+                     'start_time': '',
+                     'duration': '',
+                     'start_time_seconds': self.object.start_time_seconds(),
+                     'end_time_seconds': self.object.end_time_seconds(),
+                     'video': '/videos/behavioral_event/%d.mp4' % self.object.id,
+                     'primates': ', '.join([primate.__str__() for primate in self.object.primates.all()]),
+                     'contexts': ', '.join([context.name for context in self.object.contexts.all()]),
+                     'ethograms': ', '.join([ethogram.name for ethogram in self.object.ethograms.all()]),
+                     'notes': self.object.notes,
+                     'subevents': []
+                }
+
+                if self.object.start_time:
+                    data['start_time']='%d:%d:%d.%d' % (self.object.start_time.hour,self.object.start_time.minute,
+                                                        self.object.start_time.second,self.object.start_time.microsecond)
+                if self.object.duration:
+                    data['duration']='%d:%d:%d.%d' % (self.object.duration.hour,self.object.duration.minute,
+                                                      self.object.duration.second,self.object.duration.microsecond)
+
+                for event in BehavioralEvent.objects.filter(parent=self.object).order_by('start_time'):
+                    subevent_data={
+                        'id': event.id,
+                        'type': event.type,
+                        'start_time': '%d:%d:%d.%d' % (event.start_time.hour,event.start_time.minute,
+                                                       event.start_time.second,event.start_time.microsecond),
+                        'relative_to': event.relative_to,
+                        'duration': '%d:%d:%d.%d' % (event.duration.hour,event.duration.minute,
+                                                     event.duration.second,event.duration.microsecond),
+                        'start_time_seconds': event.start_time_seconds(),
+                        'end_time_seconds': event.end_time_seconds(),
+                        'primates': ', '.join([primate.__str__() for primate in event.primates.all()]),
+                        'contexts': ', '.join([context.name for context in event.contexts.all()]),
+                        'ethograms': ', '.join([ethogram.name for ethogram in event.ethograms.all()]),
+                        'notes': event.notes,
+                        'signaller_id': '',
+                        'signaller': '',
+                        'recipient_id': '',
+                        'recipient': '',
+                        'gesture_id': '',
+                        'gesture': '',
+                        'recipient_response': '',
+                        'goal_met': ''
+                    }
+                    if GesturalEvent.objects.filter(id=event.id).count():
+                        gestural_event=GesturalEvent.objects.get(id=event.id)
+                        subevent_data['signaller_id']=gestural_event.signaller.id
+                        subevent_data['signaller']=gestural_event.signaller.__str__()
+                        subevent_data['recipient_id']=gestural_event.recipient.id
+                        subevent_data['recipient']=gestural_event.recipient.__str__()
+                        if gestural_event.gesture is not None:
+                            subevent_data['gesture_id']=gestural_event.gesture.id
+                            subevent_data['gesture']=gestural_event.gesture.name
+                        subevent_data['recipient_response']=gestural_event.recipient_response
+                        subevent_data['goal_met']=gestural_event.goal_met
+                    data['subevents'].append(subevent_data)
+
+                return self.render_to_json_response(data)
+
+            url=self.get_success_url()
+            if '_popup' in self.request.GET:
+                url+='?_popup=1'
+                return redirect(self.object.observation_session.get_absolute_url())
+            else:
+                return self.render_to_response(self.get_context_data(form=form))
 
 
 class CreateBehavioralEventView(EditBehavioralEventMixin, CreateView):
@@ -163,9 +201,16 @@ class UpdateBehavioralEventView(EditBehavioralEventMixin,UpdateView):
         return context
 
 
-class DeleteBehavioralEventView(DeleteView):
+class DeleteBehavioralEventView(JSONResponseMixin,BaseDetailView):
     model=BehavioralEvent
-    success_url = '/gbdb/index.html'
+
+    def get_context_data(self, **kwargs):
+        context={'msg':u'No POST data sent.' }
+        if self.request.is_ajax():
+            self.object=self.get_object()
+            self.object.delete()
+            context={'idx': self.request.POST['idx']}
+        return context
 
 
 class BehavioralEventDetailView(DetailView):

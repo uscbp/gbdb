@@ -125,7 +125,7 @@ h1 {
     background: #ffffff;
 }
 
-#sub_behavioral_events_list{
+.sub_behavioral_events_list{
 	padding-left: 20px;
 	padding-bottom: 20px;
 }

@@ -6,7 +6,7 @@ from django.http import request
 from django.shortcuts import redirect
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView, FormView
 from gbdb.forms import ObservationSessionForm, ObservationSessionSearchForm
-from gbdb.models import ObservationSession, BehavioralEvent
+from gbdb.models import ObservationSession, BehavioralEvent, GesturalEvent
 from gbdb.search import runObservationSessionSearch
 from timelinejs.views import JSONResponseMixin
 import json
@@ -85,7 +85,13 @@ class ObservationSessionDetailView(DetailView):
         event_list = []
         behavioral_events = BehavioralEvent.objects.filter(observation_session=self.object, parent__isnull=True).order_by('start_time');
         for behavioral_event in behavioral_events:
-            event_list.append([behavioral_event, BehavioralEvent.objects.filter(parent=behavioral_event).order_by('start_time')])
+            sub_events=[]
+            for sub_event in BehavioralEvent.objects.filter(parent=behavioral_event).order_by('start_time'):
+                if GesturalEvent.objects.filter(id=sub_event.id).count():
+                    sub_events.append(GesturalEvent.objects.get(id=sub_event.id))
+                else:
+                    sub_events.append(sub_event)
+            event_list.append([behavioral_event, sub_events])
         #context['behavioral_events'] = BehavioralEvent.objects.filter(observation_session=self.object, parent__isnull=True)
         context['behavioral_events'] = event_list
         context['site_url']='http://%s' % get_current_site(self.request)

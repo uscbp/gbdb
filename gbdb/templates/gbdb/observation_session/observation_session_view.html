@@ -23,36 +23,6 @@
             document.location.href='/gbdb/';
         }
 
-        function addBehavioralEvent(id, start_time, duration, start_time_seconds, end_time_seconds, video, primates, contexts, ethograms, notes)
-        {
-            var count = $('#behavioral_events').children().length;
-            var tmplMarkup = $('#behavioral_event-template').html();
-            var compiledTmpl = _.template(tmplMarkup, { idx : count+1, id: id, start_time: start_time,
-                duration: duration, start_time_seconds:start_time_seconds, end_time_seconds:end_time_seconds, video: video, notes: notes, primates: primates, contexts: contexts, ethograms: ethograms});
-            $('#behavioral_events').append(compiledTmpl);
-            {% if not object.video.name %}
-                videojs("behavioral_event_"+(count+1)+"_video", {}, function(){
-                    // Player (this) is initialized and ready.
-                });
-            {% endif %}
-        }
-        
-        function deleteBehavioralEvent(url)
-        {
-        	console.log(url);
-            if(confirm('This will delete this Behavioral Event as well as all links to it from other entries. Do you really want to delete the current Behavioral Event?'))
-            {
-                var data={'csrfmiddlewaretoken': '{{ csrf_token }}'};
-                var args={type:"POST", url:url, data: data, complete: doneBehavioralEventDelete };
-                $.ajax(args);
-            }
-        }
-        
-        function doneBehavioralEventDelete()
-        {
-            document.location.href='/gbdb/observation_session/{{ object.id }}/';
-        }
-
         function initialize() {
             var map = new google.maps.Map(
                     document.getElementById('map-canvas'), {
@@ -94,82 +64,99 @@
         {
         	$('#context_data').load(href);
         };
-        
+
         $(document).ready(function()
         {
             videojs.options.flash.swf = "{{ site_url }}/static/gbdb/scripts/video-js/video-js.swf";
-            videojs('observation_session_video', {
-                plugins: {
-                    framebyframe: {
-                        fps: 30,
-                        steps: [
-                            { text: '-5', step: -5 },
-                            { text: '-1', step: -1 },
-                            { text: '+1', step: 1 },
-                            { text: '+5', step: 5 },
-                        ]
+            {% if object.video.name %}
+                videojs('observation_session_video', {
+                    plugins: {
+                        framebyframe: {
+                            fps: 30,
+                            steps: [
+                                { text: '-5', step: -5 },
+                                { text: '-1', step: -1 },
+                                { text: '+1', step: 1 },
+                                { text: '+5', step: 5 },
+                            ]
+                        }
                     }
-                }
-            });
-            
-            var periods = [];
-            {% for behavioral_event in behavioral_events %}
-            	var period = {time_in:'{{behavioral_event.0.start_time_seconds}}', 
-            		time_out:'{{behavioral_event.0.end_time_seconds}}', 
-            		track:2, 
-            		color:'#'+Math.floor(Math.random()*16777215).toString(16), 
-            		label:'{{ forloop.counter }}',
-            		content: '{{behavioral_event.0.notes}}'};
-            	periods.push(period);
-				{% for child in behavioral_event.1 %}
-				var period = {time_in:'{{child.start_time_seconds}}', 
-            		time_out:'{{child.end_time_seconds}}', 
-            		track:1, 
-            		color:'#'+Math.floor(Math.random()*16777215).toString(16), 
-            		label:'{{ forloop.parentloop.counter }}.{{ forloop.counter }}',
-            		content: '{{child.notes}}'};
-            	periods.push(period);
-				{% endfor %}
-			{% endfor %}
-            
-            videojs("observation_session_video").on("loadedmetadata", function(){
-            var options = {
-					'height':100,
-					'width':this.width(),
-					'numberOfTracks':2,
-					'cursorHeight':30,
-					'periodShape':'bubble',
-					'scaleHeight':30,
-					'scaleBackgroundColor':'#000', 
-					'backgroundColor':'#EAE5E1',
-					'scaleColor':'#EAE5E1',
-					'trackSeparatorColor':'#EAE5E1', 
-					'textColor':'#EAE5E1',
-					'cursorColor':'#f00',
-					'scaleFactor':2, 
-					};
-            
-					timeline = new Timeline('observation_session_video', 'observation_session_timeline', this.duration(), options);
-					var bubbles = [];
-					console.log(periods.length);
-					for(var i = 0; i<periods.length; i++){
-						var id = timeline.addPeriod(periods[i].time_in,periods[i].time_out,periods[i].color, periods[i].track, periods[i].label);
-						bubbles.push({id:id, content:periods[i].content});
-					}
-				});
-				
-				videojs("observation_session_video").on("timeupdate", function(){
-					var time = videojs("observation_session_video").currentTime();
-					var active_data = [];
-					for(var i=0; i<periods.length-1; i++){
-						if(time >= periods[i].time_in && time <= periods[i+1].time_out){
-							active_data.push(periods[i].content);
-						}
-					};
-				 	$('#context_data').html(active_data.join('<br /><br />'));
-				});
-				
-		});
+                });
+
+                var periods = [];
+                {% for behavioral_event in behavioral_events %}
+                    var period = {time_in:'{{behavioral_event.0.start_time_seconds}}',
+                        time_out:'{{behavioral_event.0.end_time_seconds}}',
+                        track:2,
+                        color:'#'+Math.floor(Math.random()*16777215).toString(16),
+                        label:'{{ forloop.counter }}',
+                        content: '{{behavioral_event.0.notes}}'};
+                    periods.push(period);
+                    {% for child in behavioral_event.1 %}
+                    var period = {time_in:'{{child.start_time_seconds}}',
+                        time_out:'{{child.end_time_seconds}}',
+                        track:1,
+                        color:'#'+Math.floor(Math.random()*16777215).toString(16),
+                        label:'{{ forloop.parentloop.counter }}.{{ forloop.counter }}',
+                        content: '{{child.notes}}'};
+                    periods.push(period);
+                    {% endfor %}
+                {% endfor %}
+
+                videojs("observation_session_video").on("loadedmetadata", function(){
+                var options = {
+                        'height':100,
+                        'width':this.width(),
+                        'numberOfTracks':2,
+                        'cursorHeight':30,
+                        'periodShape':'bubble',
+                        'scaleHeight':30,
+                        'scaleBackgroundColor':'#000',
+                        'backgroundColor':'#EAE5E1',
+                        'scaleColor':'#EAE5E1',
+                        'trackSeparatorColor':'#EAE5E1',
+                        'textColor':'#EAE5E1',
+                        'cursorColor':'#f00',
+                        'scaleFactor':2,
+                        };
+
+                        timeline = new Timeline('observation_session_video', 'observation_session_timeline', this.duration(), options);
+                        var bubbles = [];
+                        console.log(periods.length);
+                        for(var i = 0; i<periods.length; i++){
+                            var id = timeline.addPeriod(periods[i].time_in,periods[i].time_out,periods[i].color, periods[i].track, periods[i].label);
+                            bubbles.push({id:id, content:periods[i].content});
+                        }
+                });
+
+                videojs("observation_session_video").on("timeupdate", function(){
+                    var time = videojs("observation_session_video").currentTime();
+                    var active_data = [];
+                    for(var i=0; i<periods.length-1; i++){
+                        if(time >= periods[i].time_in && time <= periods[i+1].time_out){
+                            active_data.push(periods[i].content);
+                        }
+                    };
+                    $('#context_data').html(active_data.join('<br /><br />'));
+                });
+            {% endif %}
+        });
+
+        behavioralEventEditIdx=-1;
+        function editBehavioralEvent(id, idx)
+        {
+            $('#context_data').load('/gbdb/behavioral_event/'+id+'/edit/');
+            behavioralEventEditIdx=idx;
+            return false;
+        }
+
+        function createBehavioralEvent()
+        {
+            $('#context_data').load('/gbdb/behavioral_event/new/?observation_session={{ object.id }}');
+            behavioralEventEditIdx=-1;
+            return false;
+        }
+
         function submitBehavioralEventForm(url, obs_id)
         {
             document.getElementById('savingMsg').style.display = 'block';
@@ -187,13 +174,101 @@
         function doneSubmitBehavioralEventForm(data, status){
             if (status=="success")
             {
-                addBehavioralEvent(data.id, data.start_time, data.duration, data.start_time_seconds,
-                        data.end_time_seconds, data.video, data.primates, data.contexts, data.ethograms, data.notes);
+                var tmplMarkup = $('#behavioral_event-template').html();
+                if(behavioralEventEditIdx<0)
+                {
+                    var count = $('#behavioral_events').children().length;
+                    var compiledTmpl = _.template(tmplMarkup, { idx : count+1, id: data.id, start_time: data.start_time,
+                        duration: data.duration, start_time_seconds: data.start_time_seconds,
+                        end_time_seconds: data.end_time_seconds, video: data.video, notes: data.notes,
+                        primates: data.primates, contexts: data.contexts, ethograms: data.ethograms});
+                    $('#behavioral_events').append(compiledTmpl);
+                    {% if not object.video.name %}
+                        videojs("behavioral_event_"+(count+1)+"_video", {}, function(){
+                            // Player (this) is initialized and ready.
+                        });
+                    {% endif %}
+                    var tmplMarkup = $('#behavioral_subevent-template').html();
+                    for(var i=0; i<data.subevents.length; i++)
+                    {
+                        var compiledTmpl = _.template(tmplMarkup, { parentIdx: count+1, idx: i+1,
+                            start_time_seconds: data.subevents[i]['start_time_seconds'],
+                            end_time_seconds: data.subevents[i]['end_time_seconds'],
+                            type: data.subevents[i]['type'], start_time: data.subevents[i]['start_time'],
+                            relative_to: data.subevents[i]['relative_to'], duration: data.subevents[i]['duration'],
+                            primates: data.subevents[i]['primates'], contexts: data.subevents[i]['contexts'],
+                            ethograms: data.subevents[i]['ethograms'], signaller_id: data.subevents[i]['signaller_id'],
+                            signaller: data.subevents[i]['signaller'], recipient_id: data.subevents[i]['recipient_id'],
+                            recipient: data.subevents[i]['recipient'], gesture_id: data.subevents[i]['gesture_id'],
+                            gesture: data.subevents[i]['gesture'],
+                            recipient_response: data.subevents[i]['recipient_response'],
+                            goal_met: data.subevents[i]['goal_met'], notes: data.subevents[i]['notes']
+                        });
+                        $('#sub_behavioral_events_list-'+ (count+1)).append(compiledTmpl);
+                    }
+                }
+                else
+                {
+                    var compiledTmpl = _.template(tmplMarkup, { idx : behavioralEventEditIdx, id: data.id,
+                        start_time: data.start_time, duration: data.duration,
+                        start_time_seconds: data.start_time_seconds, end_time_seconds:data.end_time_seconds,
+                        video: data.video, notes: data.notes, primates: data.primates, contexts: data.contexts,
+                        ethograms: data.ethograms});
+                    $('#behavioral_event-'+behavioralEventEditIdx).replaceWith(compiledTmpl);
+                    {% if not object.video.name %}
+                        videojs("behavioral_event_"+behavioralEventEditIdx+"_video", {}, function(){
+                            // Player (this) is initialized and ready.
+                        });
+                    {% endif %}
+                    var tmplMarkup = $('#behavioral_subevent-template').html();
+                    for(var i=0; i<data.subevents.length; i++)
+                    {
+                        var compiledTmpl = _.template(tmplMarkup, { parentIdx: behavioralEventEditIdx, idx: i+1,
+                            start_time_seconds: data.subevents[i]['start_time_seconds'],
+                            end_time_seconds: data.subevents[i]['end_time_seconds'], type: data.subevents[i]['type'],
+                            start_time: data.subevents[i]['start_time'], relative_to: data.subevents[i]['relative_to'],
+                            duration: data.subevents[i]['duration'], primates: data.subevents[i]['primates'],
+                            contexts: data.subevents[i]['contexts'], ethograms: data.subevents[i]['ethograms'],
+                            signaller_id: data.subevents[i]['signaller_id'], signaller: data.subevents[i]['signaller'],
+                            recipient_id: data.subevents[i]['recipient_id'], recipient: data.subevents[i]['recipient'],
+                            gesture_id: data.subevents[i]['gesture_id'], gesture: data.subevents[i]['gesture'],
+                            recipient_response: data.subevents[i]['recipient_response'],
+                            goal_met: data.subevents[i]['goal_met'], notes: data.subevents[i]['notes']
+                        });
+                        if(document.getElementById('sub_behavioral_event-'+behavioralEventEditIdx+'.'+(i+1))!=null)
+                        {
+                            $('#sub_behavioral_event-'+behavioralEventEditIdx+'.'+(i+1)).replaceWith(compiledTmpl);
+                        }
+                        else
+                        {
+                            $('#sub_behavioral_events_list-'+behavioralEventEditIdx).append(compiledTmpl);
+                        }
+                    }
+                    behavioralEventEditIdx=-1;
+                }
                 $('#context_data').empty();
                 document.getElementById('savingMsg').style.display = 'none';
                 document.getElementById('savingOver').style.display = 'none';
             }
         }
+
+        function deleteBehavioralEvent(id, idx)
+        {
+            if(confirm('This will delete this Behavioral Event as well as all links to it from other entries. Do you really want to delete the current Behavioral Event?'))
+            {
+                var data={'idx':idx, 'csrfmiddlewaretoken': '{{ csrf_token }}'};
+                var args={type:"POST", url:'/gbdb/behavioral_event/'+id+'/delete/', data: data, success: doneBehavioralEventDelete };
+                $.ajax(args);
+            }
+        }
+
+        function doneBehavioralEventDelete(data, status)
+        {
+            if(status=='success')
+                $('#behavioral_event-'+data.idx).remove()
+        }
+
+
     </script>
 {% endblock %}
 {% block content %}
@@ -233,7 +308,7 @@
         {% endif %}
 
         <br>
-        <h3>Behavioral Events{% if user == object.collator %} <a href="#" onclick="displayEdit('/gbdb/behavioral_event/new/?observation_session={{ object.id }}')">Add new</a>{% endif %}</h3>
+        <h3>Behavioral Events{% if user == object.collator %} <a href="#" onclick="return createBehavioralEvent();">Add new</a>{% endif %}</h3>
         <div id="behavioral_events">
             {% for behavioral_event in behavioral_events %}
                 <div id="behavioral_event-{{ forloop.counter }}" name="behavioral_event">
@@ -277,73 +352,70 @@
                         </tr>
                     </table>
                     {% if user == object.collator %}
-			        <input type="button" value="Edit" onclick="displayEdit('/gbdb/behavioral_event/{{behavioral_event.0.id}}/edit/')"/>&nbsp;
-			        <input type="button" value="Delete" onclick="deleteBehavioralEvent('/gbdb/behavioral_event/{{behavioral_event.0.id}}/delete/')"/>&nbsp;
+			        <input type="button" value="Edit" onclick="return editBehavioralEvent({{behavioral_event.0.id}},{{ forloop.counter }});"/>&nbsp;
+			        <input type="button" value="Delete" onclick="deleteBehavioralEvent({{behavioral_event.0.id}},{{ forloop.counter }})"/>&nbsp;
 			        {% endif %}
                 </div>
-
-        <div id="sub_behavioral_events_list">
-        	{% if behavioral_event.1.length > 0 %}
-        	<h4>Behavioral and Gestural Sub-Events</h4>
-        	{% endif %}
-            {% for sub_behavioral_event in behavioral_event.1 %}
-                <div id="sub_behavioral_event-{{ forloop.counter }}" name="sub_behavioral_event">
-                    <table class="tab_panel">
-                        <tr class="{% cycle 'even_row' 'odd_row' %}">
-                            <td width=30%><strong><a href="" onclick="return setClipTime({{ sub_behavioral_event.start_time_seconds }});">Behavioral Subevent {{ forloop.parentloop.counter }}.{{ forloop.counter }}</a></strong></td>
-                        </tr>
-                        <tr class="{% cycle 'even_row' 'odd_row' %}">
-                        	<td>
-                                {% if object.video_url_mp4 %}
-                                    <a href="" onclick="return playClip({{ sub_behavioral_event.start_time_seconds }},{{ sub_behavioral_event.end_time_seconds }});">Play clip</a>
-                                {% else %}
-                                    <video id="behavioral_subevent_{{ forloop.counter0 }}_video" class="video-js vjs-default-skin" controls preload="auto"
-                                           width="225" height="150" data-setup='{}'>
-                                        <source src="{{ sub_behavioral_event.video_url_mp4 }}" type="video/mp4">
-                                        <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
-                                    </video>
+                <h4>Behavioral and Gestural Sub-Events</h4>
+                <div id="sub_behavioral_events_list-{{ forloop.counter }}" class="sub_behavioral_events_list">
+                    {% for sub_behavioral_event in behavioral_event.1 %}
+                        <div id="sub_behavioral_event-{{ forloop.parentloop.counter }}.{{ forloop.counter }}" name="sub_behavioral_event">
+                            <table class="tab_panel">
+                                <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                    <td width=30%><strong><a href="" onclick="return setClipTime({{ sub_behavioral_event.start_time_seconds }});">Behavioral Subevent {{ forloop.parentloop.counter }}.{{ forloop.counter }}</a></strong></td>
+                                </tr>
+                                <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                    <td>
+                                        {% if object.video_url_mp4 %}
+                                            <a href="" onclick="return playClip({{ sub_behavioral_event.start_time_seconds }},{{ sub_behavioral_event.end_time_seconds }});">Play clip</a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                    <td><strong>Type:</strong> {{ sub_behavioral_event.type }}</td>
+                                </tr>
+                                <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                    <td><strong>Start time:</strong> {{ sub_behavioral_event.start_time.hour }}:{{ sub_behavioral_event.start_time.minute }}:{{ sub_behavioral_event.start_time.second }}.{{ sub_behavioral_event.start_time.microsecond }}</td>
+                                </tr>
+                                <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                    <td><strong>Relative to:</strong> {{ sub_behavioral_event.relative_to }}</td>
+                                </tr>
+                                <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                    <td><strong>Duration:</strong> {{ sub_behavioral_event.duration.hour }}:{{ sub_behavioral_event.duration.minute }}:{{ sub_behavioral_event.duration.second }}.{{ sub_behavioral_event.duration.microsecond }}</td>
+                                </tr>
+                                <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                    <td><strong>Primates:</strong> {% for primate in sub_behavioral_event.primates.all %}{% if forloop.counter0 > 0%}, {% endif %}<a href="/gbdb/primate/{{ primate.id }}/">{{ primate }}</a>{% endfor %}</td>
+                                </tr>
+                                <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                    <td><strong>Contexts:</strong> {% for context in sub_behavioral_event.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}</td>
+                                </tr>
+                                <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                    <td><strong>Ethograms:</strong> {% for ethogram in sub_behavioral_event.ethograms.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ ethogram.name }}{% endfor %}</td>
+                                </tr>
+                                {% if sub_behavioral_event.type == 'gestural' %}
+                                    <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                        <td><strong>Signaller</strong> <a href="/gbdb/primate/{{ sub_behavioral_event.signaller.id }}/">{{ sub_behavioral_event.signaller }}</a></td>
+                                    </tr>
+                                    <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                        <td><strong>Recipient</strong> <a href="/gbdb/primate/{{ sub_behavioral_event.recipient.id }}/">{{ sub_behavioral_event.recipient }}</a></td>
+                                    </tr>
+                                    <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                        <td><strong>Gesture</strong> <a href="/gbdb/gesture/{{ sub_behavioral_event.gesture.id }}/">{{ sub_behavioral_event.gesture }}</a></td>
+                                    </tr>
+                                    <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                        <td><strong>Recipient response</strong> {{ sub_behavioral_event.recipient_response }}</td>
+                                    </tr>
+                                    <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                        <td><strong>Goal met</strong> {{ sub_behavioral_event.goal_met }}</td>
+                                    </tr>
                                 {% endif %}
-                            </td>
-                        </tr>
-                        <tr class="{% cycle 'even_row' 'odd_row' %}">
-                            <td><strong>Start time:</strong> {{ sub_behavioral_event.start_time.hour }}:{{ sub_behavioral_event.start_time.minute }}:{{ sub_behavioral_event.start_time.second }}.{{ sub_behavioral_event.start_time.microsecond }}</td>
-                        </tr>
-                        <tr class="{% cycle 'even_row' 'odd_row' %}">
-                            <td><strong>Relative to:</strong> {{ sub_behavioral_event.relative_to }}</td>
-                        </tr>
-                        <tr class="{% cycle 'even_row' 'odd_row' %}">
-                            <td><strong>Duration:</strong> {{ sub_behavioral_event.duration.hour }}:{{ sub_behavioral_event.duration.minute }}:{{ sub_behavioral_event.duration.second }}.{{ sub_behavioral_event.duration.microsecond }}</td>
-                        </tr>
-                        <tr class="{% cycle 'even_row' 'odd_row' %}">
-                            <td><strong>Primates:</strong> {% for primate in sub_behavioral_event.primates.all %}{% if forloop.counter0 > 0%}, {% endif %}<a href="/gbdb/primate/{{ primate.id }}/">{{ primate }}</a>{% endfor %}</td>
-                        </tr>
-                        <tr class="{% cycle 'even_row' 'odd_row' %}">
-                            <td><strong>Contexts:</strong> {% for context in sub_behavioral_event.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}</td>
-                        </tr>
-                        <tr class="{% cycle 'even_row' 'odd_row' %}">
-                            <td><strong>Ethograms:</strong> {% for ethogram in sub_behavioral_event.ethograms.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ ethogram.name }}{% endfor %}</td>
-                        </tr>
-                        {% if sub_behavioral_event.type == 'gestural' %}
-                        <tr class="{% cycle 'even_row' 'odd_row' %}">
-                            <td><strong>Recipient</strong> <a href="/gbdb/primate/{{ sub_behavioral_event.recipient.id }}/">{{ sub_behavioral_event.recipient }}</a></td>
-                        </tr>
-                        <tr class="{% cycle 'even_row' 'odd_row' %}">
-                            <td><strong>Gesture</strong> <a href="/gbdb/gesture/{{ sub_behavioral_event.gesture.id }}/">{{ sub_behavioral_event.gesture }}</a></td>
-                        </tr>
-                        <tr class="{% cycle 'even_row' 'odd_row' %}">
-                            <td><strong>Recipient response</strong> {{ sub_behavioral_event.recipient_response }}</td>
-                        </tr>
-                        <tr class="{% cycle 'even_row' 'odd_row' %}">
-                            <td><strong>Goal met</strong> {{ sub_behavioral_event.goal_met }}</td>
-                        </tr>
-                        {% endif %}
-                        <tr class="{% cycle 'even_row' 'odd_row' %}">
-                            <td><strong>Notes:</strong> {{ sub_behavioral_event.notes }}</td>
-                        </tr>
-                    </table>
+                                <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                    <td><strong>Notes:</strong> {{ sub_behavioral_event.notes }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    {% endfor %}
                 </div>
-            {% endfor %}
-        </div>
         {% comment %}
         <h4>Gestural Sub-Events</h4>
         <div id="sub_gestural_events">
@@ -429,7 +501,7 @@
         <div id="behavioral_event-<%= idx %>" name="behavioral_event">
             <table class="tab_panel">
                 <tr class="<%= getTRTag(idx) %>">
-                    <td width=30%><strong><a href="/gbdb/behavioral_event/<%= id %>/">Event <%= idx %></a></strong></td>
+                    <td width=30%><strong><a href="" onclick="return setClipTime(<%= start_time_seconds %>)">Behavioral Event <%= idx %></a></strong></td>
                 </tr>
                 <tr class="<%= getTRTag(idx) %>">
                     <td>
@@ -467,11 +539,71 @@
                 </tr>
             </table>
             {% if user == object.collator %}
-                <input type="button" value="Edit" onclick="displayEdit('/gbdb/behavioral_event/<%= id %>/edit/')"/>&nbsp;
+                <input type="button" value="Edit" onclick="return editBehavioralEvent(<%= id %>,<%= idx %>);"/>&nbsp;
                 <input type="button" value="Delete" onclick="deleteBehavioralEvent('/gbdb/behavioral_event/<%= id %>/delete/')"/>&nbsp;
             {% endif %}
+            <div id="sub_behavioral_events_list-<%= idx %>" class="sub_behavioral_events_list">
+            </div>
         </div>
-    </script>  
+    </script>
+
+    <script type="text/html" id="behavioral_subevent-template">
+        <div id="sub_behavioral_event-<%= parentIdx %>.<%= idx %>" name="sub_behavioral_event">
+            <table class="tab_panel">
+                <tr class="<%= getTRTag(idx) %>">
+                    <td width=30%><strong><a href="" onclick="return setClipTime(<%= start_time_seconds %>);">Behavioral Subevent <%= parentIdx %>.<%= idx %></a></strong></td>
+                </tr>
+                <tr class="<%= getTRTag(idx) %>">
+                    <td>
+                        {% if object.video_url_mp4 %}
+                            <a href="" onclick="return playClip(<%= start_time_seconds %>,<%= end_time_seconds %>);">Play clip</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr class="<%= getTRTag(idx) %>">
+                    <td><strong>Type:</strong> <%= type %></td>
+                </tr>
+                <tr class="<%= getTRTag(idx) %>">
+                    <td><strong>Start time:</strong> <%= start_time %></td>
+                </tr>
+                <tr class="<%= getTRTag(idx) %>">
+                    <td><strong>Relative to:</strong> <%= relative_to %></td>
+                </tr>
+                <tr class="<%= getTRTag(idx) %>">
+                    <td><strong>Duration:</strong> <%= duration %></td>
+                </tr>
+                <tr class="<%= getTRTag(idx) %>">
+                    <td><strong>Primates:</strong> <%= primates %></td>
+                </tr>
+                <tr class="<%= getTRTag(idx) %>">
+                    <td><strong>Contexts:</strong> <%= contexts %></td>
+                </tr>
+                <tr class="<%= getTRTag(idx) %>">
+                    <td><strong>Ethograms:</strong> <%= ethograms %></td>
+                </tr>
+                <% if(type == 'gestural') { %>
+                    <tr class="<%= getTRTag(idx) %>">
+                        <td><strong>Signaller</strong> <a href="/gbdb/primate/<%= signaller_id %>/"><%= signaller %></a></td>
+                    </tr>
+                    <tr class="<%= getTRTag(idx) %>">
+                        <td><strong>Recipient</strong> <a href="/gbdb/primate/<%= recipient_id %>/"><%= recipient %></a></td>
+                    </tr>
+                    <tr class="<%= getTRTag(idx) %>">
+                        <td><strong>Gesture</strong> <a href="/gbdb/gesture/<%= gesture_id %>/"><%= gesture %></a></td>
+                    </tr>
+                    <tr class="<%= getTRTag(idx) %>">
+                        <td><strong>Recipient response</strong> <%= recipient_response %></td>
+                    </tr>
+                    <tr class="<%= getTRTag(idx) %>">
+                        <td><strong>Goal met</strong> <%= goal_met %></td>
+                    </tr>
+                <% } %>
+                <tr class="<%= getTRTag(idx) %>">
+                    <td><strong>Notes:</strong> <%= notes %></td>
+                </tr>
+            </table>
+        </div>
+    </script>
 {% comment %}
 {% load timeline %}
 {% timeline %}  
