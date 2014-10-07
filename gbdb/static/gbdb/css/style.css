@@ -130,6 +130,12 @@ h1 {
 	padding-bottom: 20px;
 }
 
+#behavioral_events {
+	height: 500px; 
+	overflow-y:auto;
+	overflow-x: hidden;
+}
+
 input.btn{
     color:#0d3f74;
     font-family:'trebuchet ms',helvetica,sans-serif;

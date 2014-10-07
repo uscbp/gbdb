@@ -161,14 +161,24 @@
         {
             document.getElementById('savingMsg').style.display = 'block';
             document.getElementById('savingOver').style.display = 'block';
+            // var frm = $('#behavioralEventForm');
+            // console.log(url);
+            // $.ajax({
+                // type: frm.attr('method'),
+                // url: url,
+                // data: frm.serialize(),
+                // success: doneSubmitBehavioralEventForm
+            // });
             var frm = $('#behavioralEventForm');
-            console.log(url);
-            $.ajax({
-                type: frm.attr('method'),
-                url: url,
-                data: frm.serialize(),
-                success: doneSubmitBehavioralEventForm
-            });
+            var data = new FormData(frm.get(0));
+	        $.ajax({
+	            url: url,
+    			type: frm.attr('method'),
+	            data: data,
+	            success: doneSubmitBehavioralEventForm,
+	            processData: false,
+	            contentType: false,
+	        });
         }
 
         function doneSubmitBehavioralEventForm(data, status){
@@ -318,7 +328,7 @@
                         </tr>
                         <tr class="{% cycle 'even_row' 'odd_row' %}">
                         	<td>
-                                {% if object.video_url_mp4 %}
+                                {% if behavioral_event.0.start_time %}
                                     <a href="" onclick="return playClip({{ behavioral_event.0.start_time_seconds }},{{ behavioral_event.0.end_time_seconds }});">Play clip</a>
                                 {% else %}
                                     <video id="behavioral_event_{{ forloop.counter0 }}_video"
