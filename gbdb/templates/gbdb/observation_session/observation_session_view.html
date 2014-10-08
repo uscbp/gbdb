@@ -97,7 +97,7 @@
                         track:2,
                         color:'#'+Math.floor(Math.random()*16777215).toString(16),
                         label:'{{ forloop.counter }}',
-                        content: '{{behavioral_event.0.notes}}'};
+                        content: '{{behavioral_event.0.notes|linebreaks}}'};
                     periods.push(period);
                     {% for child in behavioral_event.1 %}
                     var period = {time_in:'{{child.start_time_seconds}}',
@@ -105,7 +105,7 @@
                         track:1,
                         color:'#'+Math.floor(Math.random()*16777215).toString(16),
                         label:'{{ forloop.parentloop.counter }}.{{ forloop.counter }}',
-                        content: '{{child.notes}}'};
+                        content: '{{child.notes|linebreaks}}'};
                     periods.push(period);
                     {% endfor %}
                 {% endfor %}
