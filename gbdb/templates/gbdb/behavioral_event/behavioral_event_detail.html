@@ -136,14 +136,6 @@
             }
         }
 
-        function save()
-        {
-            document.getElementById('savingMsg').style.display = 'block';
-            document.getElementById('savingOver').style.display = 'block';
-            document.getElementById('behavioralEventForm').submit();
-
-        }
-
         $(document).ready(function() {
             {% for sub_behavioral_event_form in sub_behavioral_event_formset.forms %}
                 widget=$('#id_sub_behavioral_event-{{ forloop.counter0 }}-contexts-wrapper').yourlabsWidget();
@@ -203,7 +195,6 @@
                         {% else %}
                             <input id="id_relative_to" name="relative_to" type="hidden" value="behavioral_event"/>
                         {% endif %}
-
                     {% else %}
                         <input id="id_relative_to" name="relative_to" type="hidden" value="observation_session"/>
                     {% endif %}
@@ -219,6 +210,7 @@
                             {{ form.video }}
                             <input type="hidden" id="id_start_time" name="start_time" value="0:0:0">
                             <input type="hidden" id="id_duration" name="duration" value="0:0:0">
+                            <input id="id_relative_to" name="relative_to" type="hidden" value="observation_session"/>
                         </td>
                         <td class="myerrors">{{ form.video.errors }}</td>
                     </tr>
@@ -272,6 +264,7 @@
                                             {{ sub_behavioral_event_form.id }}
                                             {{ sub_behavioral_event_form.observation_session }}
                                             {{ sub_behavioral_event_form.parent }}
+                                            {{ sub_behavioral_event_form.type }}
                                             <table class="tab_panel">
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td style="width:60px">
@@ -289,7 +282,7 @@
                                                         {% if not allow_video %}
                                                             {{ sub_behavioral_event_form.relative_to }}
                                                         {% else %}
-                                                            <input id="id_sub_behavioral_event-{{ forloop.counter0 }}-relative_to" name="sub_behavioral_event-{{ forloop.counter0 }}-relative_to" value="behavioral_event" type="hidden"/>
+                                                            behavioral_event<input id="id_sub_behavioral_event-{{ forloop.counter0 }}-relative_to" name="sub_behavioral_event-{{ forloop.counter0 }}-relative_to" value="behavioral_event" type="hidden"/>
                                                         {% endif %}
                                                     </td>
                                                 </tr>
@@ -353,6 +346,7 @@
                                             {{ sub_gestural_event_form.behavioralevent_ptr }}
                                             {{ sub_gestural_event_form.observation_session }}
                                             {{ sub_gestural_event_form.parent }}
+                                            {{ sub_gestural_event_form.type }}
                                             <table class="tab_panel">
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td style="width:60px">
@@ -370,7 +364,7 @@
                                                         {% if not allow_video %}
                                                             {{ sub_gestural_event_form.relative_to }}
                                                         {% else %}
-                                                            <input id="id_sub_gestural_event-{{ forloop.counter0 }}-relative_to" name="sub_gestural_event-{{ forloop.counter0 }}-relative_to" value="behavioral_event" type="hidden"/>
+                                                            behavioral_event<input id="id_sub_gestural_event-{{ forloop.counter0 }}-relative_to" name="sub_gestural_event-{{ forloop.counter0 }}-relative_to" value="behavioral_event" type="hidden"/>
                                                         {% endif %}
                                                     </td>
                                                 </tr>
@@ -482,7 +476,7 @@
                                 <option value="observation_session">observation session</option>
                             </select>
                         {% else %}
-                            <input id="id_sub_behavioral_event-<%= idx %>-relative_to" name="sub_behavioral_event-<%= idx %>-relative_to" value="behavioral_event" type="hidden"/>
+                            behavioral_event<input id="id_sub_behavioral_event-<%= idx %>-relative_to" name="sub_behavioral_event-<%= idx %>-relative_to" value="behavioral_event" type="hidden"/>
                         {% endif %}
                     </td>
                 </tr>
@@ -584,9 +578,10 @@
                                 <option value="observation_session">observation session</option>
                             </select>
                         {% else %}
-                            <input id="id_sub_gestural_event-<%= idx %>-relative_to" name="sub_gestural_event-<%= idx %>-relative_to" value="behavioral_event" type="hidden"/>
+                            behavioral_event<input id="id_sub_gestural_event-<%= idx %>-relative_to" name="sub_gestural_event-<%= idx %>-relative_to" value="behavioral_event" type="hidden"/>
                         {% endif %}
                     </td>
+                </tr>
                 <tr class="<%= getTRTag(idx) %>" valign=top>
                     <td width=60px>&nbsp;</td>
                     <td style="width:120px">Duration</td>
