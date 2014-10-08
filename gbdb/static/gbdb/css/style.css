@@ -95,7 +95,7 @@ h1 {
 	float: left;
     width: 400px;
 }
-#detail .video_panel {
+#detail #video_panel {
 	float: left;
     width: 800px;
 }
