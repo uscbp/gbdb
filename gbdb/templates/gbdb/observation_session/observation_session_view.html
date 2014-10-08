@@ -392,19 +392,19 @@
                                         <td><strong>Ethograms:</strong> {% for ethogram in sub_behavioral_event.ethograms.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ ethogram.name }}{% endfor %}</td>
                                     </tr>
                                     {% if sub_behavioral_event.type == 'gestural' %}
-                                        <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                        <tr class="{% if forloop.counter0|divisibleby:2 %}even_row{% else %}odd_row{% endif %}">
                                             <td><strong>Signaller</strong> <a href="/gbdb/primate/{{ sub_behavioral_event.signaller.id }}/">{{ sub_behavioral_event.signaller }}</a></td>
                                         </tr>
-                                        <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                        <tr class="{% if forloop.counter0|divisibleby:2 %}even_row{% else %}odd_row{% endif %}">
                                             <td><strong>Recipient</strong> <a href="/gbdb/primate/{{ sub_behavioral_event.recipient.id }}/">{{ sub_behavioral_event.recipient }}</a></td>
                                         </tr>
-                                        <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                        <tr class="{% if forloop.counter0|divisibleby:2 %}even_row{% else %}odd_row{% endif %}">
                                             <td><strong>Gesture</strong> <a href="/gbdb/gesture/{{ sub_behavioral_event.gesture.id }}/">{{ sub_behavioral_event.gesture }}</a></td>
                                         </tr>
-                                        <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                        <tr class="{% if forloop.counter0|divisibleby:2 %}even_row{% else %}odd_row{% endif %}">
                                             <td><strong>Recipient response</strong> {{ sub_behavioral_event.recipient_response }}</td>
                                         </tr>
-                                        <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                        <tr class="{% if forloop.counter0|divisibleby:2 %}even_row{% else %}odd_row{% endif %}">
                                             <td><strong>Goal met</strong> {{ sub_behavioral_event.goal_met }}</td>
                                         </tr>
                                     {% endif %}
