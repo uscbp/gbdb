@@ -198,9 +198,9 @@
                         primates: data.primates, contexts: data.contexts, ethograms: data.ethograms});
                     $('#behavioral_events').append(compiledTmpl);
                     {% if object.video.name %}
-                    document.getElementById('observation_session_video_source').src = data.video;
-                    $("#video_frame").css("display", "block");
-                    videojs("observation_session_video").load();
+                        document.getElementById('observation_session_video_source').src = data.video;
+                        $("#video_frame").css("display", "block");
+                        videojs("observation_session_video").load();
                     {% endif %}
                     var tmplMarkup = $('#behavioral_subevent-template').html();
                     for(var i=0; i<data.subevents.length; i++)
@@ -229,6 +229,7 @@
                         video: data.video, notes: data.notes, primates: data.primates, contexts: data.contexts,
                         ethograms: data.ethograms});
                     $('#behavioral_event-'+behavioralEventEditIdx).replaceWith(compiledTmpl);
+                    $('#sub_behavioral_events_list-'+behavioralEventEditIdx).empty();
                     var tmplMarkup = $('#behavioral_subevent-template').html();
                     for(var i=0; i<data.subevents.length; i++)
                     {
@@ -244,14 +245,7 @@
                             recipient_response: data.subevents[i]['recipient_response'],
                             goal_met: data.subevents[i]['goal_met'], notes: data.subevents[i]['notes']
                         });
-                        if(document.getElementById('sub_behavioral_event-'+behavioralEventEditIdx+'.'+(i+1))!=null)
-                        {
-                            $('#sub_behavioral_event-'+behavioralEventEditIdx+'.'+(i+1)).replaceWith(compiledTmpl);
-                        }
-                        else
-                        {
-                            $('#sub_behavioral_events_list-'+behavioralEventEditIdx).append(compiledTmpl);
-                        }
+                        $('#sub_behavioral_events_list-'+behavioralEventEditIdx).append(compiledTmpl);
                     }
                     behavioralEventEditIdx=-1;
                 }
