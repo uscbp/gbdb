@@ -76,6 +76,7 @@ class EditBehavioralEventMixin(object):
                      'start_time_seconds': self.object.start_time_seconds(),
                      'end_time_seconds': self.object.end_time_seconds(),
                      'video': '/videos/behavioral_event/%d.mp4' % self.object.id,
+                     'video_url_mp4': self.object.video_url_mp4(),
                      'primates': ', '.join([primate.__str__() for primate in self.object.primates.all()]),
                      'contexts': ', '.join([context.name for context in self.object.contexts.all()]),
                      'ethograms': ', '.join([ethogram.name for ethogram in self.object.ethograms.all()]),

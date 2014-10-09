@@ -194,11 +194,11 @@
                     var count = $('#behavioral_events').children("[id^=behavioral_event]").length;
                     var compiledTmpl = _.template(tmplMarkup, { idx : count+1, id: data.id, start_time: data.start_time,
                         duration: data.duration, start_time_seconds: data.start_time_seconds,
-                        end_time_seconds: data.end_time_seconds, video: data.video, notes: data.notes,
+                        end_time_seconds: data.end_time_seconds, video: data.video, video_url_mp4: data.video_url_mp4, notes: data.notes,
                         primates: data.primates, contexts: data.contexts, ethograms: data.ethograms});
                     $('#behavioral_events').append(compiledTmpl);
-                    {% if object.video.name %}
-                        document.getElementById('observation_session_video_source').src = data.video;
+                    {% if not object.video.name %}
+                        document.getElementById('observation_session_video_source').src = data.video_url_mp4;
                         $("#video_frame").css("display", "block");
                         videojs("observation_session_video").load();
                     {% endif %}
@@ -433,9 +433,9 @@
 		    <div id="observation_session_timeline"></div>
 		</div>
 		{% else %}
-		<div id='video_frame'>
+		<div id='video_frame' style="display:none;">
 		 <video id="observation_session_video" class="video-js vjs-default-skin" controls preload="auto"
-		           width="600" height="400" data-setup='{}' style="display:none;" >
+		           width="600" height="400" data-setup='{}'>
 		          <source id="observation_session_video_source" src="" type="video/mp4">
 		          	<p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
 		    </video>
@@ -451,7 +451,11 @@
         <div id="behavioral_event-<%= idx %>" name="behavioral_event">
             <table class="tab_panel">
                 <tr class="<%= getTRTag(idx) %>">
+                	{% if object.video.name %}
                     <td width=30%><strong><a href="" onclick="return setClipTime(<%= start_time_seconds %>)">Behavioral Event <%= idx %></a></strong></td>
+                	{% else %}
+                	<td width=30%><strong><a href="" onclick="return changeVideoSource('<%= video_url_mp4 %>')">Behavioral Event <%= idx %></a></strong></td>
+                	{% endif %}
                 </tr>
                 <tr class="<%= getTRTag(idx) %>">
                     <td>
