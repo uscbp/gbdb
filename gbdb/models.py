@@ -14,7 +14,7 @@ from django.utils.encoding import force_unicode
 import os.path
 
 def convert_to_mp4(mp4_filename, orig_filename, start_time=None, duration=None):
-    cmds = ['avconv', '-i', orig_filename]
+    cmds = ['ffmpeg', '-i', orig_filename]
     if start_time is not None:
         cmds.extend(['-ss', start_time])
     if duration is not None:
