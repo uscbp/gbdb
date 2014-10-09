@@ -181,12 +181,12 @@ class ObservationSession(models.Model):
         super(ObservationSession,self).save(force_insert=force_insert, force_update=force_update, using=using,
             update_fields=update_fields)
 
-        if self.video.name:
-            orig_filename=os.path.join(settings.MEDIA_ROOT,self.video.name)
-            root,ext=os.path.splitext(orig_filename)
-            mp4_filename='%s.mp4' % root
-            if not os.path.exists(mp4_filename):
-                convert_to_mp4(mp4_filename, orig_filename)
+#        if self.video.name:
+#            orig_filename=os.path.join(settings.MEDIA_ROOT,self.video.name)
+#            root,ext=os.path.splitext(orig_filename)
+#            mp4_filename='%s.mp4' % root
+#            if not os.path.exists(mp4_filename):
+#                convert_to_mp4(mp4_filename, orig_filename)
                 
     def to_dict(self):
         d = {}
@@ -266,12 +266,12 @@ class BehavioralEvent(MPTTModel):
         super(BehavioralEvent,self).save(force_insert=force_insert, force_update=force_update, using=using,
             update_fields=update_fields)
 
-        if self.video.name:
-            orig_filename=os.path.join(settings.MEDIA_ROOT,self.video.name)
-            root,ext=os.path.splitext(orig_filename)
-            mp4_filename='%s.mp4' % root
-            if not os.path.exists(mp4_filename):
-                convert_to_mp4(mp4_filename, orig_filename)
+#        if self.video.name:
+#            orig_filename=os.path.join(settings.MEDIA_ROOT,self.video.name)
+#            root,ext=os.path.splitext(orig_filename)
+#            mp4_filename='%s.mp4' % root
+#            if not os.path.exists(mp4_filename):
+#                convert_to_mp4(mp4_filename, orig_filename)
 
     def start_time_seconds(self):
         if self.start_time:
