@@ -2,47 +2,6 @@
 {% load staticfiles %}
 {% block extrahead %}
     <title>GBDB - {% if form.instance.id%}Edit{% else %}Add{% endif %} Observation Session</title>
-    <script type="text/javascript">
-    
-    function submitObservationSessionForm(url, obs_id)
-	    {
-	        //document.getElementById('savingMsg').style.display = 'block';
-            //document.getElementById('savingOver').style.display = 'block';
-	        // var frm = $('#observationSessionForm');
-	        // $.ajax({
-	            // type: frm.attr('method'),
-	            // url: url,
-	            // data: frm.serialize(),
-	            // success: doneSubmitObservationSession(obs_id),
-	            // error: function(data) {
-	                // alert("Something went wrong!");
-	            // }
-	        // });
-	        var frm = $('#observationSessionForm');
-            var data = new FormData(frm.get(0));
-	        $.ajax({
-	            url: url,
-    			type: frm.attr('method'),
-	            data: data,
-	            success: doneSubmitObservationSession,
-	            processData: false,
-	            contentType: false,
-	        });
-	    }
-	    
-	    function doneSubmitObservationSession(obs_id){
-	    	if(document.location.pathname == '/gbdb/observation_session/new/'){
-	    		document.location.href='/gbdb/observation_session/'.concat(obs_id.toString(), '/');
-	    	} else {
-	    		$('#context_data').empty();
-	    		
-	    		//This lines below need to only happen on deleting a video
-	    		//document.getElementById('observation_session_video_source').src = "";
-                //$("#video_frame").css("display", "none");
-	    	}
-	    }
-	    
-	</script>
 {% endblock %}
 {% block content %}
     <div id="detail">

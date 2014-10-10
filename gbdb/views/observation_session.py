@@ -30,19 +30,6 @@ class EditObservationSessionMixin():
             return response
 
     def form_valid(self, form):
-        
-        if self.request.is_ajax():
-            self.object = form.save();
-            data = {
-#                 'pk': self.object.pk,
-#                 'start_time': self.object.start_time,
-#                 'duration': self.object.duration,
-            }
-            return self.render_to_json_response(data)
-
-    def form_valid(self, form):
-        context = self.get_context_data()
-
         self.object = form.save(commit=False)
         # Set the collator if this is a new session
         if self.object.id is None:
@@ -51,8 +38,15 @@ class EditObservationSessionMixin():
         self.object.save()
         form.save_m2m()
 
-        url=self.get_success_url()
-        return redirect(url)
+        if self.request.is_ajax():
+            data = {
+                'id': self.object.id,
+            }
+            return self.render_to_json_response(data)
+        else:
+            url=self.get_success_url()
+            return redirect(url)
+
 
 
 class CreateObservationSessionView(EditObservationSessionMixin, CreateView):

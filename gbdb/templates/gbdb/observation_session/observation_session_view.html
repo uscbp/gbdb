@@ -294,9 +294,9 @@
                     {% endif %}
                 }
                 $('#context_data').empty();
-                document.getElementById('savingMsg').style.display = 'none';
-                document.getElementById('savingOver').style.display = 'none';
             }
+            document.getElementById('savingMsg').style.display = 'none';
+            document.getElementById('savingOver').style.display = 'none';
         }
 
         function deleteBehavioralEvent(id, idx)
@@ -321,6 +321,30 @@
                 $('#context_data').empty();
         }
 
+        function submitObservationSessionForm(url, obs_id)
+        {
+            document.getElementById('savingMsg').style.display = 'block';
+            document.getElementById('savingOver').style.display = 'block';
+            var frm = $('#observationSessionForm');
+            var data = new FormData(frm.get(0));
+            $.ajax({
+                url: url,
+                type: frm.attr('method'),
+                data: data,
+                success: doneSubmitObservationSession,
+                processData: false,
+                contentType: false,
+            });
+        }
+
+        function doneSubmitObservationSession(data, status){
+            document.getElementById('savingMsg').style.display = 'none';
+            document.getElementById('savingOver').style.display = 'none';
+            if(status=='success')
+            {
+                document.location.href='/gbdb/observation_session/'.concat(data.id.toString(), '/');
+            }
+        }
 
     </script>
 {% endblock %}
