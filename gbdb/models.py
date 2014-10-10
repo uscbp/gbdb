@@ -20,7 +20,7 @@ def convert_to_mp4(mp4_filename, orig_filename, start_time=None, duration=None):
     if duration is not None:
         cmds.extend(['-t', duration])
     ext=os.path.splitext(orig_filename)[1]
-    cmds.extend(['-vcodec', 'libx264','-acodec', 'libaac'])
+    cmds.extend(['-vcodec', 'libx264','-acodec', 'libmp3lame'])
     #this is does not get called on behavioral event chop
     if ext.lower() == '.mov':
         cmds.extend(['-strict', '-2'])
