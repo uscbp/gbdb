@@ -71,49 +71,19 @@
         {
         	$('#context_data').load(href);
         };
-
-        $(document).ready(function()
+        
+        function addPeriod(time_in, time_out, track, label, content)
         {
-            videojs.options.flash.swf = "{{ site_url }}/static/gbdb/scripts/video-js/video-js.swf";
-            {% if object.video.name %}
-                videojs('observation_session_video', {
-                    plugins: {
-                        framebyframe: {
-                            fps: 30,
-                            steps: [
-                                { text: '-5', step: -5 },
-                                { text: '-1', step: -1 },
-                                { text: '+1', step: 1 },
-                                { text: '+5', step: 5 },
-                            ]
-                        }
-                    }
-                });
-
-                var periods = [];
-                {% for behavioral_event in behavioral_events %}
-                    var period = {time_in:'{{behavioral_event.0.start_time_seconds}}',
-                        time_out:'{{behavioral_event.0.end_time_seconds}}',
-                        track:2,
-                        color:'#'+Math.floor(Math.random()*16777215).toString(16),
-                        label:'{{ forloop.counter }}',
-                        content: '{{behavioral_event.0.notes|linebreaks}}'};
-                    periods.push(period);
-                    {% for child in behavioral_event.1 %}
-                    var period = {time_in:'{{child.start_time_seconds}}',
-                        time_out:'{{child.end_time_seconds}}',
-                        track:1,
-                        color:'#'+Math.floor(Math.random()*16777215).toString(16),
-                        label:'{{ forloop.parentloop.counter }}.{{ forloop.counter }}',
-                        content: '{{child.notes|linebreaks}}'};
-                    periods.push(period);
-                    {% endfor %}
-                {% endfor %}
-
-                videojs("observation_session_video").on("loadedmetadata", function(){
-                var options = {
+        	var id = timeline.addPeriod(time_in, time_out,'#'+Math.floor(Math.random()*16777215).toString(16), track, label);
+        };
+        
+        function drawTimeline()
+        {       
+        	
+        	$('#observation_session_timeline').html("");
+        	var options = {
                         'height':100,
-                        'width':this.width(),
+                        'width':videojs("observation_session_video").width(),
                         'numberOfTracks':2,
                         'cursorHeight':30,
                         'periodShape':'bubble',
@@ -127,25 +97,84 @@
                         'scaleFactor':2,
                         };
 
-                        timeline = new Timeline('observation_session_video', 'observation_session_timeline', this.duration(), options);
-                        var bubbles = [];
-                        for(var i = 0; i<periods.length; i++){
-                            var id = timeline.addPeriod(periods[i].time_in,periods[i].time_out,periods[i].color, periods[i].track, periods[i].label);
-                            bubbles.push({id:id, content:periods[i].content});
+            timeline = new Timeline('observation_session_video', 'observation_session_timeline', videojs("observation_session_video").duration(), options);
+            for(var i = 0; i<periods.length; i++){
+                id = timeline.addPeriod(periods[i]['data'].start_time_seconds,periods[i]['data'].end_time_seconds, '#'+Math.floor(Math.random()*16777215).toString(16), periods[i]['data'].track, periods[i]['data'].label);
+            }
+        };
+
+        $(document).ready(function()
+        {
+        	periods = [];
+        	drawTimeline();
+            videojs.options.flash.swf = "{{ site_url }}/static/gbdb/scripts/video-js/video-js.swf";
+           
+                videojs('observation_session_video', {
+                    plugins: {
+                        framebyframe: {
+                            fps: 30,
+                            steps: [
+                                { text: '-5', step: -5 },
+                                { text: '-1', step: -1 },
+                                { text: '+1', step: 1 },
+                                { text: '+5', step: 5 },
+                            ]
                         }
+                    }
+                });
+				
+				{% for behavioral_event in behavioral_events %}
+					var count = '{{ forloop.counter }}';
+					var period =  {id:'{{behavioral_event.id}}', data: {id:'{{behavioral_event.id}}', idx: count, label: count.toString(), start_time: '{{behavioral_event.0.start_time}}',
+                        duration: '{{behavioral_event.0.duration}}', start_time_seconds: '{{behavioral_event.0.start_time_seconds}}',
+                        end_time_seconds: '{{behavioral_event.0.end_time_seconds}}', video: '{{behavioral_event.0.video}}', video_url_mp4: '{{behavioral_event.0.video_url_mp4}}', 
+                        notes: '{{behavioral_event.0.notes}}', primates: '{{behavioral_event.0.primates}}', contexts: '{{behavioral_event.0.contexts}}', ethograms: '{{behavioral_event.0.ethograms}}', track: 2}};
+				
+	                // var period = {time_in:'{{behavioral_event.0.start_time_seconds}}',
+	                    // time_out:'{{behavioral_event.0.end_time_seconds}}',
+	                    // track:2,
+	                    // color:'#'+Math.floor(Math.random()*16777215).toString(16),
+	                    // label:'{{ forloop.counter }}',
+	                    // content: '{{behavioral_event.0.notes|linebreaks}}'};
+	                 periods.push(period);
+	                {% for child in behavioral_event.1 %}
+	                var sub_count = '{{ forloop.counter }}';
+	                period = {id:'{{child.id}}', data: {parentIdx: count, idx: sub_count++, label: count.toString() + '.' + sub_count.toString(), start_time_seconds: '{{child.start_time_seconds}}',
+                            end_time_seconds: '{{child.end_time_seconds}}', type: '{{child.type}}',
+                            start_time: '{{child.start_time}}', relative_to: '{{child.relative_to}}',
+                            duration: '{{child.duration}}', primates: '{{child.primates}}',
+                            contexts: '{{child.contexts}}', ethograms: '{{child.ethograms}}',
+                            signaller_id: '{{child.signaller_id}}', signaller:'{{child.signaller}}',
+                            recipient_id: '{{child.recipient_id}}', recipient: '{{child.recipient}}',
+                            gesture_id: '{{child.gesture_id}}', gesture:'{{child.gesture}}',
+                            recipient_response: '{{child.recipient_reponse}}',
+                            goal_met: '{{child.goal_met}}', notes: '{{child.notes}}', track: 1}
+                       };
+	                // var period = {time_in:'{{child.start_time_seconds}}',
+	                    // time_out:'{{child.end_time_seconds}}',
+	                    // track:1,
+	                    // color:'#'+Math.floor(Math.random()*16777215).toString(16),
+	                    // label:'{{ forloop.parentloop.counter }}.{{ forloop.counter }}',
+	                    // content: '{{child.notes|linebreaks}}'};
+	                periods.push(period);
+	                {% endfor %}
+	            {% endfor %}
+            
+                videojs("observation_session_video").on("loadedmetadata", function(){
+                	drawTimeline();
                 });
 
                 videojs("observation_session_video").on("timeupdate", function(){
                     var time = videojs("observation_session_video").currentTime();
                     var active_data = [];
-                    for(var i=0; i<periods.length-1; i++){
-                        if(time >= periods[i].time_in && time < periods[i].time_out){
-                            active_data.push("<strong>Event " + periods[i].label + " Notes: </strong>" +periods[i].content);
+                    for(var i=0; i<periods.length; i++){
+                        if(time >= periods[i]['data'].start_time_seconds && time < periods[i]['data'].end_time_seconds){
+                            active_data.push("<strong>Event " + periods[i]['data'].label + " Notes: </strong>" +periods[i]['data'].notes);
                         }
                     };
                     $('#context_data').html(active_data.join('<br /><br />'));
                 });
-            {% endif %}
+            
         });
 
         behavioralEventEditIdx=-1;
@@ -192,20 +221,17 @@
                 if(behavioralEventEditIdx<0)
                 {
                     var count = $('#behavioral_events').children("[id^=behavioral_event]").length;
-                    var compiledTmpl = _.template(tmplMarkup, { idx : count+1, id: data.id, start_time: data.start_time,
+                    var period = { id: data.id, data: {id: data.id, idx : count+1, label: (count+1).toString(), start_time: data.start_time,
                         duration: data.duration, start_time_seconds: data.start_time_seconds,
                         end_time_seconds: data.end_time_seconds, video: data.video, video_url_mp4: data.video_url_mp4, notes: data.notes,
-                        primates: data.primates, contexts: data.contexts, ethograms: data.ethograms});
+                        primates: data.primates, contexts: data.contexts, ethograms: data.ethograms, track: 2}};
+                    var compiledTmpl = _.template(tmplMarkup, period['data']);
+                    periods.push(period);
                     $('#behavioral_events').append(compiledTmpl);
-                    {% if not object.video.name %}
-                        document.getElementById('observation_session_video_source').src = data.video_url_mp4;
-                        $("#video_frame").css("display", "block");
-                        videojs("observation_session_video").load();
-                    {% endif %}
                     var tmplMarkup = $('#behavioral_subevent-template').html();
                     for(var i=0; i<data.subevents.length; i++)
                     {
-                        var compiledTmpl = _.template(tmplMarkup, { parentIdx: count+1, idx: i+1,
+                    	period = { id: data.subevents[i]['id'], data:{parentIdx: count+1, idx: i+1, label: (count+1).toString() + '.' + (i+1).toString(),
                             start_time_seconds: data.subevents[i]['start_time_seconds'],
                             end_time_seconds: data.subevents[i]['end_time_seconds'],
                             type: data.subevents[i]['type'], start_time: data.subevents[i]['start_time'],
@@ -216,38 +242,56 @@
                             recipient: data.subevents[i]['recipient'], gesture_id: data.subevents[i]['gesture_id'],
                             gesture: data.subevents[i]['gesture'],
                             recipient_response: data.subevents[i]['recipient_response'],
-                            goal_met: data.subevents[i]['goal_met'], notes: data.subevents[i]['notes']
-                        });
+                            goal_met: data.subevents[i]['goal_met'], notes: data.subevents[i]['notes'], track: 1}
+                       };
+                       periods.push(period);
+                        var compiledTmpl = _.template(tmplMarkup, period['data']);
                         $('#sub_behavioral_events_list-'+ (count+1)).append(compiledTmpl);
                     }
+                    {% if not object.video.name %}
+                        document.getElementById('observation_session_video_source').src = data.video_url_mp4;
+                        $("#video_frame").css("display", "block");
+                        videojs("observation_session_video").load();
+                    {% else %}
+                    	drawTimeline();
+                    {% endif %}
                 }
                 else
                 {
-                    var compiledTmpl = _.template(tmplMarkup, { idx : behavioralEventEditIdx, id: data.id,
-                        start_time: data.start_time, duration: data.duration,
-                        start_time_seconds: data.start_time_seconds, end_time_seconds:data.end_time_seconds,
-                        video: data.video, notes: data.notes, primates: data.primates, contexts: data.contexts,
-                        ethograms: data.ethograms});
+                	var period = { id: data.id, data: {id: data.id, idx : behavioralEventEditIdx, label: behavioralEventEditIdx.toString(), start_time: data.start_time,
+                        duration: data.duration, start_time_seconds: data.start_time_seconds,
+                        end_time_seconds: data.end_time_seconds, video: data.video, video_url_mp4: data.video_url_mp4, notes: data.notes,
+                        primates: data.primates, contexts: data.contexts, ethograms: data.ethograms, track: 2}};
+                    var compiledTmpl = _.template(tmplMarkup, period['data']);
                     $('#behavioral_event-'+behavioralEventEditIdx).replaceWith(compiledTmpl);
                     $('#sub_behavioral_events_list-'+behavioralEventEditIdx).empty();
                     var tmplMarkup = $('#behavioral_subevent-template').html();
                     for(var i=0; i<data.subevents.length; i++)
                     {
-                        var compiledTmpl = _.template(tmplMarkup, { parentIdx: behavioralEventEditIdx, idx: i+1,
+                    	period = { id: data.subevents[i]['id'], data:{parentIdx: behavioralEventEditIdx, idx: i+1, label: behavioralEventEditIdx.toString() + '.' + (i+1).toString(),
                             start_time_seconds: data.subevents[i]['start_time_seconds'],
-                            end_time_seconds: data.subevents[i]['end_time_seconds'], type: data.subevents[i]['type'],
-                            start_time: data.subevents[i]['start_time'], relative_to: data.subevents[i]['relative_to'],
-                            duration: data.subevents[i]['duration'], primates: data.subevents[i]['primates'],
-                            contexts: data.subevents[i]['contexts'], ethograms: data.subevents[i]['ethograms'],
-                            signaller_id: data.subevents[i]['signaller_id'], signaller: data.subevents[i]['signaller'],
-                            recipient_id: data.subevents[i]['recipient_id'], recipient: data.subevents[i]['recipient'],
-                            gesture_id: data.subevents[i]['gesture_id'], gesture: data.subevents[i]['gesture'],
+                            end_time_seconds: data.subevents[i]['end_time_seconds'],
+                            type: data.subevents[i]['type'], start_time: data.subevents[i]['start_time'],
+                            relative_to: data.subevents[i]['relative_to'], duration: data.subevents[i]['duration'],
+                            primates: data.subevents[i]['primates'], contexts: data.subevents[i]['contexts'],
+                            ethograms: data.subevents[i]['ethograms'], signaller_id: data.subevents[i]['signaller_id'],
+                            signaller: data.subevents[i]['signaller'], recipient_id: data.subevents[i]['recipient_id'],
+                            recipient: data.subevents[i]['recipient'], gesture_id: data.subevents[i]['gesture_id'],
+                            gesture: data.subevents[i]['gesture'],
                             recipient_response: data.subevents[i]['recipient_response'],
-                            goal_met: data.subevents[i]['goal_met'], notes: data.subevents[i]['notes']
-                        });
+                            goal_met: data.subevents[i]['goal_met'], notes: data.subevents[i]['notes'], track: 1}
+                       };
+                        var compiledTmpl = _.template(tmplMarkup, period['data']);
                         $('#sub_behavioral_events_list-'+behavioralEventEditIdx).append(compiledTmpl);
                     }
                     behavioralEventEditIdx=-1;
+                    {% if not object.video.name %}
+                        document.getElementById('observation_session_video_source').src = data.video_url_mp4;
+                        $("#video_frame").css("display", "block");
+                        videojs("observation_session_video").load();
+                    {% else %}
+                    	drawTimeline();
+                    {% endif %}
                 }
                 $('#context_data').empty();
                 document.getElementById('savingMsg').style.display = 'none';
@@ -335,7 +379,7 @@
                                 {% endif %}
                             </td>
                         </tr>
-                        {% if behavioral_event.0.start_time %}
+                        {% if not behavioral_event.0.video.name %}
                             <tr class="{% cycle 'even_row' 'odd_row' %}">
                                 <td><strong>Start time:</strong> {{ behavioral_event.0.start_time.hour }}:{{ behavioral_event.0.start_time.minute }}:{{ behavioral_event.0.start_time.second }}</td>
                             </tr>
