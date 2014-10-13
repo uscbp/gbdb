@@ -1449,8 +1449,8 @@
         "pk": 1,
         "fields": {
             "name": "Budongo Forest Reserve",
-            "latitude": 1.47,
-            "longitude": 31.34
+            "latitude": 1.793040,
+            "longitude": 31.579972
         }
     },
     {
@@ -1458,8 +1458,8 @@
         "pk": 2,
         "fields": {
             "name": "Bossou, Guinea",
-            "latitude": 5.38,
-            "longitude": 8.30
+            "latitude": 7.645994,
+            "longitude": -8.502013
         }
     },
     {
@@ -1467,35 +1467,35 @@
         "pk": 3,
         "fields": {
             "name": "Tai Forest, Cote de Ivore",
-            "latitude": 5.41,
-            "longitude": 6.56
+            "latitude": 5.689941,
+            "longitude": -6.939846
         }
     },
     {
         "model": "gbdb.SavedLocation",
         "pk": 4,
         "fields": {
-            "name": "Gombe, Tanzania",
-            "latitude": 4.42,
-            "longitude": 29.37
+            "name": "Gombe National Park, Tanzania",
+            "latitude": -4.699989,
+            "longitude": 29.616318
         }
     },
     {
         "model": "gbdb.SavedLocation",
         "pk": 5,
         "fields": {
-            "name": "Kibale",
-            "latitude": 0.29,
-            "longitude": 30.22
+            "name": "Kibale Forest National Park, Uganda",
+            "latitude": 0.486117,
+            "longitude": 30.389338
         }
     },
     {
         "model": "gbdb.SavedLocation",
         "pk": 6,
         "fields": {
-            "name": "Mahale, Tanzania",
-            "latitude": 6.15,
-            "longitude": 29.56
+            "name": "Mahale National Park, Tanzania",
+            "latitude": -6.266651,
+            "longitude": 29.933134
         }
     },
     {
@@ -1503,8 +1503,8 @@
         "pk": 7,
         "fields": {
             "name": "Mbeli Bai, Nouabale-Ndoki National Park, Republic of Congo",
-            "latitude": 2.43,
-            "longitude": 16.43
+            "latitude": 2.585630,
+            "longitude": 16.628781
         }
     },
     {
@@ -1512,8 +1512,8 @@
         "pk": 8,
         "fields": {
             "name": "Salonga National Park, Democratic Republic of Congo",
-            "latitude": 2.26,
-            "longitude": 20.54
+            "latitude": -2.446691,
+            "longitude": 20.902532
         }
     }
 ]
