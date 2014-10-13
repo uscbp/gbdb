@@ -1515,5 +1515,68 @@
             "latitude": -2.446691,
             "longitude": 20.902532
         }
+    },
+    {
+        "model": "gbdb.Goal",
+        "pk": 1,
+        "fields": {
+            "name": "Affiliation"
+        }
+    },
+    {
+        "model": "gbdb.Goal",
+        "pk": 2,
+        "fields": {
+            "name": "Groom"
+        }
+    },
+    {
+        "model": "gbdb.Goal",
+        "pk": 3,
+        "fields": {
+            "name": "Climb on"
+        }
+    },
+    {
+        "model": "gbdb.Goal",
+        "pk": 4,
+        "fields": {
+            "name": "Move away"
+        }
+    },
+    {
+        "model": "gbdb.Goal",
+        "pk": 5,
+        "fields": {
+            "name": "Stop behavior"
+        }
+    },
+    {
+        "model": "gbdb.Goal",
+        "pk": 6,
+        "fields": {
+            "name": "Follow"
+        }
+    },
+    {
+        "model": "gbdb.Goal",
+        "pk": 7,
+        "fields": {
+            "name": "Move closer"
+        }
+    },
+    {
+        "model": "gbdb.Goal",
+        "pk": 8,
+        "fields": {
+            "name": "Position"
+        }
+    },
+    {
+        "model": "gbdb.Goal",
+        "pk": 9,
+        "fields": {
+            "name": "Acquire food/object"
+        }
     }
 ]
