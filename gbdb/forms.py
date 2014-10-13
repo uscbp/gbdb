@@ -4,7 +4,7 @@ from django.forms.models import inlineformset_factory
 from django.forms.extras import SelectDateWidget
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django import forms
-from gbdb.models import ObservationSession, BehavioralEvent, Primate, Context, Ethogram, Species, Gesture, BodyPart, GesturalEvent, SavedLocation
+from gbdb.models import ObservationSession, BehavioralEvent, Primate, Context, Ethogram, Species, Gesture, BodyPart, GesturalEvent, SavedLocation, Goal
 from geoposition.forms import GeopositionField
 from registration.forms import RegistrationForm
 from registration.models import User
@@ -246,7 +246,7 @@ class PrimateSearchForm(forms.Form):
 class GestureForm(forms.ModelForm):
     name = forms.CharField(widget=forms.TextInput(attrs={'size':'30'}),required=True)
     description = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=False)
-    goal = forms.CharField(widget=forms.TextInput(attrs={'size':'30'}),required=True)
+    goal = forms.ModelChoiceField(queryset=Goal.objects.all(), required=True)
     signaller_body_parts = forms.ModelMultipleChoiceField(queryset=BodyPart.objects.all(), required=False)
     recipient_body_parts = forms.ModelMultipleChoiceField(queryset=BodyPart.objects.all(), required=False)
     audible = forms.ChoiceField(choices=Gesture.CHOICES, widget=forms.Select(), required=True)
