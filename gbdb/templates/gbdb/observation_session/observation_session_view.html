@@ -217,7 +217,7 @@
         function doneSubmitBehavioralEventForm(data, status){
             if (status=="success")
             {
-                var tmplMarkup = $('#behavioral_event-template').html();
+                /*var tmplMarkup = $('#behavioral_event-template').html();
                 if(behavioralEventEditIdx<0)
                 {
                     var count = $('#behavioral_events').children("[id^=behavioral_event]").length;
@@ -292,8 +292,10 @@
                     {% else %}
                     	drawTimeline();
                     {% endif %}
-                }
+
+                }*/
                 $('#context_data').empty();
+                document.location.reload();
             }
             document.getElementById('savingMsg').style.display = 'none';
             document.getElementById('savingOver').style.display = 'none';
@@ -312,13 +314,17 @@
         function doneBehavioralEventDelete(data, status)
         {
             if(status=='success')
-                $('#behavioral_event-'+data.idx).remove();
+            {
+                /*$('#behavioral_event-'+data.idx).remove();
                 var count = $('#behavioral_events').children("[id^=behavioral_event]").length;
                 if(count == 0){
                 	document.getElementById('observation_session_video_source').src = "";
                     $("#video_frame").css("display", "none");
                 }
                 $('#context_data').empty();
+                */
+                document.location.reload();
+            }
         }
 
         function submitObservationSessionForm(url, obs_id)
@@ -333,7 +339,7 @@
                 data: data,
                 success: doneSubmitObservationSession,
                 processData: false,
-                contentType: false,
+                contentType: false
             });
         }
 
@@ -342,7 +348,8 @@
             document.getElementById('savingOver').style.display = 'none';
             if(status=='success')
             {
-                document.location.href='/gbdb/observation_session/'.concat(data.id.toString(), '/');
+                //document.location.href='/gbdb/observation_session/'.concat(data.id.toString(), '/');
+                document.location.reload();
             }
         }
 
