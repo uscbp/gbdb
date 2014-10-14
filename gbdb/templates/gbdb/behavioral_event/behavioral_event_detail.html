@@ -217,7 +217,7 @@
                 {% endif %}
                 <tr valign=top>
                     <td valign=top>{{ form.primates.label_tag }}</td>
-                    <td>{{ form.primates }} <input class="btn" type="button" value="Add Primate" onclick="return showPopup('Add Primate',600,500,'/gbdb/primate/new/');"/></td>
+                    <td>{{ form.primates }} <input class="btn" type="button" value="Add Primate" onclick="return showPopup('Add Primate',1000,700,'/gbdb/primate/new/');"/></td>
                     <td class="myerrors">{{ form.primates.errors }}</td>
                 </tr>
                 <tr valign=top>
@@ -272,7 +272,7 @@
                                                     </td>
                                                     <td style="width:120px">Start time</td>
                                                     <td colspan="4">
-                                                        {{ sub_behavioral_event_form.start_time }} (HH:MM:SS, Relative to the start of the {% if allow_video %}behavioral event{% else %}observation session{% endif %} video)
+                                                        {{ sub_behavioral_event_form.start_time }} (HH:MM:SS)
                                                     </td>
                                                 </tr>
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
@@ -354,7 +354,7 @@
                                                     </td>
                                                     <td style="width:120px">Start time</td>
                                                     <td colspan="4">
-                                                        {{ sub_gestural_event_form.start_time }} (HH:MM:SS, Relative to the start of the {% if allow_video %}behavioral event{% else %}observation session{% endif %} video)
+                                                        {{ sub_gestural_event_form.start_time }} (HH:MM:SS)
                                                     </td>
                                                 </tr>
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
@@ -463,7 +463,7 @@
                     </td>
                     <td style="width:120px">Start time</td>
                     <td colspan="4">
-                        <input id="id_sub_behavioral_event-<%= idx %>-start_time" name="sub_behavioral_event-<%= idx %>-start_time" type="text" /> (HH:MM:SS, Relative to the start of the {% if allow_video %}behavioral event{% else %}observation session{% endif %} video)
+                        <input id="id_sub_behavioral_event-<%= idx %>-start_time" name="sub_behavioral_event-<%= idx %>-start_time" type="text" /> (HH:MM:SS)
                     </td>
                 </tr>
                 <tr class="<%= getTRTag(idx) %>" valign=top>
