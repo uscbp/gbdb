@@ -52,7 +52,12 @@ h1 {
 
 /* Detail
 ---------------------------------------------------------*/
-#detail { font-size: 75%; }
+#detail { 
+	font-size: 75%; 
+	float: left;
+    width: 1200px;
+    display: inline;
+}
 #detail table {
     width: 80%;
     padding: 5px;
@@ -89,13 +94,16 @@ h1 {
     color: #0d3f74;
 }
 #detail .tab_panel {
-    width: 400px;
+    width: 370px;
+}
+#detail .sub_tab_panel {
+    width: 385px;
 }
 #detail .info_panel {
 	float: left;
     width: 400px;
 }
-#detail #video_panel {
+#detail .video_panel {
 	float: left;
     width: 800px;
 }

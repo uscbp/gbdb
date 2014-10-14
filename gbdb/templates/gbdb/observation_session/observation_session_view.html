@@ -170,6 +170,13 @@
                     for(var i=0; i<periods.length; i++){
                         if(time >= periods[i]['data'].start_time_seconds && time < periods[i]['data'].end_time_seconds){
                             active_data.push("<strong>Event " + periods[i]['data'].label + " Notes: </strong>" +periods[i]['data'].notes);
+                        	$('#behavioral_event-' + periods[i]['data'].label).css("border","5px solid black");
+                        	//var eventTopPosition = $('#behavioral_event-' + periods[i]['data'].label).position();
+                        	//$("#behavioral_events").scroll(eventTopPosition);
+                        	$('#sub_behavioral_event-' + periods[i]['data'].label).css("border","5px solid black");
+                        } else {
+                        	$('#behavioral_event-' + periods[i]['data'].label).css("border","none");
+                        	$('#sub_behavioral_event-' + periods[i]['data'].label).css("border","none");
                         }
                     };
                     $('#context_data').html(active_data.join('<br /><br />'));
@@ -378,6 +385,9 @@
                 <td><strong>Location: </strong> {{ object.location_name }}</td></td>
             </tr>
             <tr valign="top">
+                <td><strong>Notes: </strong> {{ object.notes }}</td></td>
+            </tr>
+            <tr valign="top">
                 <td>
                     <div id="map-canvas" style="height:200px"></div>
                 </td>
@@ -436,7 +446,7 @@
                     <div id="sub_behavioral_events_list-{{ forloop.counter }}" class="sub_behavioral_events_list">
                         {% for sub_behavioral_event in behavioral_event.1 %}
                             <div id="sub_behavioral_event-{{ forloop.parentloop.counter }}.{{ forloop.counter }}" name="sub_behavioral_event">
-                                <table class="tab_panel">
+                                <table class="_sub_tab_panel">
                                     <tr class="{% cycle 'even_row' 'odd_row' %}">
                                         <td width=30%><strong><a href="" onclick="return setClipTime({{ sub_behavioral_event.start_time_seconds }});"> Subevent {{ forloop.parentloop.counter }}.{{ forloop.counter }}</a></strong></td>
                                     </tr>
@@ -493,7 +503,7 @@
 
     </div>
     
-    <div id='video_panel'>
+    <div class='video_panel'>
 		{% if object.video.name or behavioral_events.0.0.video.name%}
 		<div id='video_frame'>
 		    <video id="observation_session_video" class="video-js vjs-default-skin" controls preload="auto"
