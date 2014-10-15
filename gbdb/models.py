@@ -129,6 +129,20 @@ class ObservationSession(models.Model):
     class Meta:
         app_label='gbdb'
 
+    def duration_seconds(self):
+        result = subprocess.Popen(["ffprobe", os.path.join(settings.MEDIA_ROOT,'videos','observation_session','%d.mp4' % self.id)],
+            stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
+        duration=0
+        for line in result.stdout.readlines():
+            if 'Duration' in line:
+                line_parts=line.split(', ')
+                duration_part=line_parts[0].split(': ')
+                duration_parts=duration_part[1].split(':')
+                duration+=int(duration_parts[0])*60*60
+                duration+=int(duration_parts[1])*60
+                duration+=float(duration_parts[2])
+        return duration
+
     def video_url_mp4(self):
         return ''.join(['http://', get_current_site(None).domain, os.path.join('/media/videos/observation_session','%d.mp4' % self.id)])
 
