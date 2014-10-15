@@ -565,7 +565,12 @@ Timeline.prototype.drawRect = function(x, y, w, h, color, label, highlight) {
 	this.c.strokeStyle = '#FF0';
 	this.c.lineWidth = 3
     this.c.fillRect(x, y, w, h);
-	//if(highlight){this.c.stroke();}
+	if(highlight){this.c.stroke();}
+    if(label){
+        label_width =  this.c.measureText(label);
+        this.c.fillStyle = "#000";
+        this.c.fillText(label, x+w/2-label_width.width/2, y+h/2);
+    }
 }
 /**
  * @private

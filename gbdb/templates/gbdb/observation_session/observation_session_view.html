@@ -86,7 +86,7 @@
                         'width':videojs("observation_session_video").width(),
                         'numberOfTracks':2,
                         'cursorHeight':30,
-                        'periodShape':'bubble',
+                        //'periodShape':'bubble',
                         'scaleHeight':30,
                         'scaleBackgroundColor':'#000',
                         'backgroundColor':'#EAE5E1',
@@ -432,11 +432,18 @@
                                 track: 1
                             }
                         };
+                        var found=false;
                         for(var i=0; i<periods.length; i++)
                         {
-                            if(periods[i].data.label==period.data.label)
+                            if(periods[i].parentIdx==period.parentIdx && periods[i].id==period.id)
+                            {
                                 periods[i]=period;
+                                found=true;
+                                break;
+                            }
                         }
+                        if(!found)
+                            periods.push(period);
                         var compiledTmpl = _.template(tmplMarkup, period['data']);
                         $('#sub_behavioral_events_list-'+behavioralEventEditIdx).append(compiledTmpl);
                     }
