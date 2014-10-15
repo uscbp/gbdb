@@ -99,10 +99,9 @@ class EditBehavioralEventMixin(object):
                      'subevents': []
                 }
 
-                if self.object.start_time:
+                if not self.object.video.name:
                     data['start_time']='%d:%d:%d.%d' % (self.object.start_time.hour,self.object.start_time.minute,
                                                         self.object.start_time.second,self.object.start_time.microsecond)
-                if self.object.duration:
                     data['duration']='%d:%d:%d.%d' % (self.object.duration.hour,self.object.duration.minute,
                                                       self.object.duration.second,self.object.duration.microsecond)
 

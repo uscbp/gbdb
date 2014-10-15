@@ -158,7 +158,7 @@
                             id:'{{child.id}}',
                             data: {
                                 parentIdx: count,
-                                idx: sub_count++,
+                                idx: sub_count+1,
                                 label: count.toString() + '.' + sub_count.toString(),
                                 start_time_seconds: '{{child.start_time_seconds}}',
                                 end_time_seconds: '{{child.end_time_seconds}}',
@@ -198,17 +198,32 @@
                 videojs("observation_session_video").on("timeupdate", function(){
                     var time = videojs("observation_session_video").currentTime();
                     var active_data = [];
+                    var min_start_time=10000000;
+                    var min_label='';
                     for(var i=0; i<periods.length; i++){
                         if(time >= periods[i]['data'].start_time_seconds && time < periods[i]['data'].end_time_seconds){
                             active_data.push("<strong>Event " + periods[i]['data'].label + " Notes: </strong>" +periods[i]['data'].notes);
-                        	$('#behavioral_event-' + periods[i]['data'].label).css("border","5px solid black");
-                        	$("#behavioral_events").scrollTo("#behavioral_event-" + periods[i]['data'].label);
-                        	$('#sub_behavioral_event-' + periods[i]['data'].label).css("border","5px solid black");
+                        	if(periods[i]['data'].label.indexOf('.')<0)
+                                $('#behavioral_event-' + periods[i]['data'].label).css("border","5px solid black");
+                            else
+                                $('#sub_behavioral_event-' + periods[i]['data'].label).css("border","5px solid black");
+                            if(periods[i].data.start_time_seconds<min_start_time)
+                            {
+                                min_start_time=periods[i].data.start_time_seconds;
+                                min_label=periods[i]['data'].label;
+                            }
+
                         } else {
-                        	$('#behavioral_event-' + periods[i]['data'].label).css("border","none");
-                        	$('#sub_behavioral_event-' + periods[i]['data'].label).css("border","none");
+                            if(periods[i]['data'].label.indexOf('.')<0)
+                        	    $('#behavioral_event-' + periods[i]['data'].label).css("border","none");
+                            else
+                        	    $('#sub_behavioral_event-' + periods[i]['data'].label).css("border","none");
                         }
                     };
+                    if(min_label.indexOf('.')>=0)
+                        $("#behavioral_events").scrollTo("#behavioral_event-" + min_label.substring(0,min_label.indexOf('.')));
+                    else
+                        $("#behavioral_events").scrollTo("#behavioral_event-" + min_label);
                     $('#context_data').html(active_data.join('<br /><br />'));
                 });
             
@@ -260,30 +275,89 @@
                 var tmplMarkup = $('#behavioral_event-template').html();
                 if(behavioralEventEditIdx<0)
                 {
-                    /*
                     var count = $('#behavioral_events').children("[id^=behavioral_event]").length;
-                    var period = { id: data.id, data: {id: data.id, idx : count+1, label: (count+1).toString(), start_time: data.start_time,
-                        duration: data.duration, start_time_seconds: data.start_time_seconds,
-                        end_time_seconds: data.end_time_seconds, video: data.video, video_url_mp4: data.video_url_mp4, notes: data.notes,
-                        primates: data.primates, contexts: data.contexts, ethograms: data.ethograms, track: 2}};
+                    var period = {
+                        id: data.id,
+                        data: {
+                            id: data.id,
+                            idx : count+1,
+                            label: (count+1).toString(),
+                            start_time: data.start_time,
+                            duration: data.duration,
+                            start_time_seconds: data.start_time_seconds,
+                            end_time_seconds: data.end_time_seconds,
+                            video: data.video,
+                            video_url_mp4: data.video_url_mp4,
+                            notes: data.notes,
+                            primates: data.primates,
+                            contexts: data.contexts,
+                            ethograms: data.ethograms,
+                            track: 2
+                        }
+                    };
                     var compiledTmpl = _.template(tmplMarkup, period['data']);
                     periods.push(period);
-                    $('#behavioral_events').append(compiledTmpl);
+                    if(count==0)
+                        $('#behavioral_events').append(compiledTmpl);
+                    else
+                    {
+                        for(var k=0; k<count; k++)
+                        {
+                            var thisElemStart=parseInt($('#behavioral_event-'+(k+1)+'-start_time_seconds').html());
+                            if(k==(count-1))
+                            {
+                                if(data.start_time_seconds>=thisElemStart)
+                                    $('#behavioral_events').append(compiledTmpl);
+                                else
+                                    $('#behavioral_event-'+(k+1)).before(compiledTmpl);
+                                break;
+                            }
+                            else
+                            {
+                                var nextElemStart=parseInt($('#behavioral_event-'+(k+2)+'-start_time_seconds').html());
+                                if(data.start_time_seconds<thisElemStart)
+                                {
+                                    $('#behavioral_event-'+(k+1)).before(compiledTmpl);
+                                    break;
+                                }
+                                if(data.start_time_seconds>=thisElemStart && data.start_time_seconds<=nextElemStart)
+                                {
+                                    $('#behavioral_event-'+(k+1)).after(compiledTmpl);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
                     var tmplMarkup = $('#behavioral_subevent-template').html();
                     for(var i=0; i<data.subevents.length; i++)
                     {
-                    	period = { id: data.subevents[i]['id'], data:{parentIdx: count+1, idx: i+1, label: (count+1).toString() + '.' + (i+1).toString(),
-                            start_time_seconds: data.subevents[i]['start_time_seconds'],
-                            end_time_seconds: data.subevents[i]['end_time_seconds'],
-                            type: data.subevents[i]['type'], start_time: data.subevents[i]['start_time'],
-                            relative_to: data.subevents[i]['relative_to'], duration: data.subevents[i]['duration'],
-                            primates: data.subevents[i]['primates'], contexts: data.subevents[i]['contexts'],
-                            ethograms: data.subevents[i]['ethograms'], signaller_id: data.subevents[i]['signaller_id'],
-                            signaller: data.subevents[i]['signaller'], recipient_id: data.subevents[i]['recipient_id'],
-                            recipient: data.subevents[i]['recipient'], gesture_id: data.subevents[i]['gesture_id'],
-                            gesture: data.subevents[i]['gesture'],
-                            recipient_response: data.subevents[i]['recipient_response'],
-                            goal_met: data.subevents[i]['goal_met'], notes: data.subevents[i]['notes'], track: 1}
+                    	period = {
+                            id: data.subevents[i]['id'],
+                            data:{
+                                parentIdx: count+1,
+                                idx: i+1,
+                                label: (count+1).toString() + '.' + (i+1).toString(),
+                                start_time_seconds: data.subevents[i]['start_time_seconds'],
+                                end_time_seconds: data.subevents[i]['end_time_seconds'],
+                                type: data.subevents[i]['type'],
+                                start_time: data.subevents[i]['start_time'],
+                                relative_to: data.subevents[i]['relative_to'],
+                                duration: data.subevents[i]['duration'],
+                                primates: data.subevents[i]['primates'],
+                                contexts: data.subevents[i]['contexts'],
+                                ethograms: data.subevents[i]['ethograms'],
+                                signaller_id: data.subevents[i]['signaller_id'],
+                                signaller: data.subevents[i]['signaller'],
+                                recipient_id: data.subevents[i]['recipient_id'],
+                                recipient: data.subevents[i]['recipient'],
+                                gesture_id: data.subevents[i]['gesture_id'],
+                                gesture: data.subevents[i]['gesture'],
+                                recipient_response: data.subevents[i]['recipient_response'],
+                                goal_met: data.subevents[i]['goal_met'],
+                                notes: data.subevents[i]['notes'],
+                                track: 1
+                            }
                        };
                        periods.push(period);
                         var compiledTmpl = _.template(tmplMarkup, period['data']);
@@ -293,11 +367,8 @@
                         document.getElementById('observation_session_video_source').src = data.video_url_mp4;
                         $("#video_frame").css("display", "block");
                         videojs("observation_session_video").load();
-                    {% else %}
-                    	drawTimeline();
                     {% endif %}
-                    */
-                    document.location.reload();
+                    drawTimeline();
                 }
                 else
                 {
@@ -551,6 +622,7 @@
             <div id="behavioral_events">
                 {% for behavioral_event in behavioral_events %}
                     <div id="behavioral_event-{{ forloop.counter }}" name="behavioral_event">
+                        <div id="behavioral_event-{{ forloop.counter }}-start_time_seconds" style="display: none;">{{ behavioral_event.0.start_time_seconds }}</div>
                         <table class="tab_panel">
                             <tr class="{% cycle 'even_row' 'odd_row' %}">
                                 {% if not behavioral_event.0.video.name %}
@@ -682,6 +754,7 @@
                 
     <script type="text/html" id="behavioral_event-template">
         <div id="behavioral_event-<%= idx %>" name="behavioral_event">
+            <div id="behavioral_event-<%= idx %>-start_time_seconds" style="display: none;"><%= start_time_seconds %></div>
             <table class="tab_panel">
                 <tr class="<%= getTRTag(idx) %>">
                 	{% if object.video.name %}
@@ -735,7 +808,7 @@
                 </tr>
                 <tr class="<%= getTRTag(idx) %>">
                     <td>
-                            <a href="" onclick="return playClip(<%= start_time_seconds %>,<%= end_time_seconds %>);">Play clip</a>
+                        <a href="" onclick="return playClip(<%= start_time_seconds %>,<%= end_time_seconds %>);">Play clip</a>
                     </td>
                 </tr>
                 <tr class="<%= getTRTag(idx) %>">
