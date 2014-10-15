@@ -89,10 +89,10 @@ class EditBehavioralEventMixin(object):
                 if not sub_gestural_event_form in sub_gestural_event_formset.deleted_forms:
                     gestural_event=sub_gestural_event_form.save(commit=False)
                     errors={}
-                    subevent_start_seconds=behavioral_event.start_time.hour*60*60+behavioral_event.start_time.minute*60+behavioral_event.start_time.second
-                    if behavioral_event.relative_to=='behavioral_event':
+                    subevent_start_seconds=gestural_event.start_time.hour*60*60+gestural_event.start_time.minute*60+gestural_event.start_time.second
+                    if gestural_event.relative_to=='behavioral_event':
                         subevent_start_seconds+=self.object.start_time_seconds()
-                    subevent_end_seconds=subevent_start_seconds+behavioral_event.duration.hour*60*60+behavioral_event.duration.minute*60+behavioral_event.duration.second
+                    subevent_end_seconds=subevent_start_seconds+gestural_event.duration.hour*60*60+gestural_event.duration.minute*60+gestural_event.duration.second
                     if subevent_end_seconds>self.object.end_time_seconds():
                         errors['duration']=['Subevent exceeds parent event duration']
                         errors=True
