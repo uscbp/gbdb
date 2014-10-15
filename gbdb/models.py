@@ -286,9 +286,9 @@ class BehavioralEvent(MPTTModel):
                 convert_to_mp4(mp4_filename, orig_filename)
 
     def start_time_seconds(self):
-        if self.start_time:
+        if not self.video.name:
             if self.parent is not None:
-                if self.parent.video.name is None or not len(self.parent.video.name) and  self.relative_to=='behavioral_event':
+                if (self.parent.video.name is None or not len(self.parent.video.name)) and  self.relative_to=='behavioral_event':
                     return self.parent.start_time_seconds()+self.start_time.hour*60*60+self.start_time.minute*60+self.start_time.second
             return self.start_time.hour*60*60+self.start_time.minute*60+self.start_time.second
         return 0
