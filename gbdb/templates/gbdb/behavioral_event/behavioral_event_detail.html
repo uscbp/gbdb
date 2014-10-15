@@ -183,14 +183,14 @@
                     <tr valign=top>
                         <td width=12%>{{ form.start_time.label_tag }}*</td>
                         <td>{{ form.start_time }}{% if not form.instance.parent %} (HH:MM:SS, relative to start of observation session video){% endif %}</td>
-                        <td class="myerrors" width=10%>{{ form.start_time.errors }}</td>
+                        <td class="myerrors" width=10%><div id="id_start_time_errors" class="error_label">{{ form.start_time.errors }}</div></td>
                     </tr>
                     {% if form.instance.parent %}
                         {% if not form.instance.parent.video.name %}
                             <tr valign=top>
                                 <td>{{ form.relative_to.label_tag }}</td>
                                 <td>{{ form.relative_to }}</td>
-                                <td class="myerrors">{{ form.relative_to.errors }}</td>
+                                <td class="myerrors"><div id="id_relative_to_errors" class="error_label">{{ form.relative_to.errors }}</div></td>
                             </tr>
                         {% else %}
                             <input id="id_relative_to" name="relative_to" type="hidden" value="behavioral_event"/>
@@ -201,7 +201,7 @@
                     <tr valign=top>
                         <td>{{ form.duration.label_tag }}*</td>
                         <td>{{ form.duration }} (HH:MM:SS)</td>
-                        <td class="myerrors">{{ form.duration.errors }}</td>
+                        <td class="myerrors"><div id="id_duration_errors" class="error_label">{{ form.duration.errors }}</div></td>
                     </tr>
                 {% else %}
                     <tr valign=top>
@@ -212,28 +212,28 @@
                             <input type="hidden" id="id_duration" name="duration" value="0:0:0">
                             <input id="id_relative_to" name="relative_to" type="hidden" value="observation_session"/>
                         </td>
-                        <td class="myerrors">{{ form.video.errors }}</td>
+                        <td class="myerrors"><div id="id_video_errors" class="error_label">{{ form.video.errors }}</div></td>
                     </tr>
                 {% endif %}
                 <tr valign=top>
                     <td valign=top>{{ form.primates.label_tag }}</td>
                     <td>{{ form.primates }} <input class="btn" type="button" value="Add Primate" onclick="return showPopup('Add Primate',1000,700,'/gbdb/primate/new/');"/></td>
-                    <td class="myerrors">{{ form.primates.errors }}</td>
+                    <td class="myerrors"><div id="id_primates_errors" class="error_label">{{ form.primates.errors }}</div></td>
                 </tr>
                 <tr valign=top>
                     <td valign=top>{{ form.contexts.label_tag }}</td>
                     <td>{{ form.contexts }}</td>
-                    <td class="myerrors">{{ form.contexts.errors }}</td>
+                    <td class="myerrors"><div id="id_contexts_errors" class="error_label">{{ form.contexts.errors }}</div></td>
                 </tr>
                 <tr valign=top>
                     <td valign=top>{{ form.ethograms.label_tag }}</td>
                     <td>{{ form.ethograms }}</td>
-                    <td class="myerrors">{{ form.ethograms.errors }}</td>
+                    <td class="myerrors"><div id="id_ethograms_errors" class="error_label">{{ form.ethograms.errors }}</div></td>
                 </tr>
                 <tr valign=top>
                     <td valign=top>{{ form.notes.label_tag }}</td>
                     <td>{{ form.notes }}</td>
-                    <td class="myerrors">{{ form.notes.errors }}</td>
+                    <td class="myerrors"><div id="id_notes_errors" class="error_label">{{ form.notes.errors }}</div></td>
                 </tr>
                 <tr>
                     <td colspan="3">
@@ -271,51 +271,62 @@
                                                         <a href="" onclick="return deleteInlineForm('sub_behavioral_event', {{ forloop.counter0 }});">Delete</a>
                                                     </td>
                                                     <td style="width:120px">Start time</td>
-                                                    <td colspan="4">
+                                                    <td colspan="3">
                                                         {{ sub_behavioral_event_form.start_time }} (HH:MM:SS)
                                                     </td>
+                                                    <td class="myerrors" width=10%><div id="id_sub_behavioral_event-{{ forloop.counter0 }}-start_time_errors" class="error_label">{{ sub_behavioral_event_form.start_time.errors }}</div></td>
                                                 </tr>
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td style="width:60px">&nbsp;</td>
                                                     <td style="width:120px">Relative to</td>
-                                                    <td colspan="4">
+                                                    <td colspan="3">
                                                         {% if not allow_video %}
                                                             {{ sub_behavioral_event_form.relative_to }}
                                                         {% else %}
                                                             behavioral_event<input id="id_sub_behavioral_event-{{ forloop.counter0 }}-relative_to" name="sub_behavioral_event-{{ forloop.counter0 }}-relative_to" value="behavioral_event" type="hidden"/>
                                                         {% endif %}
                                                     </td>
+                                                    <td class="myerrors" width=10%><div id="id_sub_behavioral_event-{{ forloop.counter0 }}-relative_to_errors" class="error_label">{{ sub_behavioral_event_form.relative_to.errors }}</div></td>
                                                 </tr>
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td width=60px>&nbsp;</td>
                                                     <td style="width:120px">Duration</td>
-                                                    <td colspan="4">
+                                                    <td colspan="3">
                                                         {{ sub_behavioral_event_form.duration }} (HH:MM:SS)
                                                     </td>
+                                                    <td class="myerrors" width=10%><div id="id_sub_behavioral_event-{{ forloop.counter0 }}-duration_errors" class="error_label">{{ sub_behavioral_event_form.duration.errors }}</div></td>
                                                 </tr>
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td width=60px>&nbsp;</td>
                                                     <td>Primates</td>
-                                                    <td colspan="4">{{ sub_behavioral_event_form.primates }}
+                                                    <td colspan="3">
+                                                        {{ sub_behavioral_event_form.primates }}
                                                     </td>
+                                                    <td class="myerrors" width=10%><div id="id_sub_behavioral_event-{{ forloop.counter0 }}-primates_errors" class="error_label">{{ sub_behavioral_event_form.primates.errors }}</div></td>
                                                 </tr>
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td width=60px>&nbsp;</td>
                                                     <td>Contexts</td>
-                                                    <td colspan="4">{{ sub_behavioral_event_form.contexts }}
+                                                    <td colspan="3">
+                                                        {{ sub_behavioral_event_form.contexts }}
                                                     </td>
+                                                    <td class="myerrors" width=10%><div id="id_sub_behavioral_event-{{ forloop.counter0 }}-contexts_errors" class="error_label">{{ sub_behavioral_event_form.contexts.errors }}</div></td>
                                                 </tr>
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td width=60px>&nbsp;</td>
                                                     <td>Ethograms</td>
-                                                    <td colspan="4">{{ sub_behavioral_event_form.ethograms }}</td>
+                                                    <td colspan="3">
+                                                        {{ sub_behavioral_event_form.ethograms }}
+                                                    </td>
+                                                    <td class="myerrors" width=10%><div id="id_sub_behavioral_event-{{ forloop.counter0 }}-ethograms_errors" class="error_label">{{ sub_behavioral_event_form.ethograms.errors }}</div></td>
                                                 </tr>
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td width=60px>&nbsp;</td>
                                                     <td>Notes</td>
-                                                    <td colspan="4">
+                                                    <td colspan="3">
                                                         {{ sub_behavioral_event_form.notes }}
                                                     </td>
+                                                    <td class="myerrors" width=10%><div id="id_sub_behavioral_event-{{ forloop.counter0 }}-notes_errors" class="error_label">{{ sub_behavioral_event_form.notes.errors }}</div></td>
                                                 </tr>
                                             </table>
                                             <div class="myerrors">
@@ -353,79 +364,94 @@
                                                         <a href="" onclick="return deleteInlineForm('sub_gestural_event', {{ forloop.counter0 }});">Delete</a>
                                                     </td>
                                                     <td style="width:120px">Start time</td>
-                                                    <td colspan="4">
+                                                    <td colspan="3">
                                                         {{ sub_gestural_event_form.start_time }} (HH:MM:SS)
                                                     </td>
+                                                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-{{ forloop.counter0 }}-start_time_errors" class="error_label">{{ sub_gestural_event_form.start_time.errors }}</div></td>
                                                 </tr>
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td style="width:60px">&nbsp;</td>
                                                     <td style="width:120px">Relative to</td>
-                                                    <td colspan="4">
+                                                    <td colspan="3">
                                                         {% if not allow_video %}
                                                             {{ sub_gestural_event_form.relative_to }}
                                                         {% else %}
                                                             behavioral_event<input id="id_sub_gestural_event-{{ forloop.counter0 }}-relative_to" name="sub_gestural_event-{{ forloop.counter0 }}-relative_to" value="behavioral_event" type="hidden"/>
                                                         {% endif %}
                                                     </td>
+                                                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-{{ forloop.counter0 }}-relative_to_errors" class="error_label">{{ sub_gestural_event_form.relative_to.errors }}</div></td>
                                                 </tr>
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td width=60px>&nbsp;</td>
                                                     <td style="width:120px">Duration</td>
-                                                    <td colspan="4">
+                                                    <td colspan="3">
                                                         {{ sub_gestural_event_form.duration }} (HH:MM:SS)
                                                     </td>
+                                                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-{{ forloop.counter0 }}-duration_errors" class="error_label">{{ sub_gestural_event_form.duration.errors }}</div></td>
                                                 </tr>
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td width=60px>&nbsp;</td>
                                                     <td>Contexts</td>
-                                                    <td colspan="4">{{ sub_gestural_event_form.contexts }}</td>
+                                                    <td colspan="3">
+                                                        {{ sub_gestural_event_form.contexts }}
+                                                    </td>
+                                                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-{{ forloop.counter0 }}-contexts_errors" class="error_label">{{ sub_gestural_event_form.contexts.errors }}</div></td>
                                                 </tr>
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td width=60px>&nbsp;</td>
                                                     <td>Ethograms</td>
-                                                    <td colspan="4">{{ sub_gestural_event_form.ethograms }}</td>
+                                                    <td colspan="3">
+                                                        {{ sub_gestural_event_form.ethograms }}
+                                                    </td>
+                                                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-{{ forloop.counter0 }}-ethograms_errors" class="error_label">{{ sub_gestural_event_form.ethograms.errors }}</div></td>
                                                 </tr>
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td width=60px>&nbsp;</td>
                                                     <td style="width:120px;">Signaller</td>
-                                                    <td colspan="4">
+                                                    <td colspan="3">
                                                         {{ sub_gestural_event_form.signaller }}
                                                     </td>
+                                                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-{{ forloop.counter0 }}-signaller_errors" class="error_label">{{ sub_gestural_event_form.signaller.errors }}</div></td>
                                                 </tr>
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td width=60px>&nbsp;</td>
                                                     <td style="width:120px;">Recipient</td>
-                                                    <td colspan="4">
+                                                    <td colspan="3">
                                                         {{ sub_gestural_event_form.recipient }}
                                                     </td>
+                                                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-{{ forloop.counter0 }}-recipient_errors" class="error_label">{{ sub_gestural_event_form.recipient.errors }}</div></td>
                                                 </tr>
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td width=60px>&nbsp;</td>
                                                     <td style="width:120px;">Gesture</td>
-                                                    <td colspan="4">
+                                                    <td colspan="3">
                                                         {{ sub_gestural_event_form.gesture }}<input type="button" onclick="return showPopup('Add Gesture',1000,500,'/gbdb/gesture/new/?gestural_event_idx={{ forloop.counter0 }}');" value="Add Gesture">
                                                     </td>
+                                                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-{{ forloop.counter0 }}-gesture_errors" class="error_label">{{ sub_gestural_event_form.gesture.errors }}</div></td>
                                                 </tr>
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td width=60px>&nbsp;</td>
                                                     <td style="width:120px;">Recipient Response</td>
-                                                    <td colspan="4">
+                                                    <td colspan="3">
                                                         {{ sub_gestural_event_form.recipient_response }}
                                                     </td>
+                                                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-{{ forloop.counter0 }}-recipient_response_errors" class="error_label">{{ sub_gestural_event_form.recipient_response.errors }}</div></td>
                                                 </tr>
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td width=60px>&nbsp;</td>
                                                     <td style="width:120px;">Goal met</td>
-                                                    <td colspan="4">
+                                                    <td colspan="3">
                                                         {{ sub_gestural_event_form.goal_met }}
                                                     </td>
+                                                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-{{ forloop.counter0 }}-goal_met_errors" class="error_label">{{ sub_gestural_event_form.goal_met.errors }}</div></td>
                                                 </tr>
                                                 <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
                                                     <td width=60px>&nbsp;</td>
                                                     <td>Notes</td>
-                                                    <td colspan="4">
+                                                    <td colspan="3">
                                                         {{ sub_gestural_event_form.notes }}
                                                     </td>
+                                                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-{{ forloop.counter0 }}-notes_errors" class="error_label">{{ sub_gestural_event_form.notes.errors }}</div></td>
                                                 </tr>
                                             </table>
                                             <div class="myerrors">
@@ -462,14 +488,15 @@
                         <a href="" onclick="return deleteInlineForm('sub_behavioral_event', <%= idx %>);">Delete</a>
                     </td>
                     <td style="width:120px">Start time</td>
-                    <td colspan="4">
+                    <td colspan="3">
                         <input id="id_sub_behavioral_event-<%= idx %>-start_time" name="sub_behavioral_event-<%= idx %>-start_time" type="text" /> (HH:MM:SS)
                     </td>
+                    <td class="myerrors" width=10%><div id="id_sub_behavioral_event-<%= idx %>-start_time_errors"></div></td>
                 </tr>
                 <tr class="<%= getTRTag(idx) %>" valign=top>
                     <td style="width:60px">&nbsp;</td>
                     <td style="width:120px">Relative to</td>
-                    <td colspan="4">
+                    <td colspan="3">
                         {% if not allow_video %}
                             <select id="id_sub_behavioral_event-<%= idx %>-relative_to" name="sub_behavioral_event-<%= idx %>-relative_to">
                                 <option value="behavioral_event">behavioral event</option>
@@ -479,27 +506,30 @@
                             behavioral_event<input id="id_sub_behavioral_event-<%= idx %>-relative_to" name="sub_behavioral_event-<%= idx %>-relative_to" value="behavioral_event" type="hidden"/>
                         {% endif %}
                     </td>
+                    <td class="myerrors" width=10%><div id="id_sub_behavioral_event-<%= idx %>-relative_to_errors"></div></td>
                 </tr>
                 <tr class="<%= getTRTag(idx) %>" valign=top>
                     <td width=60px>&nbsp;</td>
                     <td style="width:120px">Duration</td>
-                    <td colspan="4">
+                    <td colspan="3">
                         <input id="id_sub_behavioral_event-<%= idx %>-duration" name="sub_behavioral_event-<%= idx %>-duration" size="20" type="text" /> (HH:MM:SS)
                     </td>
+                    <td class="myerrors" width=10%><div id="id_sub_behavioral_event-<%= idx %>-duration_errors"></div></td>
                 </tr>
                 <tr class="<%= getTRTag(idx) %>" valign=top>
                     <td width=60px>&nbsp;</td>
                     <td style="width:120px;">Primates</td>
-                    <td colspan="4">
+                    <td colspan="3">
                         <select multiple id="id_sub_behavioral_event-<%= idx %>-primates" name="sub_behavioral_event-<%= idx %>-primates">
                             <option value="" selected="selected">---------</option>
                         </select>
                     </td>
+                    <td class="myerrors" width=10%><div id="id_sub_behavioral_event-<%= idx %>-primates_errors"></div></td>
                 </tr>
                 <tr class="<%= getTRTag(idx) %>" valign=top>
                     <td width=60px>&nbsp;</td>
                     <td>Contexts</td>
-					<td colspan="4">
+					<td colspan="3">
 						<span id="id_sub_behavioral_event-<%= idx %>-contexts-wrapper"
                               class="autocomplete-light-widget sub_behavioral_event-<%= idx %>-contexts multiple"
                               data-autocomplete-placeholder="add another context" data-bootstrap="normal">
@@ -516,11 +546,12 @@
 						</span>
 						<div style="clear: both"></div>
 					</td>
+                    <td class="myerrors" width=10%><div id="id_sub_behavioral_event-<%= idx %>-contexts_errors"></div></td>
                 </tr>
                 <tr class="<%= getTRTag(idx) %>" valign=top>
                     <td width=60px>&nbsp;</td>
                     <td>Ethograms</td>
-                    <td colspan="4">
+                    <td colspan="3">
 						<span id="id_sub_behavioral_event-<%= idx %>-ethograms-wrapper"
                               class="autocomplete-light-widget sub_behavioral_event-<%= idx %>-ethograms multiple"
                               data-autocomplete-placeholder="add another context" data-bootstrap="normal">
@@ -537,14 +568,16 @@
 						</span>
 						<div style="clear: both"></div>
 					</td>
+                    <td class="myerrors" width=10%><div id="id_sub_behavioral_event-<%= idx %>-ethograms_errors"></div></td>
                 </tr>
                 <tr class="<%= getTRTag(idx) %>" valign=top>
                     <td width=60px>&nbsp;</td>
                     <td>Notes</td>
-                    <td colspan="4">
+                    <td colspan="3">
                         <textarea cols="57" id="id_sub_behavioral_event-<%= idx %>-notes" name="sub_behavioral_event-<%= idx %>-notes" rows="5">
                         </textarea>
                     </td>
+                    <td class="myerrors" width=10%><div id="id_sub_behavioral_event-<%= idx %>-notes_errors"></div></td>
                 </tr>
             </table>
             <div class="myerrors">
@@ -564,14 +597,15 @@
                         <a href="" onclick="return deleteInlineForm('sub_gestural_event', <%= idx %>);">Delete</a>
                     </td>
                     <td style="width:120px">Start time</td>
-                    <td colspan="4">
+                    <td colspan="3">
                         <input id="id_sub_gestural_event-<%= idx %>-start_time" name="sub_gestural_event-<%= idx %>-start_time" type="text" /> (HH:MM:SS, Relative to the start of the {% if allow_video %}behavioral event{% else %}observation session{% endif %} video)
                     </td>
+                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-<%= idx %>-start_time_errors" class="error_label"></div></td>
                 </tr>
                 <tr class="<%= getTRTag(idx) %>" valign=top>
                     <td style="width:60px">&nbsp;</td>
                     <td style="width:120px">Relative to</td>
-                    <td colspan="4">
+                    <td colspan="3">
                         {% if not allow_video %}
                             <select id="id_sub_gestural_event-<%= idx %>-relative_to" name="sub_gestural_event-<%= idx %>-relative_to">
                                 <option value="behavioral_event">behavioral event</option>
@@ -581,18 +615,20 @@
                             behavioral_event<input id="id_sub_gestural_event-<%= idx %>-relative_to" name="sub_gestural_event-<%= idx %>-relative_to" value="behavioral_event" type="hidden"/>
                         {% endif %}
                     </td>
+                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-<%= idx %>-relative_to_errors" class="error_label"></div></td>
                 </tr>
                 <tr class="<%= getTRTag(idx) %>" valign=top>
                     <td width=60px>&nbsp;</td>
                     <td style="width:120px">Duration</td>
-                    <td colspan="4">
+                    <td colspan="3">
                         <input id="id_sub_gestural_event-<%= idx %>-duration" name="sub_gestural_event-<%= idx %>-duration" size="20" type="text" /> (HH:MM:SS)
                     </td>
+                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-<%= idx %>-duration_errors" class="error_label"></div></td>
                 </tr>
                 <tr class="<%= getTRTag(idx) %>" valign=top>
                     <td width=60px>&nbsp;</td>
                     <td>Contexts</td>
-                    <td colspan="4">
+                    <td colspan="3">
 						<span id="id_sub_gestural_event-<%= idx %>-contexts-wrapper"
                               class="autocomplete-light-widget sub_gestural_event-<%= idx %>-contexts multiple"
                               data-autocomplete-placeholder="add another context" data-bootstrap="normal">
@@ -609,10 +645,11 @@
 						</span>
 						<div style="clear: both"></div>
 					</td>
+                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-<%= idx %>-contexts_errors" class="error_label"></div></td>
                 <tr class="<%= getTRTag(idx) %>" valign=top>
                     <td width=60px>&nbsp;</td>
                     <td>Ethograms</td>
-					<td colspan="4">
+					<td colspan="3">
 						<span id="id_sub_gestural_event-<%= idx %>-ethograms-wrapper"
                               class="autocomplete-light-widget sub_gestural_event-<%= idx %>-ethograms multiple"
                               data-autocomplete-placeholder="add another context" data-bootstrap="normal">
@@ -629,29 +666,32 @@
 						</span>
 						<div style="clear: both"></div>
 					</td>
+                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-<%= idx %>-ethograms_errors" class="error_label"></div></td>
                 </tr>
                 <tr class="<%= getTRTag(idx) %>" valign=top>
                     <td width=60px>&nbsp;</td>
                     <td style="width:120px;">Signaller</td>
-                    <td colspan="4">
+                    <td colspan="3">
                         <select id="id_sub_gestural_event-<%= idx %>-signaller" name="sub_gestural_event-<%= idx %>-signaller">
                             <option value="" selected="selected">---------</option>
                         </select>
                     </td>
+                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-<%= idx %>-signaller_errors" class="error_label"></div></td>
                 </tr>
                 <tr class="<%= getTRTag(idx) %>" valign=top>
                     <td width=60px>&nbsp;</td>
                     <td style="width:120px;">Recipient</td>
-                    <td colspan="4">
+                    <td colspan="3">
                         <select id="id_sub_gestural_event-<%= idx %>-recipient" name="sub_gestural_event-<%= idx %>-recipient">
                             <option value="" selected="selected">---------</option>
                         </select>
                     </td>
+                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-<%= idx %>-recipient_errors" class="error_label"></div></td>
                 </tr>
                 <tr class="<%= getTRTag(idx) %>" valign=top>
                     <td width=60px>&nbsp;</td>
                     <td style="width:120px;">Gesture</td>
-                    <td colspan="4">
+                    <td colspan="3">
                         <select id="id_sub_gestural_event-<%= idx %>-gesture" name="sub_gestural_event-<%= idx %>-gesture">
                             <option value="" selected="selected">---------</option>
                             {% for gesture in gestures %}
@@ -660,32 +700,36 @@
                         </select>
                         <input type="button" onclick="return showPopup('Add Gesture',1000,500,'/gbdb/gesture/new/?gestural_event_idx=<%= idx %>');" value="Add Gesture">
                     </td>
+                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-<%= idx %>-gesture_errors" class="error_label"></div></td>
                 </tr>
                 <tr class="<%= getTRTag(idx) %>" valign=top>
                     <td width=60px>&nbsp;</td>
                     <td style="width:120px;">Recipient Response</td>
-                    <td colspan="4">
+                    <td colspan="3">
                         <textarea cols="57" id="id_sub_gestural_event-<%= idx %>-recipient_response" name="sub_gestural_event-<%= idx %>-recipient_response" rows="5">
                         </textarea>
                     </td>
+                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-<%= idx %>-recipient_response_errors" class="error_label"></div></td>
                 </tr>
                 <tr class="<%= getTRTag(idx) %>" valign=top>
                     <td width=60px>&nbsp;</td>
                     <td style="width:120px;">Goal met</td>
-                    <td colspan="4">
+                    <td colspan="3">
                         <select id="id_sub_gestural_event-<%= idx %>-goal_met" name="sub_gestural_event-<%= idx %>-goal_met" style="font-size: 80%;font-family: verdana, sans-serif">
                             <option value="yes">Yes</option>
                             <option value="no">No</option>
                         </select>
                     </td>
+                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-<%= idx %>-goal_met_errors" class="error_label"></div></td>
                 </tr>
                 <tr class="<%= getTRTag(idx) %>" valign=top>
                     <td width=60px>&nbsp;</td>
                     <td>Notes</td>
-                    <td colspan="4">
+                    <td colspan="3">
                         <textarea cols="57" id="id_sub_gestural_event-<%= idx %>-notes" name="sub_gestural_event-<%= idx %>-notes" rows="5">
                         </textarea>
                     </td>
+                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-<%= idx %>-notes_errors" class="error_label"></div></td>
                 </tr>
             </table>
             <div class="myerrors">

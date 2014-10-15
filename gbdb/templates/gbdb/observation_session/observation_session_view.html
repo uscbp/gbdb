@@ -239,7 +239,7 @@
 	            url: url,
     			type: frm.attr('method'),
 	            data: data,
-	            success: doneSubmitBehavioralEventForm,
+	            complete: doneSubmitBehavioralEventForm,
 	            processData: false,
 	            contentType: false
 	        });
@@ -251,7 +251,9 @@
         	return false;
         }
 
-        function doneSubmitBehavioralEventForm(data, status){
+        function doneSubmitBehavioralEventForm(res, status){
+            var txt = res.responseText;
+            var data = eval('('+txt+')');
             if (status=="success")
             {
                 $('#context_data').empty();
@@ -376,6 +378,50 @@
                     drawTimeline();
                 }
             }
+            else{
+                $('.error_label').each(function(index, element){
+                    $( this ).html('');
+                });
+                for(var property in data.errors)
+                {
+                    error_str='';
+                    for(var i=0; i<data.errors[property].length; i++)
+                    {
+                        if(i>0)
+                            error_str+='<br>';
+                        error_str+=data.errors[property][i];
+                    }
+                    $('#id_'+property+'_errors').html(error_str);
+                }
+                for(var i=0; i<data.sub_behavioral_event_errors.length; i++)
+                {
+                    for(var property in data.sub_behavioral_event_errors[i])
+                    {
+                        error_str='';
+                        for(var j=0; j<data.sub_behavioral_event_errors[i][property].length; j++)
+                        {
+                            if(j>0)
+                                error_str+='<br>';
+                            error_str+=data.sub_behavioral_event_errors[i][property][j];
+                        }
+                        $('#id_sub_behavioral_event-'+i+'-'+property+'_errors').html(error_str);
+                    }
+                }
+                for(var i=0; i<data.sub_gestural_event_errors.length; i++)
+                {
+                    for(var property in data.sub_gestural_event_errors[i])
+                    {
+                        error_str='';
+                        for(var j=0; j<data.sub_gestural_event_errors[i][property].length; j++)
+                        {
+                            if(j>0)
+                                error_str+='<br>';
+                            error_str+=data.sub_gestural_event_errors[i][property][j];
+                        }
+                        $('#id_sub_gestural_event-'+i+'-'+property+'_errors').html(error_str);
+                    }
+                }
+            }
             document.getElementById('savingMsg').style.display = 'none';
             document.getElementById('savingOver').style.display = 'none';
         }
@@ -445,10 +491,19 @@
                 document.location.reload();
             }
             else{
+                $('.error_label').each(function(index, element){
+                    $( this ).html('');
+                });
                 for(var property in data)
                 {
+                    error_str='';
                     for(var i=0; i<data[property].length; i++)
-                        $('#id_'+property+'_errors').html(data[property][i]);
+                    {
+                        if(i>0)
+                            error_str+='<br>';
+                        error_str+=data[property][i]
+                    }
+                    $('#id_'+property+'_errors').html(error_str);
                 }
             }
         }

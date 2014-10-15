@@ -23,11 +23,26 @@ class EditBehavioralEventMixin(object):
         return HttpResponse(data, **response_kwargs)
     
     def form_invalid(self, form):
-        response = super(EditBehavioralEventMixin, self).form_invalid(form)
         if self.request.is_ajax():
-            return self.render_to_json_response(form.errors, status=400)
+            context = self.get_context_data()
+            sub_behavioral_event_formset = context['sub_behavioral_event_formset']
+            sub_gestural_event_formset = context['sub_gestural_event_formset']
+            data={'errors':{}, 'sub_behavioral_event_errors': [], 'sub_gestural_event_errors': []}
+            for key,value in form.errors.iteritems():
+                data['errors'][key]=value
+            for idx,sub_behavioral_event_form in enumerate(sub_behavioral_event_formset.forms):
+                sub_event_errors={}
+                for key,val in sub_behavioral_event_form.errors.iteritems():
+                    sub_event_errors[key]=val
+                data['sub_behavioral_event_errors'].append(sub_event_errors)
+            for idx,sub_gestural_event_form in enumerate(sub_gestural_event_formset.forms):
+                sub_event_errors={}
+                for key,val in sub_gestural_event_form.errors.iteritems():
+                    sub_event_errors[key]=val
+                data['sub_gestural_event_errors'].append(sub_event_errors)
+            return self.render_to_json_response(data, status=400)
         else:
-            return response
+            return self.render_to_response(self.get_context_data(form=form))
 
     def form_valid(self, form):
 
@@ -136,6 +151,22 @@ class EditBehavioralEventMixin(object):
                 return redirect(self.object.observation_session.get_absolute_url())
             else:
                 return self.render_to_response(self.get_context_data(form=form))
+        else:
+            if self.request.is_ajax():
+                data={'sub_behavioral_event_errors':[], 'sub_gestural_event_errors':[]}
+                for idx,sub_behavioral_event_form in enumerate(sub_behavioral_event_formset.forms):
+                    sub_event_errors={}
+                    for key,val in sub_behavioral_event_form.errors.iteritems():
+                        sub_event_errors[key]=val
+                    data['sub_behavioral_event_errors'].append(sub_event_errors)
+                for idx,sub_gestural_event_form in enumerate(sub_gestural_event_formset.forms):
+                    sub_event_errors={}
+                    for key,val in sub_gestural_event_form.errors.iteritems():
+                        sub_event_errors[key]=val
+                    data['sub_gestural_event_errors'].append(sub_event_errors)
+
+                return self.render_to_json_response(data, status=400)
+
 
 
 class CreateBehavioralEventView(EditBehavioralEventMixin, CreateView):

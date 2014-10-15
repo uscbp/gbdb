@@ -13,32 +13,32 @@
                 <tr valign=top>
                     <td width=12%>{{ form.video.label_tag }}</td>
                     <td>{{ form.video }}</td>
-                    <td class="myerrors" width=10%><div id="id_video_errors">{{ form.video.errors }}</div></td>
+                    <td class="myerrors" width=10%><div id="id_video_errors" class="error_label">{{ form.video.errors }}</div></td>
                 </tr>
                 <tr valign=top>
                     <td>{{ form.date.label_tag }}*</td>
                     <td>{{ form.date }}</td>
-                    <td class="myerrors"><div id="id_date_errors">{{ form.date.errors }}</div></td>
+                    <td class="myerrors"><div id="id_date_errors" class="error_label">{{ form.date.errors }}</div></td>
                 </tr>
                 <tr valign=top>
                     <td align=top>Saved locations</td>
                     <td>{{ form.saved_locations }}</td>
-                    <td class="myerrors"><div id="id_saved_locations_errors">{{ form.saved_locations.errors }}</div></td>
+                    <td class="myerrors"><div id="id_saved_locations_errors" class="error_label">{{ form.saved_locations.errors }}</div></td>
                 </tr>
                 <tr valign=top>
                     <td valign=top>{{ form.location_name.label_tag }}*</td>
                     <td>{{ form.location_name }} <a href="" onclick="return createSavedLocation();">Save location</a></td>
-                    <td class="myerrors"><div id="id_location_name_errors">{{ form.location_name.errors }}</div></td>
+                    <td class="myerrors"><div id="id_location_name_errors" class="error_label">{{ form.location_name.errors }}</div></td>
                 </tr>
                 <tr valign=top>
                     <td valign=top>{{ form.location.label_tag }}*</td>
                     <td>{{ form.location }}</td>
-                    <td class="myerrors"><div id="id_location_errors">{{ form.location.errors }}</div></td>
+                    <td class="myerrors"><div id="id_location_errors" class="error_label">{{ form.location.errors }}</div></td>
                 </tr>
                 <tr valign=top>
                     <td valign=top>{{ form.notes.label_tag }}</td>
                     <td>{{ form.notes }}</td>
-                    <td class="myerrors"><div id="id_notes_errors">{{ form.notes.errors }}</div></td>
+                    <td class="myerrors"><div id="id_notes_errors" class="error_label">{{ form.notes.errors }}</div></td>
                 </tr>
                 <tr>
                     <td colspan="3">
