@@ -169,7 +169,7 @@ class ObservationSession(models.Model):
                     if callable(final_dest):
                         final_name = final_dest(self, file_name)
                     else:
-                        final_name = os.path.join(final_dest, '%s' % (self.pk,))
+                        final_name = os.path.join(final_dest, '%s_orig' % (self.pk,))
                         if keep_ext:
                             final_name += ext
                     if file_name != final_name:
@@ -183,8 +183,7 @@ class ObservationSession(models.Model):
 
         if self.video.name:
             orig_filename=os.path.join(settings.MEDIA_ROOT,self.video.name)
-            root,ext=os.path.splitext(orig_filename)
-            mp4_filename='%s.mp4' % root
+            mp4_filename=os.path.join(settings.MEDIA_ROOT,'videos','observation_session','%d.mp4' % self.id)
             if not os.path.exists(mp4_filename):
                 convert_to_mp4(mp4_filename, orig_filename)
                 
@@ -254,7 +253,7 @@ class BehavioralEvent(MPTTModel):
                     if callable(final_dest):
                         final_name = final_dest(self, file_name)
                     else:
-                        final_name = os.path.join(final_dest, '%s' % (self.pk,))
+                        final_name = os.path.join(final_dest, '%s_orig' % (self.pk,))
                         if keep_ext:
                             final_name += ext
                     if file_name != final_name:
@@ -268,8 +267,7 @@ class BehavioralEvent(MPTTModel):
 
         if self.video.name:
             orig_filename=os.path.join(settings.MEDIA_ROOT,self.video.name)
-            root,ext=os.path.splitext(orig_filename)
-            mp4_filename='%s.mp4' % root
+            mp4_filename=os.path.join(settings.MEDIA_ROOT,'videos','behavioral_event','%d.mp4' % self.id)
             if not os.path.exists(mp4_filename):
                 convert_to_mp4(mp4_filename, orig_filename)
 
