@@ -59,21 +59,28 @@ class EditBehavioralEventMixin(object):
                 'sub_gestural_event_errors': []
             }
             errors=False
+
             if self.object.observation_session.video.name:
                 if self.object.end_time_seconds()>self.object.observation_session.duration_seconds():
                     data['errors']['duration']=['Clip exceeds video duration']
+                    errors=True
+            for other_event in BehavioralEvent.objects.filter(observation_session=self.object.observation_session).exclude(id=self.object.id):
+                if other_event.start_time_seconds() <= self.object.end_time_seconds()<=other_event.end_time_seconds() or other_event.start_time_seconds() <= self.object.start_time_seconds() <= other_event.end_time_seconds():
+                    data['errors']['start_time']=['Clip overlaps other events']
                     errors=True
 
             for sub_behavioral_event_form in sub_behavioral_event_formset.forms:
                 if not sub_behavioral_event_form in sub_behavioral_event_formset.deleted_forms:
                     behavioral_event=sub_behavioral_event_form.save(commit=False)
                     errors={}
-                    print(behavioral_event.end_time_seconds())
-                    print(self.object.end_time_seconds())
-                    if behavioral_event.end_time_seconds()>self.object.end_time_seconds():
+                    subevent_start_seconds=behavioral_event.start_time.hour*60*60+behavioral_event.start_time.minute*60+behavioral_event.start_time.second
+                    if behavioral_event.relative_to=='behavioral_event':
+                        subevent_start_seconds+=self.object.start_time_seconds()
+                    subevent_end_seconds=subevent_start_seconds+behavioral_event.duration.hour*60*60+behavioral_event.duration.minute*60+behavioral_event.duration.second
+                    if subevent_end_seconds>self.object.end_time_seconds():
                         errors['duration']=['Subevent exceeds parent event duration']
                         errors=True
-                    if behavioral_event.relative_to=='observation_session' and behavioral_event.start_time_seconds()<self.object.start_time_seconds():
+                    if behavioral_event.relative_to=='observation_session' and subevent_start_seconds<self.object.start_time_seconds():
                         errors['start_time']=['Subevent starts before parent event']
                         errors=True
                     data['sub_behavioral_event_errors'].append(errors)
@@ -82,10 +89,14 @@ class EditBehavioralEventMixin(object):
                 if not sub_gestural_event_form in sub_gestural_event_formset.deleted_forms:
                     gestural_event=sub_gestural_event_form.save(commit=False)
                     errors={}
-                    if gestural_event.end_time_seconds()>self.object.end_time_seconds():
+                    subevent_start_seconds=behavioral_event.start_time.hour*60*60+behavioral_event.start_time.minute*60+behavioral_event.start_time.second
+                    if behavioral_event.relative_to=='behavioral_event':
+                        subevent_start_seconds+=self.object.start_time_seconds()
+                    subevent_end_seconds=subevent_start_seconds+behavioral_event.duration.hour*60*60+behavioral_event.duration.minute*60+behavioral_event.duration.second
+                    if subevent_end_seconds>self.object.end_time_seconds():
                         errors['duration']=['Subevent exceeds parent event duration']
                         errors=True
-                    if gestural_event.relative_to=='observation_session' and gestural_event.start_time_seconds()<self.object.start_time_seconds():
+                    if gestural_event.relative_to=='observation_session' and subevent_start_seconds<self.object.start_time_seconds():
                         errors['start_time']=['Subevent starts before parent event']
                         errors=True
                     data['sub_gestural_event_errors'].append(errors)
