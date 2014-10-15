@@ -54,9 +54,9 @@
             return false;
         };
         
-        function playClip(start_time)
+        function playWholeClip()
         {
-            videojs("observation_session_video").currentTime(start_time);
+            videojs("observation_session_video").currentTime(0);
             videojs("observation_session_video").play();
             return false;
         };
@@ -94,7 +94,7 @@
                         'trackSeparatorColor':'#EAE5E1',
                         'textColor':'#EAE5E1',
                         'cursorColor':'#f00',
-                        'scaleFactor':2,
+                        'scaleFactor':2
                         };
 
             timeline = new Timeline('observation_session_video', 'observation_session_timeline', videojs("observation_session_video").duration(), options);
@@ -117,7 +117,7 @@
                                 { text: '-5', step: -5 },
                                 { text: '-1', step: -1 },
                                 { text: '+1', step: 1 },
-                                { text: '+5', step: 5 },
+                                { text: '+5', step: 5 }
                             ]
                         }
                     }
@@ -125,10 +125,25 @@
 				
 				{% for behavioral_event in behavioral_events %}
 					var count = '{{ forloop.counter }}';
-					var period =  {id:'{{behavioral_event.id}}', data: {id:'{{behavioral_event.id}}', idx: count, label: count.toString(), start_time: '{{behavioral_event.0.start_time}}',
-                        duration: '{{behavioral_event.0.duration}}', start_time_seconds: '{{behavioral_event.0.start_time_seconds}}',
-                        end_time_seconds: '{{behavioral_event.0.end_time_seconds}}', video: '{{behavioral_event.0.video}}', video_url_mp4: '{{behavioral_event.0.video_url_mp4}}', 
-                        notes: '{{behavioral_event.0.notes|linebreaks}}', primates: '{{behavioral_event.0.primates}}', contexts: '{{behavioral_event.0.contexts}}', ethograms: '{{behavioral_event.0.ethograms}}', track: 2}};
+					var period =  {
+                        id:'{{behavioral_event.id}}',
+                        data: {
+                            id:'{{behavioral_event.id}}',
+                            idx: count,
+                            label: count.toString(),
+                            start_time: '{{behavioral_event.0.start_time}}',
+                            duration: '{{behavioral_event.0.duration}}',
+                            start_time_seconds: '{{behavioral_event.0.start_time_seconds}}',
+                            end_time_seconds: '{{behavioral_event.0.end_time_seconds}}',
+                            video: '{{behavioral_event.0.video}}',
+                            video_url_mp4: '{{behavioral_event.0.video_url_mp4}}',
+                            notes: '{{behavioral_event.0.notes|linebreaks}}',
+                            primates: '{{behavioral_event.0.primates}}',
+                            contexts: '{{behavioral_event.0.contexts}}',
+                            ethograms: '{{behavioral_event.0.ethograms}}',
+                            track: 2
+                        }
+                    };
 				
 	                // var period = {time_in:'{{behavioral_event.0.start_time_seconds}}',
 	                    // time_out:'{{behavioral_event.0.end_time_seconds}}',
@@ -138,25 +153,41 @@
 	                    // content: '{{behavioral_event.0.notes|linebreaks}}'};
 	                 periods.push(period);
 	                {% for child in behavioral_event.1 %}
-	                var sub_count = '{{ forloop.counter }}';
-	                period = {id:'{{child.id}}', data: {parentIdx: count, idx: sub_count++, label: count.toString() + '.' + sub_count.toString(), start_time_seconds: '{{child.start_time_seconds}}',
-                            end_time_seconds: '{{child.end_time_seconds}}', type: '{{child.type}}',
-                            start_time: '{{child.start_time}}', relative_to: '{{child.relative_to}}',
-                            duration: '{{child.duration}}', primates: '{{child.primates}}',
-                            contexts: '{{child.contexts}}', ethograms: '{{child.ethograms}}',
-                            signaller_id: '{{child.signaller_id}}', signaller:'{{child.signaller}}',
-                            recipient_id: '{{child.recipient_id}}', recipient: '{{child.recipient}}',
-                            gesture_id: '{{child.gesture_id}}', gesture:'{{child.gesture}}',
-                            recipient_response: '{{child.recipient_reponse}}',
-                            goal_met: '{{child.goal_met}}', notes: '{{child.notes|linebreaks}}', track: 1}
-                       };
-	                // var period = {time_in:'{{child.start_time_seconds}}',
-	                    // time_out:'{{child.end_time_seconds}}',
-	                    // track:1,
-	                    // color:'#'+Math.floor(Math.random()*16777215).toString(16),
-	                    // label:'{{ forloop.parentloop.counter }}.{{ forloop.counter }}',
-	                    // content: '{{child.notes|linebreaks}}'};
-	                periods.push(period);
+                        var sub_count = '{{ forloop.counter }}';
+                        period = {
+                            id:'{{child.id}}',
+                            data: {
+                                parentIdx: count,
+                                idx: sub_count++,
+                                label: count.toString() + '.' + sub_count.toString(),
+                                start_time_seconds: '{{child.start_time_seconds}}',
+                                end_time_seconds: '{{child.end_time_seconds}}',
+                                type: '{{child.type}}',
+                                start_time: '{{child.start_time}}',
+                                relative_to: '{{child.relative_to}}',
+                                duration: '{{child.duration}}',
+                                primates: '{{child.primates}}',
+                                contexts: '{{child.contexts}}',
+                                ethograms: '{{child.ethograms}}',
+                                signaller_id: '{{child.signaller_id}}',
+                                signaller:'{{child.signaller}}',
+                                recipient_id: '{{child.recipient_id}}',
+                                recipient: '{{child.recipient}}',
+                                gesture_id: '{{child.gesture_id}}',
+                                gesture:'{{child.gesture}}',
+                                recipient_response: '{{child.recipient_reponse}}',
+                                goal_met: '{{child.goal_met}}',
+                                notes: '{{child.notes|linebreaks}}',
+                                track: 1
+                            }
+                        };
+                        // var period = {time_in:'{{child.start_time_seconds}}',
+                            // time_out:'{{child.end_time_seconds}}',
+                            // track:1,
+                            // color:'#'+Math.floor(Math.random()*16777215).toString(16),
+                            // label:'{{ forloop.parentloop.counter }}.{{ forloop.counter }}',
+                            // content: '{{child.notes|linebreaks}}'};
+                        periods.push(period);
 	                {% endfor %}
 	            {% endfor %}
             
@@ -210,7 +241,7 @@
 	            data: data,
 	            success: doneSubmitBehavioralEventForm,
 	            processData: false,
-	            contentType: false,
+	            contentType: false
 	        });
         }
         
@@ -312,7 +343,11 @@
             if(confirm('This will delete this Behavioral Event as well as all links to it from other entries. Do you really want to delete the current Behavioral Event?'))
             {
                 var data={'idx':idx, 'csrfmiddlewaretoken': '{{ csrf_token }}'};
-                var args={type:"POST", url:'/gbdb/behavioral_event/'+id+'/delete/', data: data, success: doneBehavioralEventDelete };
+                var args={
+                    type:"POST",
+                    url:'/gbdb/behavioral_event/'+id+'/delete/',
+                    data: data,
+                    success: doneBehavioralEventDelete };
                 $.ajax(args);
             }
         }
@@ -321,15 +356,24 @@
         {
             if(status=='success')
             {
-                /*$('#behavioral_event-'+data.idx).remove();
-                var count = $('#behavioral_events').children("[id^=behavioral_event]").length;
-                if(count == 0){
-                	document.getElementById('observation_session_video_source').src = "";
-                    $("#video_frame").css("display", "none");
+                $('#behavioral_event-'+data.idx).remove();
+                for(var i=0; i<periods.length; i++)
+                {
+                    if(periods[i].data.label==data.idx.toString())
+                    {
+                        periods.splice(i,1);
+                        break;
+                    }
                 }
+                drawTimeline();
+                {% if not object.video.name %}
+                    var count = $('#behavioral_events').children("[id^=behavioral_event]").length;
+                    if(count == 0){
+                        document.getElementById('observation_session_video_source').src = "";
+                        $("#video_frame").css("display", "none");
+                    }
+                {% endif %}
                 $('#context_data').empty();
-                */
-                document.location.reload();
             }
         }
 
@@ -343,19 +387,27 @@
                 url: url,
                 type: frm.attr('method'),
                 data: data,
-                success: doneSubmitObservationSession,
+                complete: doneSubmitObservationSession,
                 processData: false,
                 contentType: false
             });
         }
 
-        function doneSubmitObservationSession(data, status){
+        function doneSubmitObservationSession(res, status){
             document.getElementById('savingMsg').style.display = 'none';
             document.getElementById('savingOver').style.display = 'none';
+            var txt = res.responseText;
+            var data = eval('('+txt+')');
             if(status=='success')
             {
-                //document.location.href='/gbdb/observation_session/'.concat(data.id.toString(), '/');
                 document.location.reload();
+            }
+            else{
+                for(var property in data)
+                {
+                    for(var i=0; i<data[property].length; i++)
+                        $('#id_'+property+'_errors').html(data[property][i]);
+                }
             }
         }
 
@@ -415,7 +467,7 @@
                                     {% if not behavioral_event.0.video.name %}
                                         <a href="" onclick="return playClip({{ behavioral_event.0.start_time_seconds }},{{ behavioral_event.0.end_time_seconds }});">Play clip</a>
                                     {% else %}
-                                        <a href="" onclick="return playClip(0);">Play clip</a>
+                                        <a href="" onclick="return playWholeClip();">Play clip</a>
                                     {% endif %}
                                 </td>
                             </tr>
@@ -504,27 +556,27 @@
     
         <div class='video_panel'>
             {% if object.video.name or behavioral_events.0.0.video.name%}
-            <div id='video_frame'>
-                <video id="observation_session_video" class="video-js vjs-default-skin" controls preload="auto"
-                       width="600" height="400" data-setup='{}'>
-                       {% if object.video.name %}
-                    <source id="observation_session_video_source" src="{{ object.video_url_mp4 }}" type="video/mp4">
-                        {% else %}
-                        <source id="observation_session_video_source" src="{{ behavioral_events.0.0.video_url_mp4 }}" type="video/mp4">
-                        {% endif %}
-                    <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
-                </video>
-                <div id="observation_session_timeline"></div>
-            </div>
-            {% else %}
-            <div id='video_frame' style="display:none;">
-             <video id="observation_session_video" class="video-js vjs-default-skin" controls preload="auto"
-                       width="600" height="400" data-setup='{}'>
-                      <source id="observation_session_video_source" src="" type="video/mp4">
+                <div id='video_frame'>
+                    <video id="observation_session_video" class="video-js vjs-default-skin" controls preload="auto"
+                           width="600" height="400" data-setup='{}'>
+                           {% if object.video.name %}
+                               <source id="observation_session_video_source" src="{{ object.video_url_mp4 }}" type="video/mp4">
+                           {% else %}
+                               <source id="observation_session_video_source" src="{{ behavioral_events.0.0.video_url_mp4 }}" type="video/mp4">
+                           {% endif %}
                         <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
-                </video>
-                <div id="observation_session_timeline"></div>
-            </div>
+                    </video>
+                    <div id="observation_session_timeline"></div>
+                </div>
+            {% else %}
+                <div id='video_frame' style="display:none;">
+                    <video id="observation_session_video" class="video-js vjs-default-skin" controls preload="auto"
+                           width="600" height="400" data-setup='{}'>
+                        <source id="observation_session_video_source" src="" type="video/mp4">
+                        <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
+                    </video>
+                    <div id="observation_session_timeline"></div>
+                </div>
             {% endif %}
             <div id="context_data"></div>
         </div>
