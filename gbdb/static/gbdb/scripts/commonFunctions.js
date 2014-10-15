@@ -56,7 +56,7 @@ function donePopulateLocation(res, status)
         var center = new google.maps.LatLng(parseFloat(data.latitude), parseFloat(data.longitude));
         globalMarker.setPosition(center);
         map.setCenter(center);
-        map.setZoom(15);
+        map.setZoom(5);
     }
 }
 
