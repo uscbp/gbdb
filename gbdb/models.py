@@ -25,8 +25,6 @@ def convert_to_mp4(mp4_filename, orig_filename, start_time=None, duration=None):
     if ext.lower() == '.mov':
         cmds.extend(['-strict', '-2'])
     cmds.append(mp4_filename)
-    print('converting to mp4')
-    print(cmds)
     subprocess.call(cmds)
 
 #def convert_to_ogg(ogg_filename, orig_filename, start_time=None, end_time=None):
