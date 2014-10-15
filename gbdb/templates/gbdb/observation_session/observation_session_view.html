@@ -254,9 +254,11 @@
         function doneSubmitBehavioralEventForm(data, status){
             if (status=="success")
             {
-                /*var tmplMarkup = $('#behavioral_event-template').html();
+                $('#context_data').empty();
+                var tmplMarkup = $('#behavioral_event-template').html();
                 if(behavioralEventEditIdx<0)
                 {
+                    /*
                     var count = $('#behavioral_events').children("[id^=behavioral_event]").length;
                     var period = { id: data.id, data: {id: data.id, idx : count+1, label: (count+1).toString(), start_time: data.start_time,
                         duration: data.duration, start_time_seconds: data.start_time_seconds,
@@ -292,32 +294,76 @@
                     {% else %}
                     	drawTimeline();
                     {% endif %}
+                    */
+                    document.location.reload();
                 }
                 else
                 {
-                	var period = { id: data.id, data: {id: data.id, idx : behavioralEventEditIdx, label: behavioralEventEditIdx.toString(), start_time: data.start_time,
-                        duration: data.duration, start_time_seconds: data.start_time_seconds,
-                        end_time_seconds: data.end_time_seconds, video: data.video, video_url_mp4: data.video_url_mp4, notes: data.notes,
-                        primates: data.primates, contexts: data.contexts, ethograms: data.ethograms, track: 2}};
+                	var period = {
+                        id: data.id,
+                        data: {
+                            id: data.id,
+                            idx : behavioralEventEditIdx,
+                            label: behavioralEventEditIdx.toString(),
+                            start_time: data.start_time,
+                            duration: data.duration,
+                            start_time_seconds: data.start_time_seconds,
+                            end_time_seconds: data.end_time_seconds,
+                            video: data.video,
+                            video_url_mp4: data.video_url_mp4,
+                            notes: data.notes,
+                            primates: data.primates,
+                            contexts: data.contexts,
+                            ethograms: data.ethograms,
+                            track: 2
+                        }
+                    };
+                    {% if object.video.name %}
+                        for(var i=0; i<periods.length; i++)
+                        {
+                            if(periods[i].data.label==period.data.label)
+                                periods[i]=period;
+                        }
+                    {% endif %}
                     var compiledTmpl = _.template(tmplMarkup, period['data']);
                     $('#behavioral_event-'+behavioralEventEditIdx).replaceWith(compiledTmpl);
+
                     $('#sub_behavioral_events_list-'+behavioralEventEditIdx).empty();
                     var tmplMarkup = $('#behavioral_subevent-template').html();
                     for(var i=0; i<data.subevents.length; i++)
                     {
-                    	period = { id: data.subevents[i]['id'], data:{parentIdx: behavioralEventEditIdx, idx: i+1, label: behavioralEventEditIdx.toString() + '.' + (i+1).toString(),
-                            start_time_seconds: data.subevents[i]['start_time_seconds'],
-                            end_time_seconds: data.subevents[i]['end_time_seconds'],
-                            type: data.subevents[i]['type'], start_time: data.subevents[i]['start_time'],
-                            relative_to: data.subevents[i]['relative_to'], duration: data.subevents[i]['duration'],
-                            primates: data.subevents[i]['primates'], contexts: data.subevents[i]['contexts'],
-                            ethograms: data.subevents[i]['ethograms'], signaller_id: data.subevents[i]['signaller_id'],
-                            signaller: data.subevents[i]['signaller'], recipient_id: data.subevents[i]['recipient_id'],
-                            recipient: data.subevents[i]['recipient'], gesture_id: data.subevents[i]['gesture_id'],
-                            gesture: data.subevents[i]['gesture'],
-                            recipient_response: data.subevents[i]['recipient_response'],
-                            goal_met: data.subevents[i]['goal_met'], notes: data.subevents[i]['notes'], track: 1}
-                       };
+                    	period = {
+                            id: data.subevents[i]['id'],
+                            data:{
+                                parentIdx: behavioralEventEditIdx,
+                                idx: i+1,
+                                label: behavioralEventEditIdx.toString() + '.' + (i+1).toString(),
+                                start_time_seconds: data.subevents[i]['start_time_seconds'],
+                                end_time_seconds: data.subevents[i]['end_time_seconds'],
+                                type: data.subevents[i]['type'],
+                                start_time: data.subevents[i]['start_time'],
+                                relative_to: data.subevents[i]['relative_to'],
+                                duration: data.subevents[i]['duration'],
+                                primates: data.subevents[i]['primates'],
+                                contexts: data.subevents[i]['contexts'],
+                                ethograms: data.subevents[i]['ethograms'],
+                                signaller_id: data.subevents[i]['signaller_id'],
+                                signaller: data.subevents[i]['signaller'],
+                                recipient_id: data.subevents[i]['recipient_id'],
+                                recipient: data.subevents[i]['recipient'],
+                                gesture_id: data.subevents[i]['gesture_id'],
+                                gesture: data.subevents[i]['gesture'],
+                                recipient_response: data.subevents[i]['recipient_response'],
+                                goal_met: data.subevents[i]['goal_met'],
+                                notes: data.subevents[i]['notes'],
+                                track: 1
+                            }
+                        };
+                        for(var i=0; i<periods.length; i++)
+                        {
+                            if(periods[i].data.label==period.data.label)
+                                periods[i]=period;
+                        }
                         var compiledTmpl = _.template(tmplMarkup, period['data']);
                         $('#sub_behavioral_events_list-'+behavioralEventEditIdx).append(compiledTmpl);
                     }
@@ -326,13 +372,9 @@
                         document.getElementById('observation_session_video_source').src = data.video_url_mp4;
                         $("#video_frame").css("display", "block");
                         videojs("observation_session_video").load();
-                    {% else %}
-                    	drawTimeline();
                     {% endif %}
-
-                }*/
-                $('#context_data').empty();
-                document.location.reload();
+                    drawTimeline();
+                }
             }
             document.getElementById('savingMsg').style.display = 'none';
             document.getElementById('savingOver').style.display = 'none';
@@ -555,7 +597,7 @@
         </div>
     
         <div class='video_panel'>
-            {% if object.video.name or behavioral_events.0.0.video.name%}
+            {% if object.video.name or behavioral_events.0.0.video.name %}
                 <div id='video_frame'>
                     <video id="observation_session_video" class="video-js vjs-default-skin" controls preload="auto"
                            width="600" height="400" data-setup='{}'>
