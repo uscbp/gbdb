@@ -23,11 +23,10 @@ class EditObservationSessionMixin():
         return HttpResponse(data, **response_kwargs)
     
     def form_invalid(self, form):
-        response = super(EditObservationSessionMixin, self).form_invalid(form)
         if self.request.is_ajax():
             return self.render_to_json_response(form.errors, status=400)
         else:
-            return response
+            return self.render_to_response(self.get_context_data(form=form))
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
