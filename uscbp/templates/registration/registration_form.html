@@ -1,6 +1,6 @@
 {% extends "base_generic.html" %}
 {% block extrahead %}
-    <title>BODB - User Registration</title>
+    <title>GBDB - User Registration</title>
     <script type="text/javascript">
         function checkPasswords()
         {
@@ -72,18 +72,13 @@
                     <td>{{ form.last_name }}</td>
                     {% if form.last_name.errors %}<td class="myerrors">{{ form.last_name.errors }}</td>{% endif %}
                 </tr>
-                <tr>
-                    <td>Affiliation *</td>
-                    <td>{{ form.affiliation }}</td>
-                    {% if form.affiliation.errors %}<td class="myerrors">{{ form.affiliation.errors }}</td>{% endif %}
-                </tr>
             </table>
             <p>Prove you're not a robot:</p>
             <script type="text/javascript"
-                    src="http://www.google.com/recaptcha/api/challenge?k=6LcsfdgSAAAAALpxjEXY3U7uSwkyIxzNRxPGhVBW">
+                    src="http://www.google.com/recaptcha/api/challenge?k={{ recaptcha_key }}">
             </script>
             <noscript>
-                <iframe src="http://www.google.com/recaptcha/api/noscript?k=6LcsfdgSAAAAALpxjEXY3U7uSwkyIxzNRxPGhVBW{{ captcha_error }}"
+                <iframe src="http://www.google.com/recaptcha/api/noscript?k={{ recaptcha_key }}{{ captcha_error }}"
                         height="300" width="500" frameborder="0"></iframe><br>
                 <textarea name="recaptcha_challenge_field" rows="3" cols="40">
                 </textarea>

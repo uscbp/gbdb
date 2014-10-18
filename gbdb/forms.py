@@ -37,8 +37,8 @@ YESNO_CHOICES = (
 
 class GbdbRegistrationForm(RegistrationForm):
     """
-    Extends the basic registration form with support for fields required by BODB.
-        - first_name, last_name, and affiliation
+    Extends the basic registration form with support for fields required by GBDB.
+        - first_name, last_name
     """
     first_name = forms.CharField(required=True)
     last_name = forms.CharField(required=True)
