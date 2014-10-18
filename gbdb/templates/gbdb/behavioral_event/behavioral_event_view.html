@@ -36,7 +36,7 @@
             var map = new google.maps.Map(
                     document.getElementById('map-canvas'), {
                         center: new google.maps.LatLng({{ object.observation_session.location.latitude }}, {{ object.observation_session.location.longitude }}),
-                        zoom: 13,
+                        zoom: 5,
                         mapTypeId: google.maps.MapTypeId.HYBRID
                     });
 
