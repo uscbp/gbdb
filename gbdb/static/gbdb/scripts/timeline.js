@@ -561,7 +561,10 @@ Timeline.prototype.drawLine = function(x1, y1, x2, y2, color) {
  * @private
  */
 Timeline.prototype.drawRect = function(x, y, w, h, color, label, highlight, shade) {
-	var height = h - 3;
+	var height = h;
+	if(shade || highlight){
+    	height = h-3;
+    }
     this.c.fillStyle = color;
 	this.c.lineWidth = 3
     this.c.fillRect(x, y, w, height);
