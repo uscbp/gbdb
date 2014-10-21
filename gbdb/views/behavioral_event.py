@@ -65,7 +65,7 @@ class EditBehavioralEventMixin(object):
                     data['errors']['duration']=['Clip exceeds video duration']
                     errors=True
             for other_event in BehavioralEvent.objects.filter(observation_session=self.object.observation_session).exclude(id=self.object.id):
-                if other_event.start_time_seconds() <= self.object.end_time_seconds()<=other_event.end_time_seconds() or other_event.start_time_seconds() <= self.object.start_time_seconds() <= other_event.end_time_seconds():
+                if other_event.start_time_seconds() < self.object.end_time_seconds()<other_event.end_time_seconds() or other_event.start_time_seconds() < self.object.start_time_seconds() < other_event.end_time_seconds():
                     data['errors']['start_time']=['Clip overlaps other events']
                     errors=True
 

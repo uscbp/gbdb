@@ -74,7 +74,12 @@
         
         function addPeriod(time_in, time_out, track, label, content)
         {
-        	var id = timeline.addPeriod(time_in, time_out,'#'+Math.floor(Math.random()*16777215).toString(16), track, label);
+        	var color = '#33CCFF';
+        	if(track == 1){
+        		color = '#99FF66';
+        	}
+        	//var id = timeline.addPeriod(time_in, time_out,'#'+Math.floor(Math.random()*16777215).toString(16), track, label);
+        	var id = timeline.addPeriod(time_in, time_out, color, track, label);
         };
         
         function drawTimeline()
@@ -99,7 +104,12 @@
 
             timeline = new Timeline('observation_session_video', 'observation_session_timeline', videojs("observation_session_video").duration(), options);
             for(var i = 0; i<periods.length; i++){
-                id = timeline.addPeriod(periods[i]['data'].start_time_seconds,periods[i]['data'].end_time_seconds, '#'+Math.floor(Math.random()*16777215).toString(16), periods[i]['data'].track, periods[i]['data'].label);
+            	var color = '#33CCFF';
+	        	if(periods[i]['data'].track == 1){
+	        		color = '#99FF66';
+	        	}
+                //id = timeline.addPeriod(periods[i]['data'].start_time_seconds,periods[i]['data'].end_time_seconds, '#'+Math.floor(Math.random()*16777215).toString(16), periods[i]['data'].track, periods[i]['data'].label);
+            	id = timeline.addPeriod(periods[i]['data'].start_time_seconds,periods[i]['data'].end_time_seconds, color, periods[i]['data'].track, periods[i]['data'].label);
             }
         };
 
@@ -200,18 +210,20 @@
                     var active_data = [];
                     var min_start_time=10000000;
                     var min_label='';
+                    var period_flag = false;
                     for(var i=0; i<periods.length; i++){
                         if(time >= periods[i]['data'].start_time_seconds && time < periods[i]['data'].end_time_seconds){
                             active_data.push("<strong>Event " + periods[i]['data'].label + " Notes: </strong>" +periods[i]['data'].notes);
                         	if(periods[i]['data'].label.indexOf('.')<0)
-                                $('#behavioral_event-' + periods[i]['data'].label).css("border","5px solid black");
+                                $('#behavioral_event-' + periods[i]['data'].label).css("border","5px solid #FF0");
                             else
-                                $('#sub_behavioral_event-' + periods[i]['data'].label).css("border","5px solid black");
+                                $('#sub_behavioral_event-' + periods[i]['data'].label).css("border","5px solid #FF0");
                             if(periods[i].data.start_time_seconds<min_start_time)
                             {
                                 min_start_time=periods[i].data.start_time_seconds;
                                 min_label=periods[i]['data'].label;
                             }
+                            period_flag = true;
 
                         } else {
                             if(periods[i]['data'].label.indexOf('.')<0)
@@ -220,10 +232,12 @@
                         	    $('#sub_behavioral_event-' + periods[i]['data'].label).css("border","none");
                         }
                     };
-                    if(min_label.indexOf('.')>=0)
-                        $("#behavioral_events").scrollTo("#behavioral_event-" + min_label.substring(0,min_label.indexOf('.')));
-                    else
-                        $("#behavioral_events").scrollTo("#behavioral_event-" + min_label);
+                    if(period_flag) {
+	                    if(min_label.indexOf('.')>=0)
+	                        $("#behavioral_events").scrollTo("#behavioral_event-" + min_label.substring(0,min_label.indexOf('.')));
+	                    else
+	                        $("#behavioral_events").scrollTo("#behavioral_event-" + min_label);
+	                       }
                     $('#context_data').html(active_data.join('<br /><br />'));
                 });
             

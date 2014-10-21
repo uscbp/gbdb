@@ -397,10 +397,10 @@ Timeline.prototype.updateGUI = function() {
 		var obj = this._periods[i]
 		if(this.options.periodShape == 'rectangle'){
 			if(this.time > obj.time_in && this.time < obj.time_out){
-				this.drawRect(this.timeToX(obj.time_in), this.yTrack(obj.track).top, this.timeToX(obj.time_out)-this.timeToX(obj.time_in), this.yTrack(obj.track).bottom-this.yTrack(obj.track).top, obj.color, obj.label, true )
+				this.drawRect(this.timeToX(obj.time_in), this.yTrack(obj.track).top, this.timeToX(obj.time_out)-this.timeToX(obj.time_in), this.yTrack(obj.track).bottom-this.yTrack(obj.track).top, obj.color, obj.label, true, false)
 			}
 			else {
-				this.drawRect(this.timeToX(obj.time_in), this.yTrack(obj.track).top, this.timeToX(obj.time_out)-this.timeToX(obj.time_in), this.yTrack(obj.track).bottom-this.yTrack(obj.track).top, obj.color, obj.label)				
+				this.drawRect(this.timeToX(obj.time_in), this.yTrack(obj.track).top, this.timeToX(obj.time_out)-this.timeToX(obj.time_in), this.yTrack(obj.track).bottom-this.yTrack(obj.track).top, obj.color, obj.label, false, true)				
 			}
 		}
 		if(this.options.periodShape == 'bubble'){
@@ -560,17 +560,29 @@ Timeline.prototype.drawLine = function(x1, y1, x2, y2, color) {
 /**
  * @private
  */
-Timeline.prototype.drawRect = function(x, y, w, h, color, label, highlight) {
+Timeline.prototype.drawRect = function(x, y, w, h, color, label, highlight, shade) {
+	var height = h - 3;
     this.c.fillStyle = color;
-	this.c.strokeStyle = '#FF0';
 	this.c.lineWidth = 3
-    this.c.fillRect(x, y, w, h);
-	//if(highlight){this.c.stroke();}
+    this.c.fillRect(x, y, w, height);
+    if(shade){
+    	this.c.strokeStyle = shadeColor1(color, -20);
+    	this.c.strokeRect(x, y, w, height);
+    }
+	if(highlight){
+		this.c.strokeStyle = '#FF0';
+		this.c.strokeRect(x, y, w, height);
+	}
     if(label){
         label_width =  this.c.measureText(label);
         this.c.fillStyle = "#000";
         this.c.fillText(label, x+w/2-label_width.width/2, y+h/2);
     }
+}
+
+function shadeColor1(color, percent) {  
+    var num = parseInt(color.slice(1),16), amt = Math.round(2.55 * percent), R = (num >> 16) + amt, G = (num >> 8 & 0x00FF) + amt, B = (num & 0x0000FF) + amt;
+    return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (G<255?G<1?0:G:255)*0x100 + (B<255?B<1?0:B:255)).toString(16).slice(1);
 }
 /**
  * @private
