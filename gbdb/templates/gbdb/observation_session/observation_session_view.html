@@ -599,6 +599,13 @@
                 }
             }
         }
+        
+        function managePermissions(documentId)
+			{
+				//$('#context_data').load(href);
+			    return showPopup('Manage permissions',600,500,'/gbdb/observation_session/'+documentId+'/permissions/');
+			}
+
 
     </script>
 {% endblock %}
@@ -633,10 +640,16 @@
                     </td>
                 </tr>
             </table>
-            {% if user == object.collator %}
+         
+            	{% if user == object.collator or has_edit_perms %}
                 <input type="button" value="Edit" onclick="displayEdit('/gbdb/observation_session/{{object.id}}/edit/')"/>&nbsp;
+                {% endif %}
+                {% if user == object.collator or has_delete_perms %}
                 <input type="button" value="Delete" onclick="deleteObservationSession()"/>&nbsp;
-            {% endif %}
+                {% endif %}
+                {% if user == object.collator or has_manage_perms %}
+                <input id="manageButton" class="btn" type="button" value="Manage Permissions" onclick="return managePermissions('{{object.id}}');" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+            	{% endif %}
 
             <br>
             <h3>Behavioral Events{% if user == object.collator %} <a href="#" onclick="return createBehavioralEvent();">Add new</a>{% endif %}</h3>
@@ -679,8 +692,10 @@
                                 <td><strong>Ethograms:</strong> {% for ethogram in behavioral_event.0.ethograms.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ ethogram.name }}{% endfor %}</td>
                             </tr>
                         </table>
-                        {% if user == object.collator %}
+                        {% if user == object.collator or has_edit_perms %}
                         <input type="button" value="Edit" onclick="return editBehavioralEvent({{behavioral_event.0.id}},{{ forloop.counter }});"/>&nbsp;
+                        {% endif %}
+                        {% if user == object.collator or has_delete_perms %}
                         <input type="button" value="Delete" onclick="deleteBehavioralEvent({{behavioral_event.0.id}},{{ forloop.counter }})"/>&nbsp;
                         {% endif %}
                         <h4>Behavioral and Gestural Sub-Events</h4>
@@ -811,8 +826,10 @@
                     <td><strong>Ethograms:</strong> <%= ethograms %></td>
                 </tr>
             </table>
-            {% if user == object.collator %}
+            {% if user == object.collator or has_edit_perms %}
                 <input type="button" value="Edit" onclick="return editBehavioralEvent(<%= id %>,<%= idx %>);"/>&nbsp;
+            {% endif %}
+            {% if user == object.collator or has_delete_perms %}
                 <input type="button" value="Delete" onclick="deleteBehavioralEvent(<%= id %>,<%= idx %>)"/>&nbsp;
             {% endif %}
             <h4>Behavioral and Gestural Sub-Events</h4>

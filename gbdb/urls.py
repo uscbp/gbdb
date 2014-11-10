@@ -3,7 +3,7 @@ from gbdb.views.behavioral_event import CreateBehavioralEventView, UpdateBehavio
 from gbdb.views.gestural_event import GesturalEventDetailView, DeleteGesturalEventView, UpdateGesturalEventView, CreateGesturalEventView
 from gbdb.views.location import SavedLocationDetailView, CreateSavedLocationView
 from gbdb.views.main import IndexView
-from gbdb.views.observation_session import CreateObservationSessionView, ObservationSessionDetailView, DeleteObservationSessionView, UpdateObservationSessionView, SearchObservationSessionView
+from gbdb.views.observation_session import CreateObservationSessionView, ObservationSessionDetailView, DeleteObservationSessionView, UpdateObservationSessionView, SearchObservationSessionView, ManageObservationSessionPermissionsView
 from gbdb.views.primate import CreatePrimateView, PrimateDetailView, DeletePrimateView, UpdatePrimateView, SearchPrimateView
 from gbdb.views.gesture import CreateGestureView, GestureDetailView, DeleteGestureView, UpdateGestureView, SearchGestureView
 
@@ -31,6 +31,7 @@ urlpatterns = patterns('',
     url(r'^observation_session/(?P<pk>\d+)/edit/$', UpdateObservationSessionView.as_view(), {}, 'observation_session_edit'),
     url(r'^observation_session/new/$', CreateObservationSessionView.as_view(), {}, 'observation_session_add'),
     url(r'^observation_session/search/$', SearchObservationSessionView.as_view(), {}, 'observation_session_search'),
+    url(r'^observation_session/(?P<pk>\d+)/permissions/$', ManageObservationSessionPermissionsView.as_view(), {}, 'manage_permissions'),
     
     url(r'^primate/(?P<pk>\d+)/$', PrimateDetailView.as_view(), {}, 'primate_view'),
     url(r'^primate/(?P<pk>\d+)/delete/$', DeletePrimateView.as_view(), {}, 'primate_delete'),

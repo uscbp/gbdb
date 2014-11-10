@@ -49,6 +49,15 @@ def convert_to_mp4(mp4_filename, orig_filename, start_time=None, duration=None):
 #    print(cmds)
 #    subprocess.call(cmds)
 
+class CoWoGroup(models.Model):
+    name = models.CharField(max_length=100)
+    administrators = models.ManyToManyField(User, related_name = "administrators")
+    members = models.ManyToManyField(User, related_name = "members")
+    
+    class Meta:
+        app_label='gbdb'
+        
+
 class Species(models.Model):
     genus_name = models.CharField(max_length=100)
     species_name = models.CharField(max_length=100)
@@ -126,6 +135,13 @@ class ObservationSession(models.Model):
 
     class Meta:
         app_label='gbdb'
+        
+        permissions=(
+            ('manage', 'Manage permissions'),
+            ('edit', 'Edit permissions'),
+            ('delete', 'Delete permissions'),
+            ('view', 'View permissions')
+        )
 
     def duration_seconds(self):
         result = subprocess.Popen(["ffprobe", os.path.join(settings.MEDIA_ROOT,'videos','observation_session','%d.mp4' % self.id)],

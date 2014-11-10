@@ -11,6 +11,9 @@ from gbdb.search import runObservationSessionSearch
 from timelinejs.views import JSONResponseMixin
 import json
 from django.http import HttpResponse
+from guardian.mixins import PermissionRequiredMixin
+from registration.models import User
+from django.contrib.auth.models import Group
 
 class EditObservationSessionMixin():
     model=ObservationSession
@@ -69,9 +72,11 @@ class DeleteObservationSessionView(DeleteView):
     success_url = '/gbdb/index.html'
 
 
-class ObservationSessionDetailView(DetailView):
+class ObservationSessionDetailView(PermissionRequiredMixin, DetailView):
     model = ObservationSession
     template_name = 'gbdb/observation_session/observation_session_view.html'
+    permission_required = 'gbdb.view'
+    raise_exception = True
 
     def get_context_data(self, **kwargs):
         context = super(ObservationSessionDetailView, self).get_context_data(**kwargs)
@@ -89,6 +94,10 @@ class ObservationSessionDetailView(DetailView):
         context['behavioral_events'] = event_list
         context['site_url']='http://%s' % get_current_site(self.request)
         context['timeline']=self.object
+        
+        context['has_edit_perms'] = self.request.user.has_perm('edit', self.object)
+        context['has_delete_perms'] = self.request.user.has_perm('delete', self.object)
+        
         return context
 
 
@@ -103,3 +112,85 @@ class SearchObservationSessionView(FormView):
         context['observation_sessions']=runObservationSessionSearch(form.cleaned_data, user.id)
 
         return self.render_to_response(context)
+    
+
+class ManageObservationSessionPermissionsView(DetailView):
+    template_name = 'gbdb/observation_session_permissions_detail.html'
+
+    def post(self, request, *args, **kwargs):
+        self.object=ObservationSession.objects.get(id=self.kwargs.get('pk',None))
+        context = self.get_context_data(**kwargs)
+        for user in context['users']:
+            if context['user_manage_permissions'][user]:
+                assign_perm('manage', user, self.object)
+            else:
+                remove_perm('manage', user, self.object)
+            if context['user_edit_permissions'][user]:
+                assign_perm('edit', user, self.object)
+            else:
+                remove_perm('edit', user, self.object)
+            if context['user_delete_permissions'][user]:
+                assign_perm('delete', user, self.object)
+            else:
+                remove_perm('delete', user, self.object)
+        for group in context['groups']:
+            if context['group_manage_permissions'][group]:
+                assign_perm('manage', group, self.object)
+            else:
+                remove_perm('manage', group, self.object)
+            if context['group_edit_permissions'][group]:
+                assign_perm('edit', group, self.object)
+            else:
+                remove_perm('edit', group, self.object)
+            if context['group_delete_permissions'][group]:
+                assign_perm('delete', group, self.object)
+            else:
+                remove_perm('delete', group, self.object)
+
+        redirect_url='/gbdb/observation_session/%d/permissions/' % self.object.id
+        if context['ispopup']:
+            redirect_url+='?_popup=1'
+        return redirect(redirect_url)
+
+    def get(self, request, *args, **kwargs):
+        self.object=ObservationSession.objects.get(id=self.kwargs.get('pk',None))
+        return self.render_to_response(self.get_context_data())
+
+    def get_context_data(self, **kwargs):
+        context=super(DetailView,self).get_context_data(**kwargs)
+        context['observation_session']=self.object
+        context['helpPage']='permissions.html#individual-entry-permissions'
+        context['users']=User.objects.all().exclude(id=self.request.user.id)
+        context['groups']=Group.objects.filter(user__id=self.request.user.id)
+        context['ispopup']=('_popup' in self.request.GET)
+        context['user_manage_permissions']={}
+        context['user_edit_permissions']={}
+        context['user_delete_permissions']={}
+        context['group_manage_permissions']={}
+        context['group_edit_permissions']={}
+        context['group_delete_permissions']={}
+        for user in context['users']:
+            context['user_manage_permissions'][user]=False
+            context['user_edit_permissions'][user]=False
+            context['user_delete_permissions'][user]=False
+            if self.request.POST:
+                context['user_manage_permissions'][user]=('user-%d_manage' % user.id) in self.request.POST
+                context['user_edit_permissions'][user]=('user-%d_edit' % user.id) in self.request.POST
+                context['user_delete_permissions'][user]=('user-%d_delete' % user.id) in self.request.POST
+            else:
+                context['user_manage_permissions'][user]=user.has_perm('manage',self.object)
+                context['user_edit_permissions'][user]=user.has_perm('edit',self.object)
+                context['user_delete_permissions'][user]=user.has_perm('delete',self.object)
+        for group in context['groups']:
+            context['group_manage_permissions'][group]=False
+            context['group_edit_permissions'][group]=False
+            context['group_delete_permissions'][group]=False
+            if self.request.POST:
+                context['group_manage_permissions'][group]=('group-%d_manage' % group.id) in self.request.POST
+                context['group_edit_permissions'][group]=('group-%d_edit' % group.id) in self.request.POST
+                context['group_delete_permissions'][group]=('group-%d_delete' % group.id) in self.request.POST
+            else:
+                context['group_manage_permissions'][group]='manage' in get_perms(group,self.object)
+                context['group_edit_permissions'][group]='edit' in get_perms(group,self.object)
+                context['group_delete_permissions'][group]='delete' in get_perms(group,self.object)
+        return context
