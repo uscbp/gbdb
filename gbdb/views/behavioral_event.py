@@ -93,9 +93,10 @@ class EditBehavioralEventMixin(object):
                     if gestural_event.relative_to=='behavioral_event':
                         subevent_start_seconds+=self.object.start_time_seconds()
                     subevent_end_seconds=subevent_start_seconds+gestural_event.duration.hour*60*60+gestural_event.duration.minute*60+gestural_event.duration.second
-                    if subevent_end_seconds>self.object.end_time_seconds():
-                        sub_event_errors['duration']=['Subevent exceeds parent event duration']
-                        errors=True
+                    if self.object.observation_session.video.name:
+                        if subevent_end_seconds>self.object.end_time_seconds():
+                            sub_event_errors['duration']=['Subevent exceeds parent event duration']
+                            errors=True
                     if gestural_event.relative_to=='observation_session' and subevent_start_seconds<self.object.start_time_seconds():
                         sub_event_errors['start_time']=['Subevent starts before parent event']
                         errors=True
