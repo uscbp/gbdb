@@ -45,7 +45,6 @@ class EditBehavioralEventMixin(object):
             return self.render_to_response(self.get_context_data(form=form))
 
     def form_valid(self, form):
-
         context = self.get_context_data()
         sub_behavioral_event_formset = context['sub_behavioral_event_formset']
         sub_gestural_event_formset = context['sub_gestural_event_formset']
@@ -72,34 +71,35 @@ class EditBehavioralEventMixin(object):
             for sub_behavioral_event_form in sub_behavioral_event_formset.forms:
                 if not sub_behavioral_event_form in sub_behavioral_event_formset.deleted_forms:
                     behavioral_event=sub_behavioral_event_form.save(commit=False)
-                    errors={}
+                    sub_event_errors={}
                     subevent_start_seconds=behavioral_event.start_time.hour*60*60+behavioral_event.start_time.minute*60+behavioral_event.start_time.second
                     if behavioral_event.relative_to=='behavioral_event':
                         subevent_start_seconds+=self.object.start_time_seconds()
                     subevent_end_seconds=subevent_start_seconds+behavioral_event.duration.hour*60*60+behavioral_event.duration.minute*60+behavioral_event.duration.second
-                    if subevent_end_seconds>self.object.end_time_seconds():
-                        errors['duration']=['Subevent exceeds parent event duration']
-                        errors=True
+                    if self.object.observation_session.video.name:
+                        if subevent_end_seconds>self.object.end_time_seconds():
+                            sub_event_errors['duration']=['Subevent exceeds parent event duration']
+                            errors=True
                     if behavioral_event.relative_to=='observation_session' and subevent_start_seconds<self.object.start_time_seconds():
-                        errors['start_time']=['Subevent starts before parent event']
+                        sub_event_errors['start_time']=['Subevent starts before parent event']
                         errors=True
-                    data['sub_behavioral_event_errors'].append(errors)
+                    data['sub_behavioral_event_errors'].append(sub_event_errors)
 
             for sub_gestural_event_form in sub_gestural_event_formset.forms:
                 if not sub_gestural_event_form in sub_gestural_event_formset.deleted_forms:
                     gestural_event=sub_gestural_event_form.save(commit=False)
-                    errors={}
+                    sub_event_errors={}
                     subevent_start_seconds=gestural_event.start_time.hour*60*60+gestural_event.start_time.minute*60+gestural_event.start_time.second
                     if gestural_event.relative_to=='behavioral_event':
                         subevent_start_seconds+=self.object.start_time_seconds()
                     subevent_end_seconds=subevent_start_seconds+gestural_event.duration.hour*60*60+gestural_event.duration.minute*60+gestural_event.duration.second
                     if subevent_end_seconds>self.object.end_time_seconds():
-                        errors['duration']=['Subevent exceeds parent event duration']
+                        sub_event_errors['duration']=['Subevent exceeds parent event duration']
                         errors=True
                     if gestural_event.relative_to=='observation_session' and subevent_start_seconds<self.object.start_time_seconds():
-                        errors['start_time']=['Subevent starts before parent event']
+                        sub_event_errors['start_time']=['Subevent starts before parent event']
                         errors=True
-                    data['sub_gestural_event_errors'].append(errors)
+                    data['sub_gestural_event_errors'].append(sub_event_errors)
 
             if errors:
                 return self.render_to_json_response(data, status=400)
