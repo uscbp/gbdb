@@ -53,16 +53,6 @@
         	return false;
         }
         
-        function addPeriod(time_in, time_out, track, label, content)
-        {
-        	var color = '#33CCFF';
-        	if(track == 1){
-        		color = '#99FF66';
-        	}
-        	//var id = timeline.addPeriod(time_in, time_out,'#'+Math.floor(Math.random()*16777215).toString(16), track, label);
-        	var id = timeline.addPeriod(time_in, time_out, color, track, label);
-        }
-        
         function drawTimeline()
         {       
         	
@@ -85,12 +75,25 @@
 
             timeline = new Timeline('observation_session_video', 'observation_session_timeline', videojs("observation_session_video").duration(), options);
             for(var i = 0; i<periods.length; i++){
-            	var color = '#33CCFF';
-	        	if(periods[i]['data'].track == 1){
-	        		color = '#99FF66';
-	        	}
-                //id = timeline.addPeriod(periods[i]['data'].start_time_seconds,periods[i]['data'].end_time_seconds, '#'+Math.floor(Math.random()*16777215).toString(16), periods[i]['data'].track, periods[i]['data'].label);
-            	id = timeline.addPeriod(periods[i]['data'].start_time_seconds,periods[i]['data'].end_time_seconds, color, periods[i]['data'].track, periods[i]['data'].label);
+                var color = '#33CCFF';
+                if(periods[i]['data'].track == 1){
+                    color = '#99FF66';
+                }
+                var add=true;
+                {% if not object.video.name %}
+                    if(behavioralEventSelectedIdx>-1)
+                    {
+                        if(periods[i]['data']['label'].substring(0,periods[i]['data']['label'].indexOf('.'))==behavioralEventSelectedIdx.toString())
+                            add=true;
+                        else
+                            add=false;
+                    }
+                {% endif %}
+                if(add)
+                {
+            	    //id = timeline.addPeriod(periods[i]['data'].start_time_seconds,periods[i]['data'].end_time_seconds, '#'+Math.floor(Math.random()*16777215).toString(16), periods[i]['data'].track, periods[i]['data'].label);
+            	    id = timeline.addPeriod(periods[i]['data'].start_time_seconds,periods[i]['data'].end_time_seconds, color, periods[i]['data'].track, periods[i]['data'].label);
+                }
             }
         }
 
@@ -228,6 +231,7 @@
 
         behavioralEventEditIdx=-1;
         behavioralSubEventEditIdx=-1;
+        behavioralEventSelectedIdx=1;
 
         function editBehavioralSubEvent(id, idx, parentIdx)
         {
@@ -567,10 +571,26 @@
 	        });
         }
         
-        function changeVideoSource(source){
-        	document.getElementById('observation_session_video_source').src = source;
-        	videojs("observation_session_video").load();
-        	return false;
+        function changeVideoSource(event_idx, source){
+            var $vid_obj        = _V_("observation_session_video");
+
+            behavioralEventSelectedIdx=event_idx;
+
+            $vid_obj.ready(function() {
+                // hide the video UI
+                $("#div_video_html5_api").hide();
+                // and stop it from playing
+                $vid_obj.pause();
+                // assign the targeted videos to the source nodes
+                $("video:nth-child(1)").attr("src",source);
+                // reset the UI states
+                $(".vjs-big-play-button").show();
+                $("#observation_session_video").removeClass("vjs-playing").addClass("vjs-paused");
+                // load the new sources
+                $vid_obj.load();
+                $("#div_video_html5_api").show();
+            });
+            return false;
         }
 
         /**
@@ -919,7 +939,7 @@
                                 {% if not behavioral_event.0.video.name %}
                                 <td width=30%><strong><a href="" onclick="return setClipTime({{ behavioral_event.0.start_time_seconds }})">Behavioral Event {{ forloop.counter }}</a></strong></td>
                                 {% else %}
-                                <td width=30%><strong><a href="" onclick="return changeVideoSource('{{ behavioral_event.0.video_url_mp4 }}')">Behavioral Event {{ forloop.counter }}</a></strong></td>
+                                <td width=30%><strong><a href="" onclick="return changeVideoSource({{ forloop.counter }},'{{ behavioral_event.0.video_url_mp4 }}')">Behavioral Event {{ forloop.counter }}</a></strong></td>
                                 {% endif %}
                             </tr>
                             <tr class="{% cycle 'even_row' 'odd_row' %}">
@@ -1060,7 +1080,7 @@
                 	{% if object.video.name %}
                     <td width=30%><strong><a href="" onclick="return setClipTime(<%= start_time_seconds %>)">Behavioral Event <%= idx %></a></strong></td>
                 	{% else %}
-                	<td width=30%><strong><a href="" onclick="return changeVideoSource('<%= video_url_mp4 %>')">Behavioral Event <%= idx %></a></strong></td>
+                	<td width=30%><strong><a href="" onclick="return changeVideoSource(<%= idx %>,'<%= video_url_mp4 %>')">Behavioral Event <%= idx %></a></strong></td>
                 	{% endif %}
                 </tr>
                 <tr class="<%= getTRTag(idx-1) %>">
