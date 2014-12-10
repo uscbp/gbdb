@@ -1,85 +1,7 @@
 {% load staticfiles %}
 {% block extrahead %}
-    <title>GBDB - {% if form.instance.id%}Edit{% else %}Add{% endif %} Behavioral {% if form.instance.id and form.instance.parent %}Sub-{% endif %}Event</title>
+    <title>GBDB - {% if form.instance.id%}Edit{% else %}Add{% endif %} Behavioral {% if form.parent.value %}Sub-{% endif %}Event</title>
     <script type="text/javascript">
-        function addSubBehavioralEventForm()
-        {
-            var count = $('#sub_behavioral_events').children().length;
-            var tmplMarkup = $('#sub_behavioral_event-template').html();
-            var compiledTmpl = _.template(tmplMarkup, { idx : count });
-            $('#sub_behavioral_events').append(compiledTmpl);
-            $('#id_sub_behavioral_event-TOTAL_FORMS').attr('value', count+1);
-
-            widget=$('#id_sub_behavioral_event-'+count+'-contexts-wrapper').yourlabsWidget();
-            autocomplete=$('#id_sub_behavioral_event-'+count+'-contexts_text').yourlabsAutocomplete();
-            autocomplete.choiceSelector='[data-value]';
-            autocomplete.hilightClass='hilight';
-            autocomplete.initialize();
-            widget.initialize();
-            widget.input.bind('selectChoice', function(e, choice) {
-                var main_widget = $('#id_contexts-wrapper').yourlabsWidget();
-
-                main_widget.selectChoice(choice);
-                $(this).focus();
-            });
-
-            widget=$('#id_sub_behavioral_event-'+count+'-ethograms-wrapper').yourlabsWidget();
-            autocomplete=$('#id_sub_behavioral_event-'+count+'-ethograms_text').yourlabsAutocomplete();
-            autocomplete.choiceSelector='[data-value]';
-            autocomplete.hilightClass='hilight';
-            autocomplete.initialize();
-            widget.initialize();
-            widget.input.bind('selectChoice', function(e, choice) {
-                var main_widget = $('#id_ethograms-wrapper').yourlabsWidget();
-
-                main_widget.selectChoice(choice);
-                $(this).focus();
-            });
-             populatePrimates();
-
-            return false;
-        }
-
-        function addSubGesturalEventForm()
-        {
-            var count = $('#sub_gestural_events').children().length;
-            var tmplMarkup = $('#sub_gestural_event-template').html();
-            var compiledTmpl = _.template(tmplMarkup, { idx : count });
-            $('#sub_gestural_events').append(compiledTmpl);
-            // update form count
-            $('#id_sub_gestural_event-TOTAL_FORMS').attr('value', count+1);
-
-            widget=$('#id_sub_gestural_event-'+count+'-contexts-wrapper').yourlabsWidget();
-            autocomplete=$('#id_sub_gestural_event-'+count+'-contexts_text').yourlabsAutocomplete();
-            autocomplete.choiceSelector='[data-value]';
-            autocomplete.hilightClass='hilight';
-            autocomplete.initialize();
-            widget.initialize();
-            widget.input.bind('selectChoice', function(e, choice) {
-                var main_widget = $('#id_contexts-wrapper').yourlabsWidget();
-
-                main_widget.selectChoice(choice);
-                $(this).focus();
-            });
-
-            widget=$('#id_sub_gestural_event-'+count+'-ethograms-wrapper').yourlabsWidget();
-            autocomplete=$('#id_sub_gestural_event-'+count+'-ethograms_text').yourlabsAutocomplete();
-            autocomplete.choiceSelector='[data-value]';
-            autocomplete.hilightClass='hilight';
-            autocomplete.initialize();
-            widget.initialize();
-            widget.input.bind('selectChoice', function(e, choice) {
-                var main_widget = $('#id_ethograms-wrapper').yourlabsWidget();
-
-                main_widget.selectChoice(choice);
-                $(this).focus();
-            });
-
-            populatePrimates();
-
-            return false;
-        }
-
         function addPrimate(primateID, primateName)
         {
             var primateElem=document.createElement('option');
@@ -90,103 +12,48 @@
             selectElem.appendChild(primateElem);
         }
 
-        function populatePrimates() 
+        function updateBehavioralEventOptions(sedType)
         {
-        	var vals = $("#id_primates :selected");
-	        var count = $('#sub_behavioral_events').children().length;
-	
-			for(var i=0; i < count; i++){
-                var sel = $("#id_sub_behavioral_event-" + i + "-primates");
-                sel.empty();
-                vals.map(function(i, el) {
-                    sel.append('<option value="'+el.value+'">' + $(el).text() + '</option>');
-                    });
-			}
-			
-			var count = $('#sub_gestural_events').children().length;
-	
-			for(var i=0; i < count; i++){
-                var selsignaller = $("#id_sub_gestural_event-" + i + "-signaller");
-                var selrecipient = $("#id_sub_gestural_event-" + i + "-recipient");
-                selsignaller.empty();
-                selrecipient.empty();
-                vals.map(function(i, el) {
-                    selsignaller.append('<option value="'+el.value+'">' + $(el).text() + '</option>');
-                    selrecipient.append('<option value="'+el.value+'">' + $(el).text() + '</option>');
-                    });
-			}
-			
-
-        }
-        
-        function setGesture(gestureID, gestureName, gesturalEventIdx)
-        {
-            var gestureElem=document.createElement('option');
-            gestureElem.value=gestureID;
-            gestureElem.innerHTML=gestureName;
-            gestureElem.selected='selected';
-            var selectElem=document.getElementById('id_sub_gestural_event-'+gesturalEventIdx+'-gesture');
-            selectElem.appendChild(gestureElem);
-            for(var i=0; i < selectElem.options.length; i++)
+            if(sedType=='gestural')
             {
-                if(selectElem.options[i].value === gestureID) {
-                    selectElem.selectedIndex = i;
-                    break;
-                }
+                document.getElementById('gestural_fields').style.display='inline';
+                document.getElementById('generic_fields').style.display='none';
+            }
+            else
+            {
+                document.getElementById('gestural_fields').style.display='none'
+                document.getElementById('generic_fields').style.display='inline';
             }
         }
 
-        $(document).ready(function() {
-            {% for sub_behavioral_event_form in sub_behavioral_event_formset.forms %}
-                widget=$('#id_sub_behavioral_event-{{ forloop.counter0 }}-contexts-wrapper').yourlabsWidget();
-                widget.input.bind('selectChoice', function(e, choice) {
-                    var main_widget = $('#id_contexts-wrapper').yourlabsWidget();
-
-                    main_widget.selectChoice(choice);
-                    $(this).focus();
-                });
-                widget=$('#id_sub_behavioral_event-{{ forloop.counter0 }}-ethograms-wrapper').yourlabsWidget();
-                widget.input.bind('selectChoice', function(e, choice) {
-                    var main_widget = $('#id_ethograms-wrapper').yourlabsWidget();
-
-                    main_widget.selectChoice(choice);
-                    $(this).focus();
-                });
-            {% endfor %}
-            {% for sub_gestural_event_form in sub_gestural_event_formset.forms %}
-                widget=$('#id_sub_gestural_event-{{ forloop.counter0 }}-contexts-wrapper').yourlabsWidget();
-                widget.input.bind('selectChoice', function(e, choice) {
-                    var main_widget = $('#id_contexts-wrapper').yourlabsWidget();
-
-                    main_widget.selectChoice(choice);
-                    $(this).focus();
-                });
-                widget=$('#id_sub_gestural_event-{{ forloop.counter0 }}-ethograms-wrapper').yourlabsWidget();
-                widget.input.bind('selectChoice', function(e, choice) {
-                    var main_widget = $('#id_ethograms-wrapper').yourlabsWidget();
-
-                    main_widget.selectChoice(choice);
-                    $(this).focus();
-                });
-            {% endfor %}
-        });
+        $(document).ready(function(){
+            updateBehavioralEventOptions('{{ form.type.value }}');
+        })
     </script>
 {% endblock %}
 {% block content %}
     <div id="detail">
-        <h2>{% if form.instance.id %}Edit{% else %}Add{% endif %} Behavioral {% if form.instance.id and form.instance.parent %}Sub-{% endif %}Event</h2>
+        <h2>{% if form.instance.id %}Edit{% else %}Add{% endif %} Behavioral {% if form.parent.value %}Sub-{% endif %}Event</h2>
         <form id="behavioralEventForm" method="post" action="" enctype="multipart/form-data">
-            {{ form.type }}
             {% csrf_token %}
             <table class="tab_panel">
+                {% if form.parent.value %}
+                    <tr valign=top>
+                        <td width=12%>{{ form.type.label_tag }}*</td>
+                        <td>{{ form.type }}</td>
+                        <td class="myerrors" width=10%><div id="id_type_errors" class="error_label">{{ form.type.errors }}</div></td>
+                    </tr>
+                {% else %}
+                    <input type="hidden" id="id_type" name="type" value="generic"/>
+                {% endif %}
                 {% if not allow_video %}
                     <tr valign=top>
                         <td width=12%>{{ form.start_time.label_tag }}*</td>
-                        <td>{{ form.start_time }}{% if not form.instance.parent %} (HH:MM:SS, relative to start of observation session video){% endif %}</td>
+                        <td>{{ form.start_time }}{% if not form.parent.value %} (HH:MM:SS, relative to start of observation session video){% endif %}</td>
                         <td class="myerrors" width=10%><div id="id_start_time_errors" class="error_label">{{ form.start_time.errors }}</div></td>
                     </tr>
-                    {% if form.instance.parent %}
-                        {% if not form.instance.parent.video.name %}
+                    {% if form.parent.value %}
+                        {% if not form.parent.value.video.name %}
                             <tr valign=top>
                                 <td>{{ form.relative_to.label_tag }}</td>
                                 <td>{{ form.relative_to }}</td>
@@ -216,9 +83,17 @@
                     </tr>
                 {% endif %}
                 <tr valign=top>
-                    <td valign=top>{{ form.primates.label_tag }}</td>
-                    <td>{{ form.primates }} <input class="btn" type="button" value="Add Primate" onclick="return showPopup('Add Primate',1000,700,'/gbdb/primate/new/');"/></td>
-                    <td class="myerrors"><div id="id_primates_errors" class="error_label">{{ form.primates.errors }}</div></td>
+                    <td colspan="3">
+                        <div id="generic_fields" style="display: inline;">
+                            <table class="tab_panel">
+                                <tr valign=top>
+                                    <td valign=top width="12%">{{ form.primates.label_tag }}</td>
+                                    <td>{{ form.primates }} <input class="btn" type="button" value="Add Primate" onclick="return showPopup('Add Primate',1000,700,'/gbdb/primate/new/');"/></td>
+                                    <td class="myerrors"><div id="id_primates_errors" class="error_label">{{ form.primates.errors }}</div></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
                 </tr>
                 <tr valign=top>
                     <td valign=top>{{ form.contexts.label_tag }}</td>
@@ -229,6 +104,39 @@
                     <td valign=top>{{ form.ethograms.label_tag }}</td>
                     <td>{{ form.ethograms }}</td>
                     <td class="myerrors"><div id="id_ethograms_errors" class="error_label">{{ form.ethograms.errors }}</div></td>
+                </tr>
+                <tr valign=top>
+                    <td colspan="3">
+                        <div id="gestural_fields" style="display: none;">
+                            <table class="tab_panel">
+                                <tr valign=top>
+                                    <td width="12%">{{ form.signaller.label_tag }}*</td>
+                                    <td>{{ form.signaller }}</td>
+                                    <td class="myerrors">{{ form.signaller.errors }}</td>
+                                </tr>
+                                <tr valign=top>
+                                    <td>{{ form.recipient.label_tag }}*</td>
+                                    <td>{{ form.recipient }}</td>
+                                    <td class="myerrors">{{ form.recipient.errors }}</td>
+                                </tr>
+                                <tr valign=top>
+                                    <td>{{ form.gesture.label_tag }}*</td>
+                                    <td>{{ form.gesture }} <input type="button" onclick="return showPopup('Add Gesture',1000,500,'/gbdb/gesture/new/?gestural_event_idx=0');" value="Add Gesture"></td>
+                                    <td class="myerrors">{{ form.gesture.errors }}</td>
+                                </tr>
+                                <tr valign=top>
+                                    <td>{{ form.recipient_response.label_tag }}*</td>
+                                    <td>{{ form.recipient_response }}</td>
+                                    <td class="myerrors">{{ form.recipient_response.errors }}</td>
+                                </tr>
+                                <tr valign=top>
+                                    <td>{{ form.goal_met.label_tag }}*</td>
+                                    <td>{{ form.goal_met }}</td>
+                                    <td class="myerrors">{{ form.goal_met.errors }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
                 </tr>
                 <tr valign=top>
                     <td valign=top>{{ form.notes.label_tag }}</td>
@@ -244,497 +152,15 @@
                     </td>
                 </tr>
             </table>
-            {{ sub_behavioral_event_formset.management_form }}
-            {{ sub_gestural_event_formset.management_form }}
-            {% if not form.instance.id or not form.instance.parent %}
-                <br>
-                <h3>Behavioral Sub-Events{% if not form.instance.id or form.instance.observation_session.collator == user %} <a href="#" onclick="return addSubBehavioralEventForm();">Add new</a>{% endif %}</h3>
-
-                <div id="subBehavioralEventData">
-                    <table class="tab_panel">
-                        <tr>
-                            <td>
-                                <div class="myerrors">
-                                    {{ sub_behavioral_event_formset.management_form.errors }}
-                                </div>
-                                <div id="sub_behavioral_events">
-                                    {% for sub_behavioral_event_form in sub_behavioral_event_formset.forms %}
-                                        <div id="sub_behavioral_event-{{ forloop.counter0 }}" name="sub_behavioral_event">
-                                            <input type=hidden id="id_sub_behavioral_event-{{ forloop.counter0 }}-DELETE" name="sub_behavioral_event-{{ forloop.counter0 }}-DELETE"/>
-                                            {{ sub_behavioral_event_form.id }}
-                                            {{ sub_behavioral_event_form.observation_session }}
-                                            {{ sub_behavioral_event_form.parent }}
-                                            {{ sub_behavioral_event_form.type }}
-                                            <table class="tab_panel">
-                                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                                    <td style="width:60px">
-                                                        <a href="" onclick="return deleteInlineForm('sub_behavioral_event', {{ forloop.counter0 }});">Delete</a>
-                                                    </td>
-                                                    <td style="width:120px">Start time</td>
-                                                    <td colspan="3">
-                                                        {{ sub_behavioral_event_form.start_time }} (HH:MM:SS)
-                                                    </td>
-                                                    <td class="myerrors" width=10%><div id="id_sub_behavioral_event-{{ forloop.counter0 }}-start_time_errors" class="error_label">{{ sub_behavioral_event_form.start_time.errors }}</div></td>
-                                                </tr>
-                                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                                    <td style="width:60px">&nbsp;</td>
-                                                    <td style="width:120px">Relative to</td>
-                                                    <td colspan="3">
-                                                        {% if not allow_video %}
-                                                            {{ sub_behavioral_event_form.relative_to }}
-                                                        {% else %}
-                                                            behavioral_event<input id="id_sub_behavioral_event-{{ forloop.counter0 }}-relative_to" name="sub_behavioral_event-{{ forloop.counter0 }}-relative_to" value="behavioral_event" type="hidden"/>
-                                                        {% endif %}
-                                                    </td>
-                                                    <td class="myerrors" width=10%><div id="id_sub_behavioral_event-{{ forloop.counter0 }}-relative_to_errors" class="error_label">{{ sub_behavioral_event_form.relative_to.errors }}</div></td>
-                                                </tr>
-                                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                                    <td width=60px>&nbsp;</td>
-                                                    <td style="width:120px">Duration</td>
-                                                    <td colspan="3">
-                                                        {{ sub_behavioral_event_form.duration }} (HH:MM:SS)
-                                                    </td>
-                                                    <td class="myerrors" width=10%><div id="id_sub_behavioral_event-{{ forloop.counter0 }}-duration_errors" class="error_label">{{ sub_behavioral_event_form.duration.errors }}</div></td>
-                                                </tr>
-                                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                                    <td width=60px>&nbsp;</td>
-                                                    <td>Primates</td>
-                                                    <td colspan="3">
-                                                        {{ sub_behavioral_event_form.primates }}
-                                                    </td>
-                                                    <td class="myerrors" width=10%><div id="id_sub_behavioral_event-{{ forloop.counter0 }}-primates_errors" class="error_label">{{ sub_behavioral_event_form.primates.errors }}</div></td>
-                                                </tr>
-                                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                                    <td width=60px>&nbsp;</td>
-                                                    <td>Contexts</td>
-                                                    <td colspan="3">
-                                                        {{ sub_behavioral_event_form.contexts }}
-                                                    </td>
-                                                    <td class="myerrors" width=10%><div id="id_sub_behavioral_event-{{ forloop.counter0 }}-contexts_errors" class="error_label">{{ sub_behavioral_event_form.contexts.errors }}</div></td>
-                                                </tr>
-                                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                                    <td width=60px>&nbsp;</td>
-                                                    <td>Ethograms</td>
-                                                    <td colspan="3">
-                                                        {{ sub_behavioral_event_form.ethograms }}
-                                                    </td>
-                                                    <td class="myerrors" width=10%><div id="id_sub_behavioral_event-{{ forloop.counter0 }}-ethograms_errors" class="error_label">{{ sub_behavioral_event_form.ethograms.errors }}</div></td>
-                                                </tr>
-                                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                                    <td width=60px>&nbsp;</td>
-                                                    <td>Notes</td>
-                                                    <td colspan="3">
-                                                        {{ sub_behavioral_event_form.notes }}
-                                                    </td>
-                                                    <td class="myerrors" width=10%><div id="id_sub_behavioral_event-{{ forloop.counter0 }}-notes_errors" class="error_label">{{ sub_behavioral_event_form.notes.errors }}</div></td>
-                                                </tr>
-                                            </table>
-                                            <div class="myerrors">
-                                                {{ sub_behavioral_event_form.errors }}
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                <br>
-                <h3>Gestural Sub-Events{% if not form.instance.id or form.instance.observation_session.collator == user %} <a href="#" onclick="return addSubGesturalEventForm();">Add new</a>{% endif %}</h3>
-
-                <div id="subGesturalEventData">
-                    <table class="tab_panel">
-                        <tr>
-                            <td>
-                                <div class="myerrors">
-                                    {{ sub_gestural_event_formset.management_form.errors }}
-                                </div>
-                                <div id="sub_gestural_events">
-                                    {% for sub_gestural_event_form in sub_gestural_event_formset.forms %}
-                                        <div id="sub_gestural_event-{{ forloop.counter0 }}" name="sub_gestural_event">
-                                            <input type=hidden id="id_sub_gestural_event-{{ forloop.counter0 }}-DELETE" name="sub_gestural_event-{{ forloop.counter0 }}-DELETE"/>
-                                            {{ sub_gestural_event_form.id }}
-                                            {{ sub_gestural_event_form.behavioralevent_ptr }}
-                                            {{ sub_gestural_event_form.observation_session }}
-                                            {{ sub_gestural_event_form.parent }}
-                                            {{ sub_gestural_event_form.type }}
-                                            <table class="tab_panel">
-                                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                                    <td style="width:60px">
-                                                        <a href="" onclick="return deleteInlineForm('sub_gestural_event', {{ forloop.counter0 }});">Delete</a>
-                                                    </td>
-                                                    <td style="width:120px">Start time</td>
-                                                    <td colspan="3">
-                                                        {{ sub_gestural_event_form.start_time }} (HH:MM:SS)
-                                                    </td>
-                                                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-{{ forloop.counter0 }}-start_time_errors" class="error_label">{{ sub_gestural_event_form.start_time.errors }}</div></td>
-                                                </tr>
-                                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                                    <td style="width:60px">&nbsp;</td>
-                                                    <td style="width:120px">Relative to</td>
-                                                    <td colspan="3">
-                                                        {% if not allow_video %}
-                                                            {{ sub_gestural_event_form.relative_to }}
-                                                        {% else %}
-                                                            behavioral_event<input id="id_sub_gestural_event-{{ forloop.counter0 }}-relative_to" name="sub_gestural_event-{{ forloop.counter0 }}-relative_to" value="behavioral_event" type="hidden"/>
-                                                        {% endif %}
-                                                    </td>
-                                                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-{{ forloop.counter0 }}-relative_to_errors" class="error_label">{{ sub_gestural_event_form.relative_to.errors }}</div></td>
-                                                </tr>
-                                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                                    <td width=60px>&nbsp;</td>
-                                                    <td style="width:120px">Duration</td>
-                                                    <td colspan="3">
-                                                        {{ sub_gestural_event_form.duration }} (HH:MM:SS)
-                                                    </td>
-                                                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-{{ forloop.counter0 }}-duration_errors" class="error_label">{{ sub_gestural_event_form.duration.errors }}</div></td>
-                                                </tr>
-                                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                                    <td width=60px>&nbsp;</td>
-                                                    <td>Contexts</td>
-                                                    <td colspan="3">
-                                                        {{ sub_gestural_event_form.contexts }}
-                                                    </td>
-                                                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-{{ forloop.counter0 }}-contexts_errors" class="error_label">{{ sub_gestural_event_form.contexts.errors }}</div></td>
-                                                </tr>
-                                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                                    <td width=60px>&nbsp;</td>
-                                                    <td>Ethograms</td>
-                                                    <td colspan="3">
-                                                        {{ sub_gestural_event_form.ethograms }}
-                                                    </td>
-                                                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-{{ forloop.counter0 }}-ethograms_errors" class="error_label">{{ sub_gestural_event_form.ethograms.errors }}</div></td>
-                                                </tr>
-                                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                                    <td width=60px>&nbsp;</td>
-                                                    <td style="width:120px;">Signaller</td>
-                                                    <td colspan="3">
-                                                        {{ sub_gestural_event_form.signaller }}
-                                                    </td>
-                                                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-{{ forloop.counter0 }}-signaller_errors" class="error_label">{{ sub_gestural_event_form.signaller.errors }}</div></td>
-                                                </tr>
-                                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                                    <td width=60px>&nbsp;</td>
-                                                    <td style="width:120px;">Recipient</td>
-                                                    <td colspan="3">
-                                                        {{ sub_gestural_event_form.recipient }}
-                                                    </td>
-                                                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-{{ forloop.counter0 }}-recipient_errors" class="error_label">{{ sub_gestural_event_form.recipient.errors }}</div></td>
-                                                </tr>
-                                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                                    <td width=60px>&nbsp;</td>
-                                                    <td style="width:120px;">Gesture</td>
-                                                    <td colspan="3">
-                                                        {{ sub_gestural_event_form.gesture }}<input type="button" onclick="return showPopup('Add Gesture',1000,500,'/gbdb/gesture/new/?gestural_event_idx={{ forloop.counter0 }}');" value="Add Gesture">
-                                                    </td>
-                                                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-{{ forloop.counter0 }}-gesture_errors" class="error_label">{{ sub_gestural_event_form.gesture.errors }}</div></td>
-                                                </tr>
-                                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                                    <td width=60px>&nbsp;</td>
-                                                    <td style="width:120px;">Recipient Response</td>
-                                                    <td colspan="3">
-                                                        {{ sub_gestural_event_form.recipient_response }}
-                                                    </td>
-                                                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-{{ forloop.counter0 }}-recipient_response_errors" class="error_label">{{ sub_gestural_event_form.recipient_response.errors }}</div></td>
-                                                </tr>
-                                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                                    <td width=60px>&nbsp;</td>
-                                                    <td style="width:120px;">Goal met</td>
-                                                    <td colspan="3">
-                                                        {{ sub_gestural_event_form.goal_met }}
-                                                    </td>
-                                                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-{{ forloop.counter0 }}-goal_met_errors" class="error_label">{{ sub_gestural_event_form.goal_met.errors }}</div></td>
-                                                </tr>
-                                                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                                                    <td width=60px>&nbsp;</td>
-                                                    <td>Notes</td>
-                                                    <td colspan="3">
-                                                        {{ sub_gestural_event_form.notes }}
-                                                    </td>
-                                                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-{{ forloop.counter0 }}-notes_errors" class="error_label">{{ sub_gestural_event_form.notes.errors }}</div></td>
-                                                </tr>
-                                            </table>
-                                            <div class="myerrors">
-                                                {{ sub_gestural_event_form.errors }}
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            {% endif %}
             {{ form.observation_session }}
             {{ form.parent }}
             {{ form.collator }}
             {% if form.instance.id %}
-            	<input type="button" value="Save" onclick="submitBehavioralEventForm('/gbdb/behavioral_event/{{ object.id }}/edit/', '{{ object.observation_session.id }}');"/>&nbsp;
+            	<input type="button" value="Save" onclick="{% if form.parent.value %}submitBehavioralSubEventForm('/gbdb/behavioral_event/{{ object.id }}/edit/');{% else %}submitBehavioralEventForm('/gbdb/behavioral_event/{{ object.id }}/edit/');{% endif %}"/>&nbsp;
                 <input type="button" value="Cancel" onclick="document.getElementById('context_data').innerHTML='';"/>&nbsp;
             {% else %}
-            	<input type="button" value="Save" onclick="submitBehavioralEventForm('/gbdb/behavioral_event/new/?observation_session={{ form.initial.observation_session.id }}', '{{ form.initial.observation_session.id }}');"/>&nbsp;
+            	<input type="button" value="Save" onclick="{% if form.parent.value %}submitBehavioralSubEventForm('/gbdb/behavioral_event/new/?observation_session={{ form.initial.observation_session.id }}');{% else %}submitBehavioralEventForm('/gbdb/behavioral_event/new/?observation_session={{ form.initial.observation_session.id }}');{% endif %}"/>&nbsp;
             {% endif %}
         </form>
     </div>
-    <script type="text/html" id="sub_behavioral_event-template">
-        <div id="sub_behavioral_event-<%= idx %>" name="sub_behavioral_event">
-            <input type=hidden id="id_sub_behavioral_event-<%= idx %>-DELETE" name="sub_behavioral_event-<%= idx %>-DELETE"/>
-            <input id="id_sub_behavioral_event-<%= idx %>-observation_session" name="sub_behavioral_event-<%= idx %>-observation_session" type="hidden" />
-            <input id="id_sub_behavioral_event-<%= idx %>-parent" name="sub_behavioral_event-<%= idx %>-parent" type="hidden" />
-            <input id="id_sub_behavioral_event-<%= idx %>-type" name="sub_behavioral_event-<%= idx %>-type" type="hidden" value="generic" />
-            <table class="tab_panel">
-                <tr class="<%= getTRTag(idx) %>" valign=top>
-                    <td style="width:60px">
-                        <a href="" onclick="return deleteInlineForm('sub_behavioral_event', <%= idx %>);">Delete</a>
-                    </td>
-                    <td style="width:120px">Start time</td>
-                    <td colspan="3">
-                        <input id="id_sub_behavioral_event-<%= idx %>-start_time" name="sub_behavioral_event-<%= idx %>-start_time" type="text" /> (HH:MM:SS)
-                    </td>
-                    <td class="myerrors" width=10%><div id="id_sub_behavioral_event-<%= idx %>-start_time_errors"></div></td>
-                </tr>
-                <tr class="<%= getTRTag(idx) %>" valign=top>
-                    <td style="width:60px">&nbsp;</td>
-                    <td style="width:120px">Relative to</td>
-                    <td colspan="3">
-                        {% if not allow_video %}
-                            <select id="id_sub_behavioral_event-<%= idx %>-relative_to" name="sub_behavioral_event-<%= idx %>-relative_to">
-                                <option value="behavioral_event">behavioral event</option>
-                                <option value="observation_session">observation session</option>
-                            </select>
-                        {% else %}
-                            behavioral_event<input id="id_sub_behavioral_event-<%= idx %>-relative_to" name="sub_behavioral_event-<%= idx %>-relative_to" value="behavioral_event" type="hidden"/>
-                        {% endif %}
-                    </td>
-                    <td class="myerrors" width=10%><div id="id_sub_behavioral_event-<%= idx %>-relative_to_errors"></div></td>
-                </tr>
-                <tr class="<%= getTRTag(idx) %>" valign=top>
-                    <td width=60px>&nbsp;</td>
-                    <td style="width:120px">Duration</td>
-                    <td colspan="3">
-                        <input id="id_sub_behavioral_event-<%= idx %>-duration" name="sub_behavioral_event-<%= idx %>-duration" size="20" type="text" /> (HH:MM:SS)
-                    </td>
-                    <td class="myerrors" width=10%><div id="id_sub_behavioral_event-<%= idx %>-duration_errors"></div></td>
-                </tr>
-                <tr class="<%= getTRTag(idx) %>" valign=top>
-                    <td width=60px>&nbsp;</td>
-                    <td style="width:120px;">Primates</td>
-                    <td colspan="3">
-                        <select multiple id="id_sub_behavioral_event-<%= idx %>-primates" name="sub_behavioral_event-<%= idx %>-primates">
-                            <option value="" selected="selected">---------</option>
-                        </select>
-                    </td>
-                    <td class="myerrors" width=10%><div id="id_sub_behavioral_event-<%= idx %>-primates_errors"></div></td>
-                </tr>
-                <tr class="<%= getTRTag(idx) %>" valign=top>
-                    <td width=60px>&nbsp;</td>
-                    <td>Contexts</td>
-					<td colspan="3">
-						<span id="id_sub_behavioral_event-<%= idx %>-contexts-wrapper"
-                              class="autocomplete-light-widget sub_behavioral_event-<%= idx %>-contexts multiple"
-                              data-autocomplete-placeholder="add another context" data-bootstrap="normal">
-                            <span id="id_sub_behavioral_event-<%= idx %>-contexts-deck" class="deck div"> </span>
-                            <input id="id_sub_behavioral_event-<%= idx %>-contexts_text" class=" autocomplete"
-                                   type="text" value="" name="sub_behavioral_event-<%= idx %>-contexts-autocomplete"
-                                   autocomplete="off" data-autocomplete-url="/gbdb/autocomplete/ContextAutocomplete/">
-                            <select id="id_sub_behavioral_event-<%= idx %>-contexts" class="value-select"
-                                    multiple="multiple" name="sub_behavioral_event-<%= idx %>-contexts" style="display:none"> </select>
-                            <span class="remove div" style="display:none"> X </span>
-                            <span class="choice-template div" style="display:none">
-                                <span class="choice div prepend-remove append-option-html"> </span>
-						    </span>
-						</span>
-						<div style="clear: both"></div>
-					</td>
-                    <td class="myerrors" width=10%><div id="id_sub_behavioral_event-<%= idx %>-contexts_errors"></div></td>
-                </tr>
-                <tr class="<%= getTRTag(idx) %>" valign=top>
-                    <td width=60px>&nbsp;</td>
-                    <td>Ethograms</td>
-                    <td colspan="3">
-						<span id="id_sub_behavioral_event-<%= idx %>-ethograms-wrapper"
-                              class="autocomplete-light-widget sub_behavioral_event-<%= idx %>-ethograms multiple"
-                              data-autocomplete-placeholder="add another context" data-bootstrap="normal">
-                            <span id="id_sub_behavioral_event-<%= idx %>-ethograms-deck" class="deck div"> </span>
-                            <input id="id_sub_behavioral_event-<%= idx %>-ethograms_text" class=" autocomplete"
-                                   type="text" value="" name="sub_behavioral_event-<%= idx %>-ethograms-autocomplete"
-                                   autocomplete="off" data-autocomplete-url="/gbdb/autocomplete/EthogramAutocomplete/">
-                            <select id="id_sub_behavioral_event-<%= idx %>-ethograms" class="value-select"
-                                    multiple="multiple" name="sub_behavioral_event-<%= idx %>-ethograms" style="display:none"> </select>
-                            <span class="remove div" style="display:none"> X </span>
-                            <span class="choice-template div" style="display:none">
-                                <span class="choice div prepend-remove append-option-html"> </span>
-						    </span>
-						</span>
-						<div style="clear: both"></div>
-					</td>
-                    <td class="myerrors" width=10%><div id="id_sub_behavioral_event-<%= idx %>-ethograms_errors"></div></td>
-                </tr>
-                <tr class="<%= getTRTag(idx) %>" valign=top>
-                    <td width=60px>&nbsp;</td>
-                    <td>Notes</td>
-                    <td colspan="3">
-                        <textarea cols="57" id="id_sub_behavioral_event-<%= idx %>-notes" name="sub_behavioral_event-<%= idx %>-notes" rows="5">
-                        </textarea>
-                    </td>
-                    <td class="myerrors" width=10%><div id="id_sub_behavioral_event-<%= idx %>-notes_errors"></div></td>
-                </tr>
-            </table>
-            <div class="myerrors">
-
-            </div>
-        </div>
-    </script>
-    <script type="text/html" id="sub_gestural_event-template">
-        <div id="sub_gestural_event-<%= idx %>" name="sub_gestural_event">
-            <input type=hidden id="id_sub_gestural_event-<%= idx %>-DELETE" name="sub_gestural_event-<%= idx %>-DELETE"/>
-            <input id="id_sub_gestural_event-<%= idx %>-observation_session" name="sub_gestural_event-<%= idx %>-observation_session" type="hidden" />
-            <input id="id_sub_gestural_event-<%= idx %>-parent" name="sub_gestural_event-<%= idx %>-parent" type="hidden" />
-            <input id="id_sub_gestural_event-<%= idx %>-type" name="sub_gestural_event-<%= idx %>-type" type="hidden" value="gestural" />
-            <table class="tab_panel">
-                <tr class="<%= getTRTag(idx) %>" valign=top>
-                    <td style="width:60px">
-                        <a href="" onclick="return deleteInlineForm('sub_gestural_event', <%= idx %>);">Delete</a>
-                    </td>
-                    <td style="width:120px">Start time</td>
-                    <td colspan="3">
-                        <input id="id_sub_gestural_event-<%= idx %>-start_time" name="sub_gestural_event-<%= idx %>-start_time" type="text" /> (HH:MM:SS, Relative to the start of the {% if allow_video %}behavioral event{% else %}observation session{% endif %} video)
-                    </td>
-                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-<%= idx %>-start_time_errors" class="error_label"></div></td>
-                </tr>
-                <tr class="<%= getTRTag(idx) %>" valign=top>
-                    <td style="width:60px">&nbsp;</td>
-                    <td style="width:120px">Relative to</td>
-                    <td colspan="3">
-                        {% if not allow_video %}
-                            <select id="id_sub_gestural_event-<%= idx %>-relative_to" name="sub_gestural_event-<%= idx %>-relative_to">
-                                <option value="behavioral_event">behavioral event</option>
-                                <option value="observation_session">observation session</option>
-                            </select>
-                        {% else %}
-                            behavioral_event<input id="id_sub_gestural_event-<%= idx %>-relative_to" name="sub_gestural_event-<%= idx %>-relative_to" value="behavioral_event" type="hidden"/>
-                        {% endif %}
-                    </td>
-                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-<%= idx %>-relative_to_errors" class="error_label"></div></td>
-                </tr>
-                <tr class="<%= getTRTag(idx) %>" valign=top>
-                    <td width=60px>&nbsp;</td>
-                    <td style="width:120px">Duration</td>
-                    <td colspan="3">
-                        <input id="id_sub_gestural_event-<%= idx %>-duration" name="sub_gestural_event-<%= idx %>-duration" size="20" type="text" /> (HH:MM:SS)
-                    </td>
-                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-<%= idx %>-duration_errors" class="error_label"></div></td>
-                </tr>
-                <tr class="<%= getTRTag(idx) %>" valign=top>
-                    <td width=60px>&nbsp;</td>
-                    <td>Contexts</td>
-                    <td colspan="3">
-						<span id="id_sub_gestural_event-<%= idx %>-contexts-wrapper"
-                              class="autocomplete-light-widget sub_gestural_event-<%= idx %>-contexts multiple"
-                              data-autocomplete-placeholder="add another context" data-bootstrap="normal">
-                            <span id="id_sub_gestural_event-<%= idx %>-contexts-deck" class="deck div"> </span>
-                            <input id="id_sub_gestural_event-<%= idx %>-contexts_text" class=" autocomplete"
-                                   type="text" value="" name="sub_gestural_event-<%= idx %>-contexts-autocomplete"
-                                   autocomplete="off" data-autocomplete-url="/gbdb/autocomplete/ContextAutocomplete/">
-                            <select id="id_sub_gestural_event-<%= idx %>-contexts" class="value-select"
-                                    multiple="multiple" name="sub_gestural_event-<%= idx %>-contexts" style="display:none"> </select>
-                            <span class="remove div" style="display:none"> X </span>
-                            <span class="choice-template div" style="display:none">
-                                <span class="choice div prepend-remove append-option-html"> </span>
-						    </span>
-						</span>
-						<div style="clear: both"></div>
-					</td>
-                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-<%= idx %>-contexts_errors" class="error_label"></div></td>
-                <tr class="<%= getTRTag(idx) %>" valign=top>
-                    <td width=60px>&nbsp;</td>
-                    <td>Ethograms</td>
-					<td colspan="3">
-						<span id="id_sub_gestural_event-<%= idx %>-ethograms-wrapper"
-                              class="autocomplete-light-widget sub_gestural_event-<%= idx %>-ethograms multiple"
-                              data-autocomplete-placeholder="add another context" data-bootstrap="normal">
-                            <span id="id_sub_gestural_event-<%= idx %>-ethograms-deck" class="deck div"> </span>
-                            <input id="id_sub_gestural_event-<%= idx %>-ethograms_text" class=" autocomplete"
-                                   type="text" value="" name="sub_gestural_event-<%= idx %>-ethograms-autocomplete"
-                                   autocomplete="off" data-autocomplete-url="/gbdb/autocomplete/EthogramAutocomplete/">
-                            <select id="id_sub_gestural_event-<%= idx %>-ethograms" class="value-select"
-                                    multiple="multiple" name="sub_gestural_event-<%= idx %>-ethograms" style="display:none"> </select>
-                            <span class="remove div" style="display:none"> X </span>
-                            <span class="choice-template div" style="display:none">
-                                <span class="choice div prepend-remove append-option-html"> </span>
-						    </span>
-						</span>
-						<div style="clear: both"></div>
-					</td>
-                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-<%= idx %>-ethograms_errors" class="error_label"></div></td>
-                </tr>
-                <tr class="<%= getTRTag(idx) %>" valign=top>
-                    <td width=60px>&nbsp;</td>
-                    <td style="width:120px;">Signaller</td>
-                    <td colspan="3">
-                        <select id="id_sub_gestural_event-<%= idx %>-signaller" name="sub_gestural_event-<%= idx %>-signaller">
-                            <option value="" selected="selected">---------</option>
-                        </select>
-                    </td>
-                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-<%= idx %>-signaller_errors" class="error_label"></div></td>
-                </tr>
-                <tr class="<%= getTRTag(idx) %>" valign=top>
-                    <td width=60px>&nbsp;</td>
-                    <td style="width:120px;">Recipient</td>
-                    <td colspan="3">
-                        <select id="id_sub_gestural_event-<%= idx %>-recipient" name="sub_gestural_event-<%= idx %>-recipient">
-                            <option value="" selected="selected">---------</option>
-                        </select>
-                    </td>
-                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-<%= idx %>-recipient_errors" class="error_label"></div></td>
-                </tr>
-                <tr class="<%= getTRTag(idx) %>" valign=top>
-                    <td width=60px>&nbsp;</td>
-                    <td style="width:120px;">Gesture</td>
-                    <td colspan="3">
-                        <select id="id_sub_gestural_event-<%= idx %>-gesture" name="sub_gestural_event-<%= idx %>-gesture">
-                            <option value="" selected="selected">---------</option>
-                            {% for gesture in gestures %}
-                            	<option value="{{ gesture.id }}">{{ gesture.name }}</option>
-                        	{% endfor %}
-                        </select>
-                        <input type="button" onclick="return showPopup('Add Gesture',1000,500,'/gbdb/gesture/new/?gestural_event_idx=<%= idx %>');" value="Add Gesture">
-                    </td>
-                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-<%= idx %>-gesture_errors" class="error_label"></div></td>
-                </tr>
-                <tr class="<%= getTRTag(idx) %>" valign=top>
-                    <td width=60px>&nbsp;</td>
-                    <td style="width:120px;">Recipient Response</td>
-                    <td colspan="3">
-                        <textarea cols="57" id="id_sub_gestural_event-<%= idx %>-recipient_response" name="sub_gestural_event-<%= idx %>-recipient_response" rows="5">
-                        </textarea>
-                    </td>
-                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-<%= idx %>-recipient_response_errors" class="error_label"></div></td>
-                </tr>
-                <tr class="<%= getTRTag(idx) %>" valign=top>
-                    <td width=60px>&nbsp;</td>
-                    <td style="width:120px;">Goal met</td>
-                    <td colspan="3">
-                        <select id="id_sub_gestural_event-<%= idx %>-goal_met" name="sub_gestural_event-<%= idx %>-goal_met" style="font-size: 80%;font-family: verdana, sans-serif">
-                            <option value="yes">Yes</option>
-                            <option value="no">No</option>
-                        </select>
-                    </td>
-                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-<%= idx %>-goal_met_errors" class="error_label"></div></td>
-                </tr>
-                <tr class="<%= getTRTag(idx) %>" valign=top>
-                    <td width=60px>&nbsp;</td>
-                    <td>Notes</td>
-                    <td colspan="3">
-                        <textarea cols="57" id="id_sub_gestural_event-<%= idx %>-notes" name="sub_gestural_event-<%= idx %>-notes" rows="5">
-                        </textarea>
-                    </td>
-                    <td class="myerrors" width=10%><div id="id_sub_gestural_event-<%= idx %>-notes_errors" class="error_label"></div></td>
-                </tr>
-            </table>
-            <div class="myerrors">
-
-            </div>
-        </div>
-    </script>
 {% endblock %}

@@ -94,7 +94,13 @@ class ObservationSessionSearchForm(forms.Form):
 
 
 class BehavioralEventForm(forms.ModelForm):
-    type=forms.CharField(widget=HiddenInput, required=False)
+    TYPE_CHOICES = (
+        ('generic', 'Generic'),
+        ('gestural', 'Gestural')
+    )
+    type=forms.ChoiceField(choices=TYPE_CHOICES,
+        widget=forms.Select(attrs={'onchange': 'updateBehavioralEventOptions(this.value)'}), help_text='Type of event',
+        required=True)
     observation_session=forms.ModelChoiceField(queryset=ObservationSession.objects.all(),widget=forms.HiddenInput,
         required=False)
     parent=forms.ModelChoiceField(queryset=BehavioralEvent.objects.all(),widget=forms.HiddenInput, required=False)
@@ -102,13 +108,19 @@ class BehavioralEventForm(forms.ModelForm):
     duration = forms.TimeField(widget=TimeInput() ,required=False)
     relative_to = forms.ChoiceField(choices=BehavioralEvent.RELATIVE_TO_CHOICES, help_text='Time relative to')
     video = forms.FileField(required=False)
-    primates = forms.ModelMultipleChoiceField(queryset=Primate.objects.all(),
-        widget=forms.SelectMultiple(attrs={"onChange":'populatePrimates()'}), required=False)
+    primates = forms.ModelMultipleChoiceField(queryset=Primate.objects.all(), widget=forms.SelectMultiple(),
+        required=False)
     contexts = forms.ModelMultipleChoiceField(queryset=Context.objects.all(),
         widget=autocomplete_light.MultipleChoiceWidget('ContextAutocomplete'))
     ethograms = forms.ModelMultipleChoiceField(queryset=Ethogram.objects.all(),
         widget=autocomplete_light.MultipleChoiceWidget('EthogramAutocomplete'))
     notes = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=False)
+    signaller = forms.ModelChoiceField(queryset=Primate.objects.all(), required=False)
+    recipient = forms.ModelChoiceField(queryset=Primate.objects.all(), required=False)
+    gesture = forms.ModelChoiceField(queryset=Gesture.objects.all(), required=False)
+    recipient_response = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=False)
+    goal_met = forms.ChoiceField(choices=GesturalEvent.CHOICES,
+        widget=forms.Select(attrs={'style': 'font-size: 80%;font-family: verdana, sans-serif'}), required=False)
 
     class Meta:
         model=BehavioralEvent
@@ -192,22 +204,6 @@ class BehavioralEventSearchForm(forms.Form):
         required=False)
     gestural_goal_met=forms.ChoiceField(choices=YESNO_CHOICES, help_text='Goal of gesture met', required=False)
     search_options = forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
-
-
-class GesturalEventForm(BehavioralEventForm):
-    signaller = forms.ModelChoiceField(queryset=Primate.objects.all(), required=False)
-    recipient = forms.ModelChoiceField(queryset=Primate.objects.all(), required=False)
-    gesture = forms.ModelChoiceField(queryset=Gesture.objects.all(), required=False)
-    recipient_response = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=False)
-    goal_met = forms.ChoiceField(choices=GesturalEvent.CHOICES,
-        widget=forms.Select(attrs={'style': 'font-size: 80%;font-family: verdana, sans-serif'}), required=True)
-
-    class Meta:
-        model=GesturalEvent
-
-
-GesturalEventFormSet = inlineformset_factory(BehavioralEvent, GesturalEvent, form=GesturalEventForm, fk_name='parent',
-    extra=0, can_delete=True, can_order=True)
 
 
 class PrimateForm(forms.ModelForm):
