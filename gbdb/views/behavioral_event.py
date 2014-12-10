@@ -209,17 +209,19 @@ class CreateBehavioralEventView(EditBehavioralEventMixin, CreateView):
 
     def get_form(self, form_class):
         form=super(CreateBehavioralEventView,self).get_form(form_class)
-        observation_session=ObservationSession.objects.get(id=self.request.GET.get('observation_session'))
-        if observation_session.video is None or not observation_session.video.name:
-            form.fields['video'].required=True
+        if 'parent' not in self.request.POST:
+            observation_session=ObservationSession.objects.get(id=self.request.GET.get('observation_session'))
+            if observation_session.video is None or not observation_session.video.name:
+                form.fields['video'].required=True
         return form
 
     def get_context_data(self, **kwargs):
         context = super(CreateBehavioralEventView,self).get_context_data(**kwargs)
         context['allow_video']=False
-        observation_session=ObservationSession.objects.get(id=self.request.GET.get('observation_session'))
-        if observation_session.video is None or not observation_session.video.name:
-            context['allow_video']=True
+        if 'parent_event' not in self.request.GET:
+            observation_session=ObservationSession.objects.get(id=self.request.GET.get('observation_session'))
+            if observation_session.video is None or not observation_session.video.name:
+                context['allow_video']=True
         context['contexts']=Context.objects.all()
         context['ethograms']=Ethogram.objects.all()
         context['primates'] = Primate.objects.all()
