@@ -329,32 +329,30 @@
                     // Figure out where to insert subevent
                     else
                     {
-                        for(var k=0; k<count; k++)
-                        {
-                            // Insert before this subevent
-                            var thisElemStart=parseInt(document.getElementById('sub_behavioral_event-'+behavioralEventEditIdx+'.'+(k+1)+'-start_time_seconds').textContent);
+                        $('#sub_behavioral_events_list-'+behavioralEventEditIdx).children("[id^=sub_behavioral_event]").each(function(index){
+                            var thisElemStart=parseInt(this.getElementsByClassName('sub_behavioral_event-start_time_seconds')[0].textContent);
                             if(data.start_time_seconds<thisElemStart)
                             {
-                                $(document.getElementById('sub_behavioral_event-'+behavioralEventEditIdx+'.'+(k+1))).before(compiledTmpl);
-                                break;
+                                $(this).before(compiledTmpl);
+                                return false;
                             }
                             // Add after only subevent
-                            else if(k==(count-1))
+                            else if(index==(count-1))
                             {
                                 $(document.getElementById('sub_behavioral_events_list-'+behavioralEventEditIdx)).append(compiledTmpl);
-                                break;
+                                return false;
                             }
                             else
                             {
                                 // Insert between this subevent and the next
-                                var nextElemStart=parseInt(document.getElementById('sub_behavioral_event-'+behavioralEventEditIdx+'.'+(k+2)+'-start_time_seconds').textContent);
+                                var nextElemStart=parseInt($('#sub_behavioral_events_list-'+behavioralEventEditIdx).children("[id^=sub_behavioral_event]")[index+1].getElementsByClassName('sub_behavioral_event-start_time_seconds')[0].textContent);
                                 if(data.start_time_seconds>=thisElemStart && data.start_time_seconds<=nextElemStart)
                                 {
-                                    $(document.getElementById('sub_behavioral_event-'+behavioralEventEditIdx+'.'+(k+1))).after(compiledTmpl);
-                                    break;
+                                    $(this).after(compiledTmpl);
+                                    return false;
                                 }
                             }
-                        }
+                        });
                     }
                 }
                 // Update existing subevent
@@ -634,32 +632,32 @@
                     // Figure out where to insert event
                     else
                     {
-                        for(var k=0; k<count; k++)
+                        $('#behavioral_events').children("[id^=behavioral_event]").each(function(index)
                         {
                             // Insert after this event
-                            var thisElemStart=parseInt(document.getElementById('behavioral_event-'+(k+1)+'-start_time_seconds').textContent);
+                            var thisElemStart=parseInt(this.getElementsByClassName('behavioral_event-start_time_seconds')[0].textContent);
                             if(data.start_time_seconds<thisElemStart)
                             {
-                                $(document.getElementById('behavioral_event-'+(k+1))).before(compiledTmpl);
-                                break;
+                                $(this).before(compiledTmpl);
+                                return false;
                             }
-                            // Add after only event
-                            else if(k==(count-1))
+                            // Add after only subevent
+                            else if(index==(count-1))
                             {
                                 $(document.getElementById('behavioral_events')).append(compiledTmpl);
-                                break;
+                                return false;
                             }
                             else
                             {
                                 // Insert between this subevent and the next
-                                var nextElemStart=parseInt(document.getElementById('behavioral_event-'+(k+2)+'-start_time_seconds').textContent);
+                                var nextElemStart=parseInt($('#behavioral_events').children("[id^=behavioral_event]")[index+1].getElementsByClassName('behavioral_event-start_time_seconds')[0].textContent);
                                 if(data.start_time_seconds>=thisElemStart && data.start_time_seconds<=nextElemStart)
                                 {
-                                    $(document.getElementById('behavioral_event-'+(k+1))).after(compiledTmpl);
-                                    break;
+                                    $(this).after(compiledTmpl);
+                                    return false;
                                 }
                             }
-                        }
+                        });
                     }
 
                     {% if not object.video.name %}
@@ -911,7 +909,7 @@
             <div id="behavioral_events">
                 {% for behavioral_event in behavioral_events %}
                     <div id="behavioral_event-{{ forloop.counter }}" name="behavioral_event">
-                        <div id="behavioral_event-{{ forloop.counter }}-start_time_seconds" style="display: none;">{{ behavioral_event.0.start_time_seconds }}</div>
+                        <div id="behavioral_event-{{ forloop.counter }}-start_time_seconds" class="behavioral_event-start_time_seconds" style="display: none;">{{ behavioral_event.0.start_time_seconds }}</div>
                         <table class="tab_panel">
                             <tr class="{% cycle 'even_row' 'odd_row' %}">
                                 {% if not behavioral_event.0.video.name %}
@@ -957,7 +955,7 @@
                         <div id="sub_behavioral_events_list-{{ forloop.counter }}" class="sub_behavioral_events_list">
                             {% for sub_behavioral_event in behavioral_event.1 %}
                                 <div id="sub_behavioral_event-{{ forloop.parentloop.counter }}.{{ forloop.counter }}" name="sub_behavioral_event">
-                                    <div id="sub_behavioral_event-{{ forloop.parentloop.counter }}.{{ forloop.counter }}-start_time_seconds" style="display: none;">{{ sub_behavioral_event.start_time_seconds }}</div>
+                                    <div id="sub_behavioral_event-{{ forloop.parentloop.counter }}.{{ forloop.counter }}-start_time_seconds" class="sub_behavioral_event-start_time_seconds" style="display: none;">{{ sub_behavioral_event.start_time_seconds }}</div>
                                     <table class="_sub_tab_panel">
                                         <tr class="{% cycle 'even_row' 'odd_row' %}">
                                             <td width=30%><strong><a href="" onclick="return setClipTime({{ sub_behavioral_event.start_time_seconds }});">Subevent {{ forloop.parentloop.counter }}.{{ forloop.counter }}</a></strong></td>
@@ -1052,7 +1050,7 @@
                 
     <script type="text/html" id="behavioral_event-template">
         <div id="behavioral_event-<%= idx %>" name="behavioral_event">
-            <div id="behavioral_event-<%= idx %>-start_time_seconds" style="display: none;"><%= start_time_seconds %></div>
+            <div id="behavioral_event-<%= idx %>-start_time_seconds" class="behavioral_event-start_time_seconds" style="display: none;"><%= start_time_seconds %></div>
             <table class="tab_panel">
                 <tr class="<%= getTRTag(idx-1) %>">
                 	{% if object.video.name %}
@@ -1102,7 +1100,7 @@
 
     <script type="text/html" id="behavioral_subevent-template">
         <div id="sub_behavioral_event-<%= parentIdx %>.<%= idx %>" name="sub_behavioral_event">
-            <div id="sub_behavioral_event-<%= parentIdx %>.<%= idx %>-start_time_seconds" style="display: none;"><%= start_time_seconds %></div>
+            <div id="sub_behavioral_event-<%= parentIdx %>.<%= idx %>-start_time_seconds" class="sub_behavioral_event-start_time_seconds" style="display: none;"><%= start_time_seconds %></div>
             <table class="tab_panel">
                 <tr class="<%= getTRTag(idx-1) %>">
                     <td width=30%><strong><a href="" onclick="return setClipTime(<%= start_time_seconds %>);">Subevent <%= parentIdx %>.<%= idx %></a></strong></td>
