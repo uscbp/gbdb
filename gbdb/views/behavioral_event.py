@@ -53,10 +53,11 @@ class EditBehavioralEventMixin(object):
                 data['errors']['duration']=['Event exceeds observation session duration']
                 errors=True
         if self.object.parent is None:
-            for other_event in BehavioralEvent.objects.filter(observation_session=self.object.observation_session,parent__isnull=True).exclude(id=self.object.id):
-                if other_event.start_time_seconds() < self.object.end_time_seconds()<other_event.end_time_seconds() or other_event.start_time_seconds() < self.object.start_time_seconds() < other_event.end_time_seconds():
-                    data['errors']['start_time']=['Event overlaps other events']
-                    errors=True
+            if self.object.observation_session.video.name:
+                for other_event in BehavioralEvent.objects.filter(observation_session=self.object.observation_session,parent__isnull=True).exclude(id=self.object.id):
+                    if other_event.start_time_seconds() < self.object.end_time_seconds()<other_event.end_time_seconds() or other_event.start_time_seconds() < self.object.start_time_seconds() < other_event.end_time_seconds():
+                        data['errors']['start_time']=['Event overlaps other events']
+                        errors=True
         else:
             behavioral_event=self.object.parent
             if self.object.end_time_seconds()>behavioral_event.end_time_seconds():
