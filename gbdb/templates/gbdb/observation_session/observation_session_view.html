@@ -142,7 +142,9 @@
 	                    // color:'#'+Math.floor(Math.random()*16777215).toString(16),
 	                    // label:'{{ forloop.counter }}',
 	                    // content: '{{behavioral_event.0.notes|linebreaks}}'};
-	                 periods.push(period);
+                    {% if object.video.name %}
+	                    periods.push(period);
+                    {% endif %}
 	                {% for child in behavioral_event.1 %}
                         var sub_count = '{{ forloop.counter }}';
                         period = {
@@ -620,8 +622,10 @@
                     period['data']['idx']=count+1;
                     period['data']['label']=(count+1).toString();
 
-                    // Add to list of periods
-                    periods.push(period);
+                    {% if object.video.name %}
+                        // Add to list of periods
+                        periods.push(period);
+                    {% endif %}
 
                     // Fill in template
                     var compiledTmpl = _.template(tmplMarkup, period['data']);
