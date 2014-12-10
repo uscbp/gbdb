@@ -324,7 +324,21 @@ class BehavioralEvent(MPTTModel):
         return 0
 
     def end_time_seconds(self):
-        return self.start_time_seconds()+self.duration.hour*60*60+self.duration.minute*60+self.duration.second
+        if not self.video.name:
+            return self.start_time_seconds()+self.duration.hour*60*60+self.duration.minute*60+self.duration.second
+        else:
+            result = subprocess.Popen(["ffprobe", os.path.join(settings.MEDIA_ROOT,'videos','behavioral_event','%d.mp4' % self.id)],
+                stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
+            duration=0
+            for line in result.stdout.readlines():
+                if 'Duration' in line:
+                    line_parts=line.split(', ')
+                    duration_part=line_parts[0].split(': ')
+                    duration_parts=duration_part[1].split(':')
+                    duration+=int(duration_parts[0])*60*60
+                    duration+=int(duration_parts[1])*60
+                    duration+=float(duration_parts[2])
+            return duration
     
     def to_dict(self):
         d = {}
