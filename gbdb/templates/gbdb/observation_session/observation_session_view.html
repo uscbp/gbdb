@@ -108,9 +108,11 @@
                 $(".vjs-control-bar").show();
                 $("#div_video_html5_api").show();
                 playClip(0,0);
-                videojs("observation_session_video").on("pause",function(){
+                videojs("observation_session_video").on("pause",reset);
+                function reset(){
                     videojs("observation_session_video").currentTime(0);
-                });
+                    videojs("observation_session_video").off('pause',reset);
+                }
 
             });
             return false;
