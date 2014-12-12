@@ -106,6 +106,7 @@
                 $("#observation_session_video").removeClass("vjs-playing").addClass("vjs-paused");
                 // load the new sources
                 this.load();
+                $(".vjs-big-play-button").hide();
                 $("#div_video_html5_api").show();
                 playClip(0,0);
             });
