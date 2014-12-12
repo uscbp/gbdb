@@ -68,12 +68,12 @@
                 {% if not allow_video %}
                     <tr valign=top>
                         <td width=12%>{{ form.start_time.label_tag }}*</td>
-                        <td><div id="id_start_time_label">{{ form.start_time.value }} seconds</div></td>
+                        <td><div id="id_start_time_label">{% if form.start_time.value %}{{ form.start_time.value }} seconds{% endif %}</div></td>
                         <td class="myerrors" width=10%><div id="id_start_time_errors" class="error_label">{{ form.start_time.errors }}</div></td>
                     </tr>
                     <tr valign=top>
                         <td>{{ form.duration.label_tag }}*</td>
-                        <td><div id="id_duration_label">{{ form.duration.value }} seconds</div></td>
+                        <td><div id="id_duration_label">{% if form.duration.value %}{{ form.duration.value }} seconds{% endif %}</div></td>
                         <td class="myerrors"><div id="id_duration_errors" class="error_label">{{ form.duration.errors }}</div></td>
                     </tr>
                 {% else %}
