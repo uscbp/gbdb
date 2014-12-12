@@ -39,39 +39,47 @@ class EditBehavioralEventMixin(object):
 
         data={
             'errors':{},
-            'sub_behavioral_event_errors': [],
-            'sub_gestural_event_errors': []
         }
-        errors=False
 
-        if self.object.type=='gestural' and len(form.cleaned_data['goal_met'])==0:
-            data['errors']['goal_met']=['Field required']
-            errors=True
+        if self.object.parent is None or not context['allow_video']:
+            if len(form.cleaned_data['start_time'])==0:
+                data['errors']['start_time']=['Field required']
+            if len(form.cleaned_data['duration'])==0:
+                data['errors']['duration']=['Field required']
 
-        if self.object.observation_session.video.name:
-            if self.object.end_time_seconds()>self.object.observation_session.duration_seconds():
-                data['errors']['duration']=['Event exceeds observation session duration']
-                errors=True
-        if self.object.parent is None:
-            if self.object.observation_session.video.name:
-                for other_event in BehavioralEvent.objects.filter(observation_session=self.object.observation_session,parent__isnull=True).exclude(id=self.object.id):
-                    if other_event.start_time_seconds() < self.object.end_time_seconds()<other_event.end_time_seconds() or other_event.start_time_seconds() < self.object.start_time_seconds() < other_event.end_time_seconds():
-                        data['errors']['start_time']=['Event overlaps other events']
-                        errors=True
-        else:
-            behavioral_event=self.object.parent
-            if self.object.end_time_seconds()>behavioral_event.end_time_seconds():
-                data['errors']['duration']=['Subevent exceeds parent event duration']
-                errors=True
-            if behavioral_event.relative_to=='observation_session' and self.object.start_time_seconds()<behavioral_event.start_time_seconds():
-                data['errors']['start_time']=['Subevent starts before parent event']
-                errors=True
-            for other_event in BehavioralEvent.objects.filter(parent=self.object.parent).exclude(id=self.object.id):
-                if other_event.start_time_seconds() < self.object.end_time_seconds()<other_event.end_time_seconds() or other_event.start_time_seconds() < self.object.start_time_seconds() < other_event.end_time_seconds():
-                    data['errors']['start_time']=['Subevent overlaps other subevents']
-                    errors=True
+        if len(form.cleaned_data['contexts'])==0:
+            data['errors']['contexts']=['Field required']
+        if len(form.cleaned_data['ethograms'])==0:
+            data['errors']['ethograms']=['Field required']
 
-        if errors:
+        if self.object.type=='gestural':
+            if len(form.cleaned_data['goal_met'])==0:
+                data['errors']['goal_met']=['Field required']
+            if form.cleaned_data['signaller'] is None:
+                data['errors']['signaller']=['Field required']
+            if form.cleaned_data['recipient'] is None:
+                data['errors']['recipient']=['Field required']
+            if form.cleaned_data['gesture'] is None:
+                data['errors']['gesture']=['Field required']
+
+        if not 'start_time' in data['errors'] and not 'duration' in data['errors']:
+            if self.object.parent is None:
+                if self.object.observation_session.video.name:
+                    if self.object.end_time()>self.object.observation_session.duration_seconds():
+                        data['errors']['duration']=['Event exceeds observation session duration']
+                    for other_event in BehavioralEvent.objects.filter(observation_session=self.object.observation_session,parent__isnull=True).exclude(id=self.object.id):
+                        if other_event.start_time < self.object.end_time()<other_event.end_time() or other_event.start_time < self.object.start_time < other_event.end_time():
+                            data['errors']['start_time']=['Event overlaps other events']
+            else:
+                if self.object.end_time()>self.object.parent.end_time():
+                    data['errors']['duration']=['Subevent exceeds parent event duration']
+                if self.object.start_time<self.object.parent.start_time:
+                    data['errors']['start_time']=['Subevent starts before parent event']
+                for other_event in BehavioralEvent.objects.filter(parent=self.object.parent).exclude(id=self.object.id):
+                    if other_event.start_time < self.object.end_time()<other_event.end_time() or other_event.start_time < self.object.start_time < other_event.end_time():
+                        data['errors']['start_time']=['Subevent overlaps other subevents']
+
+        if len(data['errors'].keys()):
             return self.render_to_json_response(data, status=400)
 
         self.object.save()
@@ -115,9 +123,7 @@ class EditBehavioralEventMixin(object):
                  'type': self.object.type,
                  'start_time': '',
                  'duration': '',
-                 'relative_to': self.object.relative_to,
-                 'start_time_seconds': self.object.start_time_seconds(),
-                 'end_time_seconds': self.object.end_time_seconds(),
+                 'end_time': self.object.end_time(),
                  'video': '/videos/behavioral_event/%d.mp4' % self.object.id,
                  'video_url_mp4': self.object.video_url_mp4(),
                  'contexts': ', '.join([context.name for context in self.object.contexts.all()]),
@@ -146,22 +152,16 @@ class EditBehavioralEventMixin(object):
                 data['goal_met']=self.object.goal_met.__str__()
 
             if not self.object.video.name:
-                data['start_time']='%d:%d:%d.%d' % (self.object.start_time.hour,self.object.start_time.minute,
-                                                    self.object.start_time.second,self.object.start_time.microsecond)
-                data['duration']='%d:%d:%d.%d' % (self.object.duration.hour,self.object.duration.minute,
-                                                  self.object.duration.second,self.object.duration.microsecond)
+                data['start_time']=float(self.object.start_time)
+                data['duration']=float(self.object.duration)
 
             for event in BehavioralEvent.objects.filter(parent=self.object).order_by('start_time'):
                 subevent_data={
                     'id': event.id,
                     'type': event.type,
-                    'start_time': '%d:%d:%d.%d' % (event.start_time.hour,event.start_time.minute,
-                                                   event.start_time.second,event.start_time.microsecond),
-                    'relative_to': event.relative_to,
-                    'duration': '%d:%d:%d.%d' % (event.duration.hour,event.duration.minute,
-                                                 event.duration.second,event.duration.microsecond),
-                    'start_time_seconds': event.start_time_seconds(),
-                    'end_time_seconds': event.end_time_seconds(),
+                    'start_time': float(event.start_time),
+                    'duration': float(event.duration),
+                    'end_time': event.end_time(),
                     'primates': ', '.join([primate.__str__() for primate in event.primates.all()]),
                     'contexts': ', '.join([context.name for context in event.contexts.all()]),
                     'ethograms': ', '.join([ethogram.name for ethogram in event.ethograms.all()]),
@@ -273,22 +273,6 @@ class DeleteBehavioralEventView(JSONResponseMixin,BaseDetailView):
             context={'idx': self.request.POST['idx']}
             if 'parentIdx' in self.request.POST:
                 context['parentIdx']=self.request.POST['parentIdx']
-        return context
-
-
-class BehavioralEventDetailView(DetailView):
-    model = BehavioralEvent
-    template_name = 'gbdb/behavioral_event/behavioral_event_view.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(BehavioralEventDetailView, self).get_context_data(**kwargs)
-        context['sub_behavioral_events']=BehavioralEvent.objects.filter(parent=self.object,gesturalevent__isnull=True)
-        context['sub_gestural_events']=GesturalEvent.objects.filter(parent=self.object)
-        context['ispopup']='_popup' in self.request.GET
-        root,ext=os.path.splitext(self.object.video.name)
-        context['video_url_mp4'] = ''.join(['http://', get_current_site(self.request).domain, os.path.join('/media/','%s.mp4' % root)])
-        #context['video_url_ogg'] = ''.join(['http://', get_current_site(self.request).domain, os.path.join('/media/','%s.ogg' % root)])
-        #context['video_url_swf'] = ''.join(['http://', get_current_site(self.request).domain, os.path.join('/media/','%s.swf' % root)])
         return context
 
 

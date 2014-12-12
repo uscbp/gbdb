@@ -231,16 +231,11 @@ class ObservationSession(models.Model):
 
         
 class BehavioralEvent(MPTTModel):
-    RELATIVE_TO_CHOICES = (
-        ('behavioral_event', 'behavioral event'),
-        ('observation_session', 'observation session'),
-    )
     observation_session=models.ForeignKey(ObservationSession, null=True, blank=True)
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
     type = models.CharField(max_length=45, blank=False, null=False, default='generic')
-    start_time = models.TimeField(blank=True, null=True)
-    duration = models.TimeField(blank=True, null=True)
-    relative_to = models.CharField(max_length=100, choices=RELATIVE_TO_CHOICES, default='observation_session')
+    start_time = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    duration = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     video = models.FileField(upload_to='videos/behavioral_event/temp',  blank=True, null=True)
     primates = models.ManyToManyField(Primate)
     contexts = models.ManyToManyField(Context)
@@ -258,18 +253,20 @@ class BehavioralEvent(MPTTModel):
         return reverse('behavioral_event_view', kwargs={'pk': self.pk})
 
     def duration_seconds(self):
-        result = subprocess.Popen(["ffprobe", os.path.join(settings.MEDIA_ROOT,'videos','behavioral_event','%d.mp4' % self.id)],
-            stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
-        duration=0
-        for line in result.stdout.readlines():
-            if 'Duration' in line:
-                line_parts=line.split(', ')
-                duration_part=line_parts[0].split(': ')
-                duration_parts=duration_part[1].split(':')
-                duration+=int(duration_parts[0])*60*60
-                duration+=int(duration_parts[1])*60
-                duration+=float(duration_parts[2])
-        return duration
+        if self.video.name:
+            result = subprocess.Popen(["ffprobe", os.path.join(settings.MEDIA_ROOT,'videos','behavioral_event','%d.mp4' % self.id)],
+                stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
+            duration=0
+            for line in result.stdout.readlines():
+                if 'Duration' in line:
+                    line_parts=line.split(', ')
+                    duration_part=line_parts[0].split(': ')
+                    duration_parts=duration_part[1].split(':')
+                    duration+=int(duration_parts[0])*60*60
+                    duration+=int(duration_parts[1])*60
+                    duration+=float(duration_parts[2])
+            return duration
+        return self.duration
 
     def video_url_mp4(self):
         if self.video.name:
@@ -313,28 +310,16 @@ class BehavioralEvent(MPTTModel):
             if not os.path.exists(mp4_filename):
                 convert_to_mp4(mp4_filename, orig_filename)
 
-    def start_time_seconds(self):
-
+    def end_time(self):
         if not self.video.name:
-            offset=0
-            if self.parent is not None:
-                if (self.parent.video.name is None or not len(self.parent.video.name)) and  self.relative_to=='behavioral_event':
-                    offset=self.parent.start_time_seconds()
-            return offset+self.start_time.hour*60*60+self.start_time.minute*60+self.start_time.second
-        return 0
-
-    def end_time_seconds(self):
-        if not self.video.name:
-            return self.start_time_seconds()+self.duration.hour*60*60+self.duration.minute*60+self.duration.second
+            return float(self.start_time+self.duration)
         else:
-            print('getting duration seconds')
             return self.duration_seconds()
     
     def to_dict(self):
         d = {}
-        #start_datetime = datetime.datetime(0,0,0, self.start_time.hour, self.start_time.minute, self.start_time.second)
-        start_datetime = datetime.datetime.combine(self.observation_session.date, self.start_time)
-        end_datetime = start_datetime + datetime.timedelta(hours=self.duration.hour, minutes=self.duration.minute, seconds=self.duration.second)
+        start_datetime = datetime.datetime.combine(self.observation_session.date, datetime.time(second=self.start_time))
+        end_datetime = start_datetime + datetime.timedelta(seconds=self.duration)
         d['startDate'] = start_datetime.strftime('%Y,%m,%d,%H,%M,%S')
         d['endDate'] = end_datetime.strftime('%Y,%m,%d,%H,%M,%S')
         d['headline'] = "Behavioral Event"

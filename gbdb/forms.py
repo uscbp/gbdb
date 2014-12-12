@@ -104,16 +104,15 @@ class BehavioralEventForm(forms.ModelForm):
     observation_session=forms.ModelChoiceField(queryset=ObservationSession.objects.all(),widget=forms.HiddenInput,
         required=False)
     parent=forms.ModelChoiceField(queryset=BehavioralEvent.objects.all(),widget=forms.HiddenInput, required=False)
-    start_time = forms.TimeField(widget=TimeInput(), required=False)
-    duration = forms.TimeField(widget=TimeInput() ,required=False)
-    relative_to = forms.ChoiceField(choices=BehavioralEvent.RELATIVE_TO_CHOICES, help_text='Time relative to')
+    start_time = forms.CharField(widget=HiddenInput(), required=False)
+    duration = forms.CharField(widget=HiddenInput(), required=False)
     video = forms.FileField(required=False)
     primates = forms.ModelMultipleChoiceField(queryset=Primate.objects.all(), widget=forms.SelectMultiple(),
         required=False)
     contexts = forms.ModelMultipleChoiceField(queryset=Context.objects.all(),
-        widget=autocomplete_light.MultipleChoiceWidget('ContextAutocomplete'))
+        widget=autocomplete_light.MultipleChoiceWidget('ContextAutocomplete'), required=False)
     ethograms = forms.ModelMultipleChoiceField(queryset=Ethogram.objects.all(),
-        widget=autocomplete_light.MultipleChoiceWidget('EthogramAutocomplete'))
+        widget=autocomplete_light.MultipleChoiceWidget('EthogramAutocomplete'), required=False)
     notes = forms.CharField(widget=forms.Textarea(attrs={'cols':'57','rows':'5'}),required=False)
     signaller = forms.ModelChoiceField(queryset=Primate.objects.all(), required=False)
     recipient = forms.ModelChoiceField(queryset=Primate.objects.all(), required=False)

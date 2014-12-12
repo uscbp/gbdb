@@ -1,5 +1,5 @@
 from django.conf.urls import *
-from gbdb.views.behavioral_event import CreateBehavioralEventView, UpdateBehavioralEventView, BehavioralEventDetailView, DeleteBehavioralEventView, SearchBehavioralEventView
+from gbdb.views.behavioral_event import CreateBehavioralEventView, UpdateBehavioralEventView, DeleteBehavioralEventView, SearchBehavioralEventView
 from gbdb.views.location import SavedLocationDetailView, CreateSavedLocationView
 from gbdb.views.main import IndexView
 from gbdb.views.observation_session import CreateObservationSessionView, ObservationSessionDetailView, DeleteObservationSessionView, UpdateObservationSessionView, SearchObservationSessionView, ManageObservationSessionPermissionsView
@@ -14,7 +14,6 @@ urlpatterns = patterns('',
     url(r'^autocomplete/', include('autocomplete_light.urls')),
     url(r'^timeline/', include('timelinejs.urls')),
                        
-    url(r'^behavioral_event/(?P<pk>\d+)/$', BehavioralEventDetailView.as_view(), {}, 'behavioral_event_view'),
     url(r'^behavioral_event/(?P<pk>\d+)/delete/$', DeleteBehavioralEventView.as_view(), {}, 'behavioral_event_delete'),
     url(r'^behavioral_event/(?P<pk>\d+)/edit/$', UpdateBehavioralEventView.as_view(), {}, 'behavioral_event_edit'),
     url(r'^behavioral_event/new/$', CreateBehavioralEventView.as_view(), {}, 'behavioral_event_add'),

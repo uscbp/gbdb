@@ -396,7 +396,7 @@ Timeline.prototype.updateGUI = function() {
     for(var i=0; i<this._periods.length; i++){
 		var obj = this._periods[i]
 		if(this.options.periodShape == 'rectangle'){
-			if(this.time > obj.time_in && this.time < obj.time_out){
+			if(this.time >= obj.time_in && this.time <= obj.time_out){
 				this.drawRect(this.timeToX(obj.time_in), this.yTrack(obj.track).top, this.timeToX(obj.time_out)-this.timeToX(obj.time_in), this.yTrack(obj.track).bottom-this.yTrack(obj.track).top, obj.color, obj.label, true, false)
 			}
 			else {
@@ -433,7 +433,7 @@ Timeline.prototype.updateGUI = function() {
 Timeline.prototype.addPeriod = function(time_in, time_out, color, track, label){
 	var id = (((1+Math.random())*0x10000)|0).toString(16).substring(1);
 	if(track == undefined){track = 1}
-	var period = {id:id, time_in:parseInt(time_in), time_out:parseInt(time_out), color:color, track:track}
+	var period = {id:id, time_in:parseFloat(time_in), time_out:parseFloat(time_out), color:color, track:track}
 	if(label != undefined){period.label = label; }
 	this._periods.push(period)
 	this.updateGUI()
