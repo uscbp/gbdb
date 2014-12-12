@@ -107,8 +107,9 @@
                 // load the new sources
                 this.load();
                 $(".vjs-big-play-button").hide();
+                $(".vjs-control-bar").show();
                 $("#div_video_html5_api").show();
-                playClip(0,0);
+                //playClip(0,0);
             });
             return false;
         }
@@ -354,7 +355,13 @@
                 }
             });
 
-            playClip(0,0);
+            //playClip(0,0);
+            {% if object.video.name %}
+                changeVideoSource(-1, '{{ object.video_url_mp4 }}');
+            {% elif behavioral_events|length %}
+                changeVideoSource(1, '{{ behavioral_events.0.0.video_url_mp4 }}');
+            {% endif %}
+            videojs("observation_session_video").hideSlider();
         });
 
         var creatingBehavioralSubEvent=false;
@@ -374,7 +381,9 @@
         {
             setClipTime(startTimeSeconds);
             videojs("observation_session_video").showSlider();
-            videojs("observation_session_video").setValueSlider(startTimeSeconds,endTimeSeconds);
+            videojs("observation_session_video").ready(function(){
+                videojs("observation_session_video").setValueSlider(startTimeSeconds,endTimeSeconds);
+            });
             $('#context_data').load('/gbdb/behavioral_event/'+id+'/edit/');
             behavioralEventEditIdx=parentIdx;
             behavioralSubEventEditIdx=idx;
@@ -401,7 +410,9 @@
                 changeVideoSource(parentIdx,parentVideoSource);
             {% endif %}
             videojs("observation_session_video").showSlider();
-            videojs("observation_session_video").setValueSlider(parentStartTimeSeconds, parentEndTimeSeconds);
+            {% if object.video.name %}
+                videojs("observation_session_video").setValueSlider(parentStartTimeSeconds, parentEndTimeSeconds);
+            {% endif %}
             $('#context_data').load('/gbdb/behavioral_event/new/?observation_session={{ object.id }}&parent_event='+parent_id);
             creatingBehavioralSubEvent=true;
             behavioralEventEditIdx=parentIdx;
