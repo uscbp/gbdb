@@ -2,13 +2,13 @@
 {% block extrahead %}
     <title>GBDB - {% if form.instance.id%}Edit{% else %}Add{% endif %} Behavioral {% if form.parent.value %}Sub-{% endif %}Event</title>
     <script type="text/javascript">
-        function addPrimate(primateID, primateName)
+        function addPrimate(primateID, primateName, targetElem)
         {
             var primateElem=document.createElement('option');
             primateElem.value=primateID;
             primateElem.innerHTML=primateName;
             primateElem.selected='selected';
-            var selectElem=document.getElementById('id_primates');
+            var selectElem=document.getElementById(targetElem);
             selectElem.appendChild(primateElem);
         }
 
@@ -26,7 +26,7 @@
             }
         }
 
-        function setGesture(gestureID, gestureName, gesturalEventIdx)
+        function setGesture(gestureID, gestureName)
         {
             var gestureElem=document.createElement('option');
             gestureElem.value=gestureID;
@@ -93,7 +93,7 @@
                             <table class="tab_panel">
                                 <tr valign=top>
                                     <td valign=top width="12%">{{ form.primates.label_tag }}</td>
-                                    <td>{{ form.primates }} <input class="btn" type="button" value="Add Primate" onclick="return showPopup('Add Primate',1000,700,'/gbdb/primate/new/');"/></td>
+                                    <td>{{ form.primates }} <input class="btn" type="button" value="Add Primate" onclick="return showPopup('Add Primate',1000,700,'/gbdb/primate/new/?target=id_primates');"/></td>
                                     <td class="myerrors"><div id="id_primates_errors" class="error_label">{{ form.primates.errors }}</div></td>
                                 </tr>
                             </table>
@@ -116,17 +116,17 @@
                             <table class="tab_panel">
                                 <tr valign=top>
                                     <td width="12%">{{ form.signaller.label_tag }}*</td>
-                                    <td>{{ form.signaller }}</td>
+                                    <td>{{ form.signaller }} <input class="btn" type="button" value="Add Primate" onclick="return showPopup('Add Primate',1000,700,'/gbdb/primate/new/?target=id_signaller');"/></td>
                                     <td class="myerrors"><div id="id_signaller_errors" class="error_label">{{ form.signaller.errors }}</div></td>
                                 </tr>
                                 <tr valign=top>
                                     <td>{{ form.recipient.label_tag }}*</td>
-                                    <td>{{ form.recipient }}</td>
+                                    <td>{{ form.recipient }} <input class="btn" type="button" value="Add Primate" onclick="return showPopup('Add Primate',1000,700,'/gbdb/primate/new/?target=id_recipient');"/></td>
                                     <td class="myerrors"><div id="id_recipient_errors" class="error_label">{{ form.recipient.errors }}</div></td>
                                 </tr>
                                 <tr valign=top>
                                     <td>{{ form.gesture.label_tag }}*</td>
-                                    <td>{{ form.gesture }} <input type="button" onclick="return showPopup('Add Gesture',1000,500,'/gbdb/gesture/new/?gestural_event_idx=0');" value="Add Gesture"></td>
+                                    <td>{{ form.gesture }} <input class="btn" type="button" onclick="return showPopup('Add Gesture',1000,500,'/gbdb/gesture/new/');" value="Add Gesture"></td>
                                     <td class="myerrors"><div id="id_gesture_errors" class="error_label">{{ form.gesture.errors }}</div></td>
                                 </tr>
                                 <tr valign=top>

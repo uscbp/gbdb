@@ -5,7 +5,7 @@
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
     <script type="text/javascript">
         {% if ispopup %}
-            opener.addPrimate({{ object.id }}, '{{ object.name }}');
+            opener.addPrimate({{ object.id }}, '{{ object.name }}', '{{ target }}');
             self.close()
         {% endif %}
 
