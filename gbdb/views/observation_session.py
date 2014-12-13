@@ -8,7 +8,7 @@ from django.views.generic import CreateView, UpdateView, DeleteView, DetailView,
 from gbdb.forms import ObservationSessionForm, ObservationSessionSearchForm
 from gbdb.models import ObservationSession, BehavioralEvent, GesturalEvent
 from gbdb.search import runObservationSessionSearch
-from timelinejs.views import JSONResponseMixin
+from guardian.shortcuts import assign_perm, remove_perm, get_perms
 import json
 from django.http import HttpResponse
 from guardian.mixins import PermissionRequiredMixin
@@ -90,7 +90,6 @@ class ObservationSessionDetailView(PermissionRequiredMixin, DetailView):
                 else:
                     sub_events.append(sub_event)
             event_list.append([behavioral_event, sub_events])
-        #context['behavioral_events'] = BehavioralEvent.objects.filter(observation_session=self.object, parent__isnull=True)
         context['behavioral_events'] = event_list
         context['site_url']='http://%s' % get_current_site(self.request)
         context['timeline']=self.object
