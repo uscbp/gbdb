@@ -107,6 +107,7 @@
                 $(".vjs-big-play-button").hide();
                 $(".vjs-control-bar").show();
                 $("#div_video_html5_api").show();
+                // With flash - have to play the clip for rangeslider to work - play for 0 sec and reset to beginning
                 playClip(0,0);
                 videojs("observation_session_video").on("pause",reset);
                 function reset(){
@@ -118,56 +119,91 @@
             return false;
         }
 
+        /**
+         * Highlight event
+         * @param idx - event index
+         */
         function highlightEvent(idx)
         {
             $(document.getElementById('behavioral_event-' + idx)).css("border","5px solid #FF0");
         }
 
+        /**
+         * Highlight subevent
+         * @param parentIdx - index of parent event
+         * @param idx - index of  subevent
+         */
         function highlightSubEvent(parentIdx, idx)
         {
             $(document.getElementById('sub_behavioral_event-' + parentIdx+'.'+idx)).css("border","5px solid #FF0");
         }
 
+        /**
+         * Unhighlight all events
+         */
         function unhighlightAllEvents()
         {
             $('.behavioral_event').each(function(){
-                $(this).css("border","none");
+                $(this).css("border","5px solid #FFF");
             });
         }
 
+        /**
+         * Unhighlight all subevents
+         */
         function unhighlightAllSubEvents()
         {
             $('.sub_behavioral_event').each(function(){
-                $(this).css("border","none");
+                $(this).css("border","5px solid #FFF");
             });
         }
 
+        /**
+         * Select a single event
+         * @param idx - index of event
+         * @param start_time - start time of event
+         * @param video_source - video URL
+         * @return {Boolean}
+         */
         function selectSingleEvent(idx, start_time, video_source)
         {
+            // Highlight just this event
             unhighlightAllSubEvents();
             unhighlightAllEvents();
             highlightEvent(idx);
+            // Set selected index
             behavioralEventSelectedIdx=idx;
+            // If observation session has a video - jump to event start time
             {% if object.video.name %}
                 return setClipTime(start_time);
+            // Otherwise - change video to event video
             {% else %}
                 return changeVideoSource(video_source);
             {% endif %}
         }
 
+        /**
+         * Select a single subevent
+         * @param idx - index of subevent
+         * @param parentIdx - parent event index
+         * @param start_time - start time of subevent
+         * @param video_source - video URL
+         * @return {Boolean}
+         */
         function selectSingleSubEvent(idx, parentIdx, start_time, video_source)
         {
+            // Highlight subevent
             unhighlightAllSubEvents();
             unhighlightAllEvents();
-            highlightEvent(parentIdx);
             highlightSubEvent(parentIdx, idx);
+            // Set selected index to parent event
             behavioralEventSelectedIdx=parentIdx;
-            {% if object.video.name %}
-                return setClipTime(start_time);
-            {% else %}
-                return changeVideoSource(video_source);
+            // If observation session has no video - change video to parent event video
+            {% if not object.video.name %}
+                changeVideoSource(video_source);
             {% endif %}
-            return false;
+            // Jump to start time of event
+            return setClipTime(start_time);
         }
 
         /**
@@ -220,8 +256,8 @@
                 {% endif %}
                 if(add)
                 {
-            	    //id = timeline.addPeriod(periods[i]['data'].start_time_seconds,periods[i]['data'].end_time, '#'+Math.floor(Math.random()*16777215).toString(16), periods[i]['data'].track, periods[i]['data'].label);
-            	    id = timeline.addPeriod(periods[i]['data'].start_time,periods[i]['data'].end_time, color, periods[i]['data'].track, periods[i]['data'].label);
+            	    id = timeline.addPeriod(periods[i]['data'].start_time,periods[i]['data'].end_time, color,
+                            periods[i]['data'].track, periods[i]['data'].label);
                 }
             }
         }
@@ -307,15 +343,14 @@
                 {
                     var time = videojs("observation_session_video").currentTime();
                     var active_data = [];
-                    var min_start_time=10000000;
-                    var min_label='';
-                    var period_flag = false;
                     {% if object.video.name %}
                         unhighlightAllEvents();
                     {% endif %}
                     unhighlightAllSubEvents();
-                    for(var i=0; i<periods.length; i++){
-                        if(time >= periods[i]['data'].start_time && time < periods[i]['data'].end_time){
+                    for(var i=0; i<periods.length; i++)
+                    {
+                        if(time >= periods[i]['data'].start_time && time < periods[i]['data'].end_time)
+                        {
                             active_data.push("<strong>Event " + periods[i]['data'].label + " Notes: </strong>" +periods[i]['data'].notes);
                             if(periods[i]['data'].label.indexOf('.')<0)
                             {
@@ -325,20 +360,8 @@
                             }
                             else
                                 highlightSubEvent(periods[i]['data'].parentIdx, periods[i]['data'].idx);
-                            if(periods[i].data.start_time<min_start_time)
-                            {
-                                min_start_time=periods[i].data.start_time;
-                                min_label=periods[i]['data'].label;
-                            }
-                            period_flag = true;
                         }
                     };
-                    if(period_flag) {
-                        if(min_label.indexOf('.')>=0)
-                            $("#behavioral_events").scrollTo("#behavioral_event-" + min_label.substring(0,min_label.indexOf('.')));
-                        else
-                            $("#behavioral_events").scrollTo("#behavioral_event-" + min_label);
-                           }
                     $('#context_data').html(active_data.join('<br /><br />'));
                 }
             });
@@ -1244,7 +1267,7 @@
             <h3>Behavioral Events{% if user == object.collator %} <a href="#" onclick="return createBehavioralEvent();">Add new</a>{% endif %}</h3>
             <div id="behavioral_events">
                 {% for behavioral_event in behavioral_events %}
-                    <div id="behavioral_event-{{ forloop.counter }}" name="behavioral_event" class="behavioral_event">
+                    <div id="behavioral_event-{{ forloop.counter }}" name="behavioral_event" class="behavioral_event" style="border: 5px solid #FFF">
                         <div id="behavioral_event-{{ forloop.counter }}-start_time" class="behavioral_event-start_time" style="display: none;">{{ behavioral_event.0.start_time }}</div>
                         <table class="tab_panel">
                             <tr class="{% cycle 'even_row' 'odd_row' %}">
@@ -1282,7 +1305,7 @@
                             <input type="button" value="Delete" onclick="deleteBehavioralEvent({{behavioral_event.0.id}},{{ forloop.counter }})"/>&nbsp;
                         {% endif %}
                         <h4>Behavioral and Gestural Sub-Events{% if user == object.collator %} <a href="#" onclick="return createBehavioralSubEvent({{ behavioral_event.0.id }},{{ forloop.counter }},{{ behavioral_event.0.start_time }},{{ behavioral_event.0.end_time }},'{{ behavioral_event.0.video_url_mp4 }}');">Add new</a>{% endif %}</h4>
-                        <div id="sub_behavioral_events_list-{{ forloop.counter }}" class="sub_behavioral_events_list">
+                        <div id="sub_behavioral_events_list-{{ forloop.counter }}" class="sub_behavioral_events_list" style="border: 5px solid #FFF">
                             {% for sub_behavioral_event in behavioral_event.1 %}
                                 <div id="sub_behavioral_event-{{ forloop.parentloop.counter }}.{{ forloop.counter }}" name="sub_behavioral_event" class="sub_behavioral_event">
                                     <div id="sub_behavioral_event-{{ forloop.parentloop.counter }}.{{ forloop.counter }}-start_time" class="sub_behavioral_event-start_time" style="display: none;">{{ sub_behavioral_event.start_time }}</div>
@@ -1368,7 +1391,7 @@
     </div>
                 
     <script type="text/html" id="behavioral_event-template">
-        <div id="behavioral_event-<%= idx %>" name="behavioral_event" class="behavioral_event">
+        <div id="behavioral_event-<%= idx %>" name="behavioral_event" class="behavioral_event" style="border: 5px solid #FFF">
             <div id="behavioral_event-<%= idx %>-start_time" class="behavioral_event-start_time" style="display: none;"><%= start_time %></div>
             <table class="tab_panel">
                 <tr class="<%= getTRTag(idx-1) %>">
@@ -1412,7 +1435,7 @@
     </script>
 
     <script type="text/html" id="behavioral_subevent-template">
-        <div id="sub_behavioral_event-<%= parentIdx %>.<%= idx %>" name="sub_behavioral_event" class="sub_behavioral_event">
+        <div id="sub_behavioral_event-<%= parentIdx %>.<%= idx %>" name="sub_behavioral_event" class="sub_behavioral_event" style="border: 5px solid #FFF">
             <div id="sub_behavioral_event-<%= parentIdx %>.<%= idx %>-start_time" class="sub_behavioral_event-start_time" style="display: none;"><%= start_time %></div>
             <table class="tab_panel">
                 <tr class="<%= getTRTag(idx-1) %>">
