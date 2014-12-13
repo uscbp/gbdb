@@ -91,7 +91,6 @@
         {
             // Clear menu area
             $('#context_data').empty();
-
             videojs("observation_session_video").ready(function() {
                 // hide the video UI
                 $("#div_video_html5_api").hide();
@@ -108,13 +107,12 @@
                 $(".vjs-control-bar").show();
                 $("#div_video_html5_api").show();
                 // With flash - have to play the clip for rangeslider to work - play for 0 sec and reset to beginning
-                playClip(0,0);
                 videojs("observation_session_video").on("pause",reset);
                 function reset(){
                     videojs("observation_session_video").currentTime(0);
                     videojs("observation_session_video").off('pause',reset);
                 }
-
+                playClip(0,0);
             });
             return false;
         }
@@ -359,7 +357,10 @@
                                 {% endif %}
                             }
                             else
-                                highlightSubEvent(periods[i]['data'].parentIdx, periods[i]['data'].idx);
+                            {
+                                if(periods[i]['data'].parentIdx==behavioralEventSelectedIdx || {% if object.video.name %}true{% else %}false{% endif %})
+                                    highlightSubEvent(periods[i]['data'].parentIdx, periods[i]['data'].idx);
+                            }
                         }
                     };
                     $('#context_data').html(active_data.join('<br /><br />'));
@@ -1272,12 +1273,7 @@
                         <table class="tab_panel">
                             <tr class="{% if forloop.counter|divisibleby:2 %}parent_even_row{% else %}parent_odd_row{% endif %}">
                                 <td width=30%>
-                                    <strong><a href="" onclick="return selectSingleEvent({{ forloop.counter }},{{ behavioral_event.0.start_time }});">Behavioral Event {{ forloop.counter }}</a></strong>
-                                </td>
-                            </tr>
-                            <tr class="{% if forloop.counter|divisibleby:2 %}parent_even_row{% else %}parent_odd_row{% endif %}">
-                                <td>
-                                    <a href="" onclick="selectSingleEvent({{ forloop.counter }}, {{ behavioral_event.0.start_time }}, '{{ behavioral_event.0.video_url_mp4 }}');{% if object.video.name %} return playClip({{ behavioral_event.0.start_time }},{{ behavioral_event.0.end_time }});{% else %}return playWholeVideo();{% endif %}">Play clip</a>
+                                    <strong><a href="" onclick="return selectSingleEvent({{ forloop.counter }},{{ behavioral_event.0.start_time }}, '{{ behavioral_event.0.video_url_mp4 }}');">Behavioral Event {{ forloop.counter }}</a></strong>
                                 </td>
                             </tr>
                             {% if not behavioral_event.0.video.name %}
@@ -1312,11 +1308,6 @@
                                     <table class="_sub_tab_panel">
                                         <tr class="{% if forloop.counter|divisibleby:2 %}even_row{% else %}odd_row{% endif %}">
                                             <td width=30%><strong><a href="" onclick="return selectSingleSubEvent({{ forloop.counter }},{{ forloop.parentloop.counter }},{{ sub_behavioral_event.start_time }},'{{ behavioral_event.0.video_url_mp4 }}');">Subevent {{ forloop.parentloop.counter }}.{{ forloop.counter }}</a></strong></td>
-                                        </tr>
-                                        <tr class="{% if forloop.counter|divisibleby:2 %}even_row{% else %}odd_row{% endif %}">
-                                            <td>
-                                                <a href="" onclick="selectSingleSubEvent({{ forloop.counter }},{{ forloop.parentloop.counter }},{{ sub_behavioral_event.start_time }},'{{ behavioral_event.video_url_mp4 }}'); return playClip({{ sub_behavioral_event.start_time }},{{ sub_behavioral_event.end_time }});">Play clip</a>
-                                            </td>
                                         </tr>
                                         <tr class="{% if forloop.counter|divisibleby:2 %}even_row{% else %}odd_row{% endif %}">
                                             <td><strong>Type:</strong> {{ sub_behavioral_event.type }}</td>
@@ -1399,11 +1390,6 @@
                         <strong><a href="" onclick="return selectSingleEvent(<%= idx %>,<%= start_time %>,'<%= video_url_mp4 %>');">Behavioral Event <%= idx %></a></strong>
                     </td>
                 </tr>
-                <tr class="parent_<%= getTRTag(idx-1) %>">
-                    <td>
-                        <a href="" onclick="selectSingleEvent(<%= idx %>,<%= start_time %>,'<%= video_url_mp4 %>');{% if object.video.name %} return playClip(<%= start_time %>,<%= end_time %>);{% else %}return playWholeVideo();{% endif %}">Play clip</a>
-                    </td>
-                </tr>
                 {% if object.video.name %}
                     <tr class="parent_<%= getTRTag(idx-1) %>">
                         <td><strong>Start time:</strong> <%= start_time %></td>
@@ -1439,11 +1425,8 @@
             <div id="sub_behavioral_event-<%= parentIdx %>.<%= idx %>-start_time" class="sub_behavioral_event-start_time" style="display: none;"><%= start_time %></div>
             <table class="_sub_tab_panel">
                 <tr class="<%= getTRTag(idx-1) %>">
-                    <td width=30%><strong><a href="" onclick="return selectSingleSubEvent(<%= idx %>,<%= parentIdx %>,<%= start_time %>,'<%= video_url_mp4 %>');">Subevent <%= parentIdx %>.<%= idx %></a></strong></td>
-                </tr>
-                <tr class="<%= getTRTag(idx-1) %>">
-                    <td>
-                        <a href="" onclick="selectSingleSubEvent(<%= idx %>,<%= parentIdx %>,<%= start_time %>,'<%= video_url_mp4 %>'); return playClip(<%= start_time %>,<%= end_time %>);">Play clip</a>
+                    <td width=30%>
+                        <strong><a href="" onclick="return selectSingleSubEvent(<%= idx %>,<%= parentIdx %>,<%= start_time %>,'<%= video_url_mp4 %>');">Subevent <%= parentIdx %>.<%= idx %></a></strong>
                     </td>
                 </tr>
                 <tr class="<%= getTRTag(idx-1) %>">
