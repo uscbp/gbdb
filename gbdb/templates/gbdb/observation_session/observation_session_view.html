@@ -946,7 +946,7 @@
                     {% if not object.video.name %}
                         $("#video_frame").css("display", "block");
                     {% endif %}
-                    selectSingleEvent(count+1, data.start_time, data_video_url_mp4);
+                    selectSingleEvent(count+1, data.start_time, data.video_url_mp4);
                     drawTimeline();
                 }
                 // Update existing event
@@ -1254,10 +1254,10 @@
             </table>
          
             	{% if user == object.collator or has_edit_perms %}
-                <input type="button" value="Edit" onclick="editObservationSession('/gbdb/observation_session/{{object.id}}/edit/')"/>&nbsp;
+                <input class="btn" type="button" value="Edit" onclick="editObservationSession('/gbdb/observation_session/{{object.id}}/edit/')"/>&nbsp;
                 {% endif %}
                 {% if user == object.collator or has_delete_perms %}
-                <input type="button" value="Delete" onclick="deleteObservationSession()"/>&nbsp;
+                <input class="btn" type="button" value="Delete" onclick="deleteObservationSession()"/>&nbsp;
                 {% endif %}
                 {% if user == object.collator or has_manage_perms %}
                 <input id="manageButton" class="btn" type="button" value="Manage Permissions" onclick="return managePermissions('{{object.id}}');" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
@@ -1299,10 +1299,10 @@
                             </tr>
                         </table>
                         {% if user == object.collator or has_edit_perms %}
-                            <input type="button" value="Edit" onclick="return editBehavioralEvent({{behavioral_event.0.id}},{{ forloop.counter }},{{ behavioral_event.0.start_time }},{{ behavioral_event.0.end_time }},'{{ behavioral_event.0.video_url_mp4 }}');"/>&nbsp;
+                            <input class="btn" type="button" value="Edit" onclick="return editBehavioralEvent({{behavioral_event.0.id}},{{ forloop.counter }},{{ behavioral_event.0.start_time }},{{ behavioral_event.0.end_time }},'{{ behavioral_event.0.video_url_mp4 }}');"/>&nbsp;
                         {% endif %}
                         {% if user == object.collator or has_delete_perms %}
-                            <input type="button" value="Delete" onclick="deleteBehavioralEvent({{behavioral_event.0.id}},{{ forloop.counter }})"/>&nbsp;
+                            <input class="btn" type="button" value="Delete" onclick="deleteBehavioralEvent({{behavioral_event.0.id}},{{ forloop.counter }})"/>&nbsp;
                         {% endif %}
                         <h4>Behavioral and Gestural Sub-Events{% if user == object.collator %} <a href="#" onclick="return createBehavioralSubEvent({{ behavioral_event.0.id }},{{ forloop.counter }},{{ behavioral_event.0.start_time }},{{ behavioral_event.0.end_time }},'{{ behavioral_event.0.video_url_mp4 }}');">Add new</a>{% endif %}</h4>
                         <div id="sub_behavioral_events_list-{{ forloop.counter }}" class="sub_behavioral_events_list" style="border: 5px solid #FFF">
@@ -1355,10 +1355,10 @@
                                         {% endif %}
                                     </table>
                                     {% if user == object.collator or has_edit_perms %}
-                                        <input type="button" value="Edit" onclick="return editBehavioralSubEvent({{ sub_behavioral_event.id}},{{ forloop.counter }},{{ forloop.parentloop.counter }},{{ sub_behavioral_event.start_time }},{{ sub_behavioral_event.end_time }},'{{ behavioral_event.0.video_url_mp4 }}');"/>&nbsp;
+                                        <input class="btn" type="button" value="Edit" onclick="return editBehavioralSubEvent({{ sub_behavioral_event.id}},{{ forloop.counter }},{{ forloop.parentloop.counter }},{{ sub_behavioral_event.start_time }},{{ sub_behavioral_event.end_time }},'{{ behavioral_event.0.video_url_mp4 }}');"/>&nbsp;
                                     {% endif %}
                                     {% if user == object.collator or has_delete_perms %}
-                                        <input type="button" value="Delete" onclick="deleteBehavioralSubEvent({{ sub_behavioral_event.id}},{{ forloop.counter }},{{ forloop.parentloop.counter }})"/>&nbsp;
+                                        <input class="btn" type="button" value="Delete" onclick="deleteBehavioralSubEvent({{ sub_behavioral_event.id}},{{ forloop.counter }},{{ forloop.parentloop.counter }})"/>&nbsp;
                                     {% endif %}
                                 </div>
                             {% endfor %}
@@ -1423,10 +1423,10 @@
                 </tr>
             </table>
             {% if user == object.collator or has_edit_perms %}
-                <input type="button" value="Edit" onclick="return editBehavioralEvent(<%= id %>,<%= idx %>,<%= start_time %>,<%= end_time %>,'<%= video_url_mp4 %>');"/>&nbsp;
+                <input class="btn" type="button" value="Edit" onclick="return editBehavioralEvent(<%= id %>,<%= idx %>,<%= start_time %>,<%= end_time %>,'<%= video_url_mp4 %>');"/>&nbsp;
             {% endif %}
             {% if user == object.collator or has_delete_perms %}
-                <input type="button" value="Delete" onclick="deleteBehavioralEvent(<%= id %>,<%= idx %>)"/>&nbsp;
+                <input class="btn" type="button" value="Delete" onclick="deleteBehavioralEvent(<%= id %>,<%= idx %>)"/>&nbsp;
             {% endif %}
             <h4>Behavioral and Gestural Sub-Events{% if user == object.collator %} <a href="#" onclick="return createBehavioralSubEvent(<%= id %>, <%= idx %>, <%= start_time %>,<%= end_time %>,'<%= video_url_mp4 %>');">Add new</a>{% endif %}</h4>
             <div id="sub_behavioral_events_list-<%= idx %>" class="sub_behavioral_events_list">
@@ -1483,10 +1483,10 @@
                 <% } %>
             </table>
             {% if user == object.collator or has_edit_perms %}
-                <input type="button" value="Edit" onclick="return editBehavioralSubEvent(<%= id %>,<%= idx %>,<%= parentIdx %>,<%= start_time %>,<%= end_time %>,'<%= video_url_mp4 %>');"/>&nbsp;
+                <input class="btn" type="button" value="Edit" onclick="return editBehavioralSubEvent(<%= id %>,<%= idx %>,<%= parentIdx %>,<%= start_time %>,<%= end_time %>,'<%= video_url_mp4 %>');"/>&nbsp;
             {% endif %}
             {% if user == object.collator or has_delete_perms %}
-                <input type="button" value="Delete" onclick="deleteBehavioralSubEvent(<%= id %>,<%= idx %>,<%= parentIdx %>)"/>&nbsp;
+                <input class="btn" type="button" value="Delete" onclick="deleteBehavioralSubEvent(<%= id %>,<%= idx %>,<%= parentIdx %>)"/>&nbsp;
             {% endif %}
         </div>
     </script>
