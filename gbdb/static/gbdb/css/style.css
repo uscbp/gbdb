@@ -126,6 +126,12 @@ h1 {
     font-size: 90%;
     font-weight: bold;
 }
+#detail .parent_odd_row {
+    background: #CFD1D5;
+}
+#detail .parent_even_row {
+    background: #BABCC0;
+}
 #detail .odd_row {
     background: #e6e8ed;
 }

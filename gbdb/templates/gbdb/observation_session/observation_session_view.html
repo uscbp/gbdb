@@ -144,7 +144,7 @@
         function unhighlightAllEvents()
         {
             $('.behavioral_event').each(function(){
-                $(this).css("border","5px solid #FFF");
+                $(this).css("border","5px solid transparent");
             });
         }
 
@@ -154,7 +154,7 @@
         function unhighlightAllSubEvents()
         {
             $('.sub_behavioral_event').each(function(){
-                $(this).css("border","5px solid #FFF");
+                $(this).css("border","5px solid transparent");
             });
         }
 
@@ -1267,34 +1267,34 @@
             <h3>Behavioral Events{% if user == object.collator %} <a href="#" onclick="return createBehavioralEvent();">Add new</a>{% endif %}</h3>
             <div id="behavioral_events">
                 {% for behavioral_event in behavioral_events %}
-                    <div id="behavioral_event-{{ forloop.counter }}" name="behavioral_event" class="behavioral_event" style="border: 5px solid #FFF">
+                    <div id="behavioral_event-{{ forloop.counter }}" name="behavioral_event" class="behavioral_event {% if forloop.counter|divisibleby:2 %}parent_even_row{% else %}parent_odd_row{% endif %}" style="border: 5px solid transparent;">
                         <div id="behavioral_event-{{ forloop.counter }}-start_time" class="behavioral_event-start_time" style="display: none;">{{ behavioral_event.0.start_time }}</div>
                         <table class="tab_panel">
-                            <tr class="{% cycle 'even_row' 'odd_row' %}">
+                            <tr class="{% if forloop.counter|divisibleby:2 %}parent_even_row{% else %}parent_odd_row{% endif %}">
                                 <td width=30%>
                                     <strong><a href="" onclick="return selectSingleEvent({{ forloop.counter }},{{ behavioral_event.0.start_time }});">Behavioral Event {{ forloop.counter }}</a></strong>
                                 </td>
                             </tr>
-                            <tr class="{% cycle 'even_row' 'odd_row' %}">
+                            <tr class="{% if forloop.counter|divisibleby:2 %}parent_even_row{% else %}parent_odd_row{% endif %}">
                                 <td>
                                     <a href="" onclick="selectSingleEvent({{ forloop.counter }}, {{ behavioral_event.0.start_time }}, '{{ behavioral_event.0.video_url_mp4 }}');{% if object.video.name %} return playClip({{ behavioral_event.0.start_time }},{{ behavioral_event.0.end_time }});{% else %}return playWholeVideo();{% endif %}">Play clip</a>
                                 </td>
                             </tr>
                             {% if not behavioral_event.0.video.name %}
-                                <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                <tr class="{% if forloop.counter|divisibleby:2 %}parent_even_row{% else %}parent_odd_row{% endif %}">
                                     <td><strong>Start time:</strong> {{ behavioral_event.0.start_time }}</td>
                                 </tr>
-                                <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                <tr class="{% if forloop.counter|divisibleby:2 %}parent_even_row{% else %}parent_odd_row{% endif %}">
                                     <td><strong>Duration:</strong> {{ behavioral_event.0.duration }}</td>
                                 </tr>
                             {% endif %}
-                            <tr class="{% cycle 'even_row' 'odd_row' %}">
+                            <tr class="{% if forloop.counter|divisibleby:2 %}parent_even_row{% else %}parent_odd_row{% endif %}">
                                 <td><strong>Primates:</strong> <div id="behavioral_event-{{ forloop.counter }}-primates">{% for primate in behavioral_event.0.primates.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ primate }}{% endfor %}</div></td>
                             </tr>
-                            <tr class="{% cycle 'even_row' 'odd_row' %}">
+                            <tr class="{% if forloop.counter|divisibleby:2 %}parent_even_row{% else %}parent_odd_row{% endif %}">
                                 <td><strong>Contexts:</strong> <div id="behavioral_event-{{ forloop.counter }}-contexts">{% for context in behavioral_event.0.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}</div></td>
                             </tr>
-                            <tr class="{% cycle 'even_row' 'odd_row' %}">
+                            <tr class="{% if forloop.counter|divisibleby:2 %}parent_even_row{% else %}parent_odd_row{% endif %}">
                                 <td><strong>Ethograms:</strong> <div id="behavioral_event-{{ forloop.counter }}-ethograms">{% for ethogram in behavioral_event.0.ethograms.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ ethogram.name }}{% endfor %}</div></td>
                             </tr>
                         </table>
@@ -1305,35 +1305,35 @@
                             <input class="btn" type="button" value="Delete" onclick="deleteBehavioralEvent({{behavioral_event.0.id}},{{ forloop.counter }})"/>&nbsp;
                         {% endif %}
                         <h4>Behavioral and Gestural Sub-Events{% if user == object.collator %} <a href="#" onclick="return createBehavioralSubEvent({{ behavioral_event.0.id }},{{ forloop.counter }},{{ behavioral_event.0.start_time }},{{ behavioral_event.0.end_time }},'{{ behavioral_event.0.video_url_mp4 }}');">Add new</a>{% endif %}</h4>
-                        <div id="sub_behavioral_events_list-{{ forloop.counter }}" class="sub_behavioral_events_list" style="border: 5px solid #FFF">
+                        <div id="sub_behavioral_events_list-{{ forloop.counter }}" class="sub_behavioral_events_list {% if forloop.counter|divisibleby:2 %}parent_even_row{% else %}parent_odd_row{% endif %}" style="border: 5px solid transparent;">
                             {% for sub_behavioral_event in behavioral_event.1 %}
-                                <div id="sub_behavioral_event-{{ forloop.parentloop.counter }}.{{ forloop.counter }}" name="sub_behavioral_event" class="sub_behavioral_event">
+                                <div id="sub_behavioral_event-{{ forloop.parentloop.counter }}.{{ forloop.counter }}" name="sub_behavioral_event" class="sub_behavioral_event {% if forloop.counter|divisibleby:2 %}even_row{% else %}odd_row{% endif %}">
                                     <div id="sub_behavioral_event-{{ forloop.parentloop.counter }}.{{ forloop.counter }}-start_time" class="sub_behavioral_event-start_time" style="display: none;">{{ sub_behavioral_event.start_time }}</div>
                                     <table class="_sub_tab_panel">
-                                        <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                        <tr class="{% if forloop.counter|divisibleby:2 %}even_row{% else %}odd_row{% endif %}">
                                             <td width=30%><strong><a href="" onclick="return selectSingleSubEvent({{ forloop.counter }},{{ forloop.parentloop.counter }},{{ sub_behavioral_event.start_time }},'{{ behavioral_event.0.video_url_mp4 }}');">Subevent {{ forloop.parentloop.counter }}.{{ forloop.counter }}</a></strong></td>
                                         </tr>
-                                        <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                        <tr class="{% if forloop.counter|divisibleby:2 %}even_row{% else %}odd_row{% endif %}">
                                             <td>
                                                 <a href="" onclick="selectSingleSubEvent({{ forloop.counter }},{{ forloop.parentloop.counter }},{{ sub_behavioral_event.start_time }},'{{ behavioral_event.video_url_mp4 }}'); return playClip({{ sub_behavioral_event.start_time }},{{ sub_behavioral_event.end_time }});">Play clip</a>
                                             </td>
                                         </tr>
-                                        <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                        <tr class="{% if forloop.counter|divisibleby:2 %}even_row{% else %}odd_row{% endif %}">
                                             <td><strong>Type:</strong> {{ sub_behavioral_event.type }}</td>
                                         </tr>
-                                        <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                        <tr class="{% if forloop.counter|divisibleby:2 %}even_row{% else %}odd_row{% endif %}">
                                             <td><strong>Start time:</strong> {{ sub_behavioral_event.start_time }}</td>
                                         </tr>
-                                        <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                        <tr class="{% if forloop.counter|divisibleby:2 %}even_row{% else %}odd_row{% endif %}">
                                             <td><strong>Duration:</strong> {{ sub_behavioral_event.duration }}</td>
                                         </tr>
-                                        <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                        <tr class="{% if forloop.counter|divisibleby:2 %}even_row{% else %}odd_row{% endif %}">
                                             <td><strong>Primates:</strong> {% for primate in sub_behavioral_event.primates.all %}{% if forloop.counter0 > 0%}, {% endif %}<a href="/gbdb/primate/{{ primate.id }}/">{{ primate }}</a>{% endfor %}</td>
                                         </tr>
-                                        <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                        <tr class="{% if forloop.counter|divisibleby:2 %}even_row{% else %}odd_row{% endif %}">
                                             <td><strong>Contexts:</strong> {% for context in sub_behavioral_event.contexts.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ context.name }}{% endfor %}</td>
                                         </tr>
-                                        <tr class="{% cycle 'even_row' 'odd_row' %}">
+                                        <tr class="{% if forloop.counter|divisibleby:2 %}even_row{% else %}odd_row{% endif %}">
                                             <td><strong>Ethograms:</strong> {% for ethogram in sub_behavioral_event.ethograms.all %}{% if forloop.counter0 > 0 %}, {% endif %}{{ ethogram.name }}{% endfor %}</td>
                                         </tr>
                                         {% if sub_behavioral_event.type == 'gestural' %}
@@ -1391,34 +1391,34 @@
     </div>
                 
     <script type="text/html" id="behavioral_event-template">
-        <div id="behavioral_event-<%= idx %>" name="behavioral_event" class="behavioral_event" style="border: 5px solid #FFF">
+        <div id="behavioral_event-<%= idx %>" name="behavioral_event" class="behavioral_event parent_<%= getTRTag(idx-1) %>" style="border: 5px solid transparent">
             <div id="behavioral_event-<%= idx %>-start_time" class="behavioral_event-start_time" style="display: none;"><%= start_time %></div>
             <table class="tab_panel">
-                <tr class="<%= getTRTag(idx-1) %>">
+                <tr class="parent_<%= getTRTag(idx-1) %>">
                     <td width=30%>
                         <strong><a href="" onclick="return selectSingleEvent(<%= idx %>,<%= start_time %>,'<%= video_url_mp4 %>');">Behavioral Event <%= idx %></a></strong>
                     </td>
                 </tr>
-                <tr class="<%= getTRTag(idx-1) %>">
+                <tr class="parent_<%= getTRTag(idx-1) %>">
                     <td>
                         <a href="" onclick="selectSingleEvent(<%= idx %>,<%= start_time %>,'<%= video_url_mp4 %>');{% if object.video.name %} return playClip(<%= start_time %>,<%= end_time %>);{% else %}return playWholeVideo();{% endif %}">Play clip</a>
                     </td>
                 </tr>
                 {% if object.video.name %}
-                    <tr class="<%= getTRTag(idx-1) %>">
+                    <tr class="parent_<%= getTRTag(idx-1) %>">
                         <td><strong>Start time:</strong> <%= start_time %></td>
                     </tr>
-                    <tr class="<%= getTRTag(idx-1) %>">
+                    <tr class="parent_<%= getTRTag(idx-1) %>">
                         <td><strong>Duration:</strong> <%= duration %></td>
                     </tr>
                 {% endif %}
-                <tr class="<%= getTRTag(idx-1) %>">
+                <tr class="parent_<%= getTRTag(idx-1) %>">
                     <td><strong>Primates:</strong> <div id="behavioral_event-<%= idx %>-primates"><%= primates %></div></td>
                 </tr>
-                <tr class="<%= getTRTag(idx-1) %>">
+                <tr class="parent_<%= getTRTag(idx-1) %>">
                     <td><strong>Contexts:</strong> <div id="behavioral_event-<%= idx %>-contexts"><%= contexts %></div></td>
                 </tr>
-                <tr class="<%= getTRTag(idx-1) %>">
+                <tr class="parent_<%= getTRTag(idx-1) %>">
                     <td><strong>Ethograms:</strong> <div id="behavioral_event-<%= idx %>-ethograms"><%= ethograms %></div></td>
                 </tr>
             </table>
@@ -1429,19 +1429,19 @@
                 <input class="btn" type="button" value="Delete" onclick="deleteBehavioralEvent(<%= id %>,<%= idx %>)"/>&nbsp;
             {% endif %}
             <h4>Behavioral and Gestural Sub-Events{% if user == object.collator %} <a href="#" onclick="return createBehavioralSubEvent(<%= id %>, <%= idx %>, <%= start_time %>,<%= end_time %>,'<%= video_url_mp4 %>');">Add new</a>{% endif %}</h4>
-            <div id="sub_behavioral_events_list-<%= idx %>" class="sub_behavioral_events_list">
+            <div id="sub_behavioral_events_list-<%= idx %>" class="sub_behavioral_events_list parent_<%= getTRTag(idx-1) %>">
             </div>
         </div>
     </script>
 
     <script type="text/html" id="behavioral_subevent-template">
-        <div id="sub_behavioral_event-<%= parentIdx %>.<%= idx %>" name="sub_behavioral_event" class="sub_behavioral_event" style="border: 5px solid #FFF">
+        <div id="sub_behavioral_event-<%= parentIdx %>.<%= idx %>" name="sub_behavioral_event" class="sub_behavioral_event <%= getTRTag(idx-1) %>" style="border: 5px solid transparent">
             <div id="sub_behavioral_event-<%= parentIdx %>.<%= idx %>-start_time" class="sub_behavioral_event-start_time" style="display: none;"><%= start_time %></div>
-            <table class="tab_panel">
+            <table class="_sub_tab_panel">
                 <tr class="<%= getTRTag(idx-1) %>">
                     <td width=30%><strong><a href="" onclick="return selectSingleSubEvent(<%= idx %>,<%= parentIdx %>,<%= start_time %>,'<%= video_url_mp4 %>');">Subevent <%= parentIdx %>.<%= idx %></a></strong></td>
                 </tr>
-                <tr class="{% cycle 'even_row' 'odd_row' %}">
+                <tr class="<%= getTRTag(idx-1) %>">
                     <td>
                         <a href="" onclick="selectSingleSubEvent(<%= idx %>,<%= parentIdx %>,<%= start_time %>,'<%= video_url_mp4 %>'); return playClip(<%= start_time %>,<%= end_time %>);">Play clip</a>
                     </td>
