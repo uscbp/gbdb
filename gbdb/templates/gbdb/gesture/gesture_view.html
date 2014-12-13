@@ -5,7 +5,7 @@
     <script type="text/javascript">
 
         {% if ispopup %}
-            opener.setGesture({{ object.id }}, '{{ object.name }}', {{ gestural_event_idx }});
+            opener.setGesture({{ object.id }}, '{{ object.name }}');
             self.close();
         {% endif %}
 

@@ -20,8 +20,6 @@ class EditGestureMixin():
         url=self.get_success_url()
         if '_popup' in self.request.GET:
             url+='?_popup=1'
-            if 'gestural_event_idx' in self.request.GET:
-                url+='&gestural_event_idx='+self.request.GET['gestural_event_idx']
         return redirect(url)
 
 
@@ -51,8 +49,6 @@ class GestureDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(GestureDetailView, self).get_context_data(**kwargs)
         context['ispopup']='_popup' in self.request.GET
-        if context['ispopup'] and 'gestural_event_idx' in self.request.GET:
-            context['gestural_event_idx']=self.request.GET['gestural_event_idx']
         return context
 
 
