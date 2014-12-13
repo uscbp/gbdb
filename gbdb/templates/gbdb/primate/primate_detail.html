@@ -59,9 +59,9 @@
                 </tr>
             </table>
             
-            <input type="submit" value="Save" />&nbsp;
+            <input class="btn" type="submit" value="Save" />&nbsp;
             {% if form.instance.id %}
-                <input type="button" value="Cancel" onclick="document.location.href='/gbdb/primate/{{ form.instance.id }}/';"/>&nbsp;
+                <input class="btn" type="button" value="Cancel" onclick="document.location.href='/gbdb/primate/{{ form.instance.id }}/';"/>&nbsp;
             {% endif %}
         </form>
     </div>

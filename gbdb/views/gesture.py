@@ -27,6 +27,7 @@ class CreateGestureView(EditGestureMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(CreateGestureView,self).get_context_data(**kwargs)
+        context['ispopup']='_popup' in self.request.GET
         return context
 
 
@@ -34,6 +35,7 @@ class UpdateGestureView(EditGestureMixin,UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(UpdateGestureView,self).get_context_data(**kwargs)
+        context['ispopup']='_popup' in self.request.GET
         return context
 
 

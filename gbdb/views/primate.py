@@ -28,6 +28,7 @@ class CreatePrimateView(EditPrimateMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(CreatePrimateView,self).get_context_data(**kwargs)
+        context['ispopup']='_popup' in self.request.GET
         return context
 
 
@@ -35,6 +36,7 @@ class UpdatePrimateView(EditPrimateMixin,UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(UpdatePrimateView,self).get_context_data(**kwargs)
+        context['ispopup']='_popup' in self.request.GET
         return context
 
 
