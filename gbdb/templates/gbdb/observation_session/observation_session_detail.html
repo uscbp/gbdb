@@ -54,11 +54,11 @@
 		            <br>
 		            {{ form.collator }}
 		            {% if form.instance.id %}
-		            	<input type="button" value="Save" onclick="submitObservationSessionForm('/gbdb/observation_session/{{ object.id }}/edit/', '{{ object.id }}');"/>&nbsp;
-		                <input type="button" value="Cancel" onclick="document.getElementById('context_data').innerHTML='';"/>&nbsp;
+		            	<input class="btn" type="button" value="Save" onclick="submitObservationSessionForm('/gbdb/observation_session/{{ object.id }}/edit/', '{{ object.id }}');"/>&nbsp;
+		                <input class="btn" type="button" value="Cancel" onclick="document.getElementById('context_data').innerHTML='';"/>&nbsp;
 		            {% else %}
-		            	<input type="submit" value="Save" onclick="document.getElementById('savingMsg').style.display = 'block';document.getElementById('savingOver').style.display = 'block';document.getElementById('observationSessionForm').submit();"/>&nbsp;
-                        <input type="button" value="Cancel" onclick="document.location.href='';"/>&nbsp;
+		            	<input class="btn" type="submit" value="Save" onclick="document.getElementById('savingMsg').style.display = 'block';document.getElementById('savingOver').style.display = 'block';document.getElementById('observationSessionForm').submit();"/>&nbsp;
+                        <input class="btn" type="button" value="Cancel" onclick="document.location.href='';"/>&nbsp;
 		            {% endif %}
 		            </td>
 		        </tr>
