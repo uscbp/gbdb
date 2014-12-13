@@ -157,8 +157,16 @@
 
         function selectSingleSubEvent(idx, parentIdx, start_time, video_source)
         {
-            selectSingleEvent(parentIdx, start_time, video_source);
+            unhighlightAllSubEvents();
+            unhighlightAllEvents();
+            highlightEvent(parentIdx);
             highlightSubEvent(parentIdx, idx);
+            behavioralEventSelectedIdx=parentIdx;
+            {% if object.video.name %}
+                return setClipTime(start_time);
+            {% else %}
+                return changeVideoSource(video_source);
+            {% endif %}
             return false;
         }
 
@@ -239,16 +247,15 @@
             });
 
             {% for behavioral_event in behavioral_events %}
-                var count = '{{ forloop.counter }}';
                 var period =  {
                     id:'{{behavioral_event.id}}',
                     data: {
                         id:'{{behavioral_event.id}}',
-                        idx: count,
-                        label: count.toString(),
-                        start_time: '{{behavioral_event.0.start_time}}',
-                        duration: '{{behavioral_event.0.duration}}',
-                        end_time: '{{behavioral_event.0.end_time}}',
+                        idx: {{ forloop.counter }},
+                        label: '{{ forloop.counter }}',
+                        start_time: {{behavioral_event.0.start_time}},
+                        duration: {{behavioral_event.0.duration}},
+                        end_time: {{behavioral_event.0.end_time}},
                         video: '{{behavioral_event.0.video}}',
                         video_url_mp4: '{{behavioral_event.0.video_url_mp4}}',
                         notes: '{{behavioral_event.0.notes|linebreaks}}',
@@ -259,25 +266,19 @@
                     }
                 };
 
-                // var period = {time_in:'{{behavioral_event.0.start_time}}',
-                    // time_out:'{{behavioral_event.0.end_time}}',
-                    // track:2,
-                    // color:'#'+Math.floor(Math.random()*16777215).toString(16),
-                    // label:'{{ forloop.counter }}',
-                    // content: '{{behavioral_event.0.notes|linebreaks}}'};
                 periods.push(period);
+
                 {% for child in behavioral_event.1 %}
-                    var sub_count = '{{ forloop.counter }}';
                     period = {
                         id:'{{child.id}}',
                         data: {
-                            parentIdx: count,
-                            idx: sub_count+1,
-                            label: count.toString() + '.' + sub_count.toString(),
-                            end_time: '{{child.end_time}}',
+                            parentIdx: {{ forloop.parentloop.counter }},
+                            idx: {{ forloop.counter }},
+                            label: '{{ forloop.parentloop.counter }}.{{ forloop.counter }}',
+                            start_time: {{child.start_time}},
+                            duration: {{child.duration}},
+                            end_time: {{child.end_time}},
                             type: '{{child.type}}',
-                            start_time: '{{child.start_time}}',
-                            duration: '{{child.duration}}',
                             primates: '{{child.primates}}',
                             contexts: '{{child.contexts}}',
                             ethograms: '{{child.ethograms}}',
@@ -293,12 +294,6 @@
                             track: 1
                         }
                     };
-                    // var period = {time_in:'{{child.start_time}}',
-                        // time_out:'{{child.end_time}}',
-                        // track:1,
-                        // color:'#'+Math.floor(Math.random()*16777215).toString(16),
-                        // label:'{{ forloop.parentloop.counter }}.{{ forloop.counter }}',
-                        // content: '{{child.notes|linebreaks}}'};
                     periods.push(period);
                 {% endfor %}
             {% endfor %}
@@ -386,7 +381,6 @@
                 {% elif behavioral_events|length %}
                     selectSingleEvent(1, {{ behavioral_events.0.0.start_time }}, '{{ behavioral_events.0.0.video_url_mp4 }}');
                 {% endif %}
-                //playClip(0,0);
             });
         });
 
@@ -534,7 +528,7 @@
                         // Iterate through subevents of parent Event
                         $('#sub_behavioral_events_list-'+behavioralEventEditIdx).children("[id^=sub_behavioral_event]").each(function(index){
                             // Insert before current subevent
-                            var thisElemStart=parseInt(this.getElementsByClassName('sub_behavioral_event-start_time')[0].textContent);
+                            var thisElemStart=parseFloat(this.getElementsByClassName('sub_behavioral_event-start_time')[0].textContent);
                             if(data.start_time<thisElemStart)
                             {
                                 $(this).before(compiledTmpl);
@@ -549,7 +543,7 @@
                             else
                             {
                                 // Insert between this subevent and the next
-                                var nextElemStart=parseInt($('#sub_behavioral_events_list-'+behavioralEventEditIdx).children("[id^=sub_behavioral_event]")[index+1].getElementsByClassName('sub_behavioral_event-start_time')[0].textContent);
+                                var nextElemStart=parseFloat($('#sub_behavioral_events_list-'+behavioralEventEditIdx).children("[id^=sub_behavioral_event]")[index+1].getElementsByClassName('sub_behavioral_event-start_time')[0].textContent);
                                 if(data.start_time>=thisElemStart && data.start_time<=nextElemStart)
                                 {
                                     $(this).after(compiledTmpl);
@@ -901,7 +895,7 @@
                         $('#behavioral_events').children("[id^=behavioral_event]").each(function(index)
                         {
                             // Insert after this event
-                            var thisElemStart=parseInt(this.getElementsByClassName('behavioral_event-start_time')[0].textContent);
+                            var thisElemStart=parseFloat(this.getElementsByClassName('behavioral_event-start_time')[0].textContent);
                             if(data.start_time<thisElemStart)
                             {
                                 $(this).before(compiledTmpl);
@@ -916,7 +910,7 @@
                             else
                             {
                                 // Insert between this subevent and the next
-                                var nextElemStart=parseInt($('#behavioral_events').children("[id^=behavioral_event]")[index+1].getElementsByClassName('behavioral_event-start_time')[0].textContent);
+                                var nextElemStart=parseFloat($('#behavioral_events').children("[id^=behavioral_event]")[index+1].getElementsByClassName('behavioral_event-start_time')[0].textContent);
                                 if(data.start_time>=thisElemStart && data.start_time<=nextElemStart)
                                 {
                                     $(this).after(compiledTmpl);
