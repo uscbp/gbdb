@@ -57,17 +57,6 @@
         }
 
         /**
-         * Play entire video
-         * @return {Boolean}
-         */
-        function playWholeVideo()
-        {
-            videojs("observation_session_video").currentTime(0);
-            videojs("observation_session_video").play();
-            return false;
-        }
-
-        /**
          * Jump video to start of clip
          * @param start_time - start time of clip
          * @return {Boolean}
@@ -83,7 +72,6 @@
         /**
          * Change video source - called when events have their own, different videos and we need to change between them
          * when event is clicked
-         * @param event_idx - index of the event clicked on
          * @param source - video source
          * @return {Boolean}
          */
@@ -218,7 +206,6 @@
                         'width':videojs("observation_session_video").width(),
                         'numberOfTracks':2,
                         'cursorHeight':30,
-                        //'periodShape':'bubble',
                         'scaleHeight':30,
                         'scaleBackgroundColor':'#000',
                         'backgroundColor':'#EAE5E1',
@@ -230,7 +217,7 @@
                         };
 
             // Create new timeline
-            timeline = new Timeline('observation_session_video', 'observation_session_timeline', videojs("observation_session_video").duration(), options);
+            var timeline = new Timeline('observation_session_video', 'observation_session_timeline', videojs("observation_session_video").duration(), options);
 
             // Add periods to timeline
             for(var i = 0; i<periods.length; i++)
