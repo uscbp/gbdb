@@ -12,8 +12,8 @@ function playClip(start_time, end_time)
     function stopClip(){
         if(this.currentTime()>=end_time)
         {
-            this.pause();
             this.off('timeupdate',stopClip);
+            this.pause();
         }
     }
     // Check if we need to stop at every time update
@@ -65,8 +65,8 @@ function changeVideoSource(source)
         function init(){
             videojs("observation_session_video").on("pause",reset);
             function reset(){
-                videojs("observation_session_video").currentTime(0);
                 videojs("observation_session_video").off('pause',reset);
+                videojs("observation_session_video").currentTime(0);
             }
             playClip(0,0);
         }

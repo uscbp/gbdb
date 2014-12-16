@@ -249,46 +249,6 @@
                     $('#context_data').html(active_data.join('<br /><br />'));
                 }
             });
-
-            videojs("observation_session_video").ready(function()
-            {
-                videojs("observation_session_video").rangeslider({hidden:true,controlTime:false});
-                videojs("observation_session_video").on("sliderchange",function() {
-                    if(document.getElementById('id_start_time')!=null && document.getElementById('id_duration')!=null)
-                    {
-                        var values = videojs("observation_session_video").getValueSlider();
-                        $(document.getElementById('id_start_time_label')).html(videojs.round(values.start,2)+' seconds');
-                        document.getElementById('id_start_time').value=videojs.round(values.start,2);
-                        $(document.getElementById('id_duration_label')).html(videojs.round(values.end-values.start,2)+' seconds');
-                        document.getElementById('id_duration').value=videojs.round(values.end-values.start,2);
-                    }
-                });
-                videojs("observation_session_video").on("sliderchanged",function() {
-                    if(creatingBehavioralSubEvent || behavioralSubEventEditIdx>-1)
-                    {
-                        var values = videojs("observation_session_video").getValueSlider();
-                        var newStart=values.start;
-                        var newEnd=values.end;
-                        for(var i=0; i<periods.length; i++)
-                        {
-                            if(!('parentIdx' in periods[i].data) && periods[i].data.idx==behavioralEventEditIdx)
-                            {
-                                if(newStart<periods[i].data.start_time)
-                                    newStart=periods[i].data.start_time;
-                                if(newEnd>periods[i].data.end_time)
-                                    newEnd=periods[i].data.end_time;
-                                videojs("observation_session_video").setValueSlider(newStart, newEnd);
-                                break;
-                            }
-                        }
-                    }
-                });
-                {% if object.video.name %}
-                    changeVideoSource('{{ object.video_url_mp4 }}');
-                {% elif behavioral_events|length %}
-                    selectSingleEvent(1, {{ behavioral_events.0.0.start_time }}, '{{ behavioral_events.0.0.video_url_mp4 }}');
-                {% endif %}
-            });
         });
 
         var creatingBehavioralSubEvent=false;
@@ -992,6 +952,44 @@
             </div>
             <div id="context_data"></div>
         </div>
+        <script type="text/javascript">
+            videojs("observation_session_video").rangeslider({hidden:true,controlTime:false});
+            videojs("observation_session_video").on("sliderchange",function() {
+                if(document.getElementById('id_start_time')!=null && document.getElementById('id_duration')!=null)
+                {
+                    var values = videojs("observation_session_video").getValueSlider();
+                    $(document.getElementById('id_start_time_label')).html(videojs.round(values.start,2)+' seconds');
+                    document.getElementById('id_start_time').value=videojs.round(values.start,2);
+                    $(document.getElementById('id_duration_label')).html(videojs.round(values.end-values.start,2)+' seconds');
+                    document.getElementById('id_duration').value=videojs.round(values.end-values.start,2);
+                }
+            });
+            videojs("observation_session_video").on("sliderchanged",function() {
+                if(creatingBehavioralSubEvent || behavioralSubEventEditIdx>-1)
+                {
+                    var values = videojs("observation_session_video").getValueSlider();
+                    var newStart=values.start;
+                    var newEnd=values.end;
+                    for(var i=0; i<periods.length; i++)
+                    {
+                        if(!('parentIdx' in periods[i].data) && periods[i].data.idx==behavioralEventEditIdx)
+                        {
+                            if(newStart<periods[i].data.start_time)
+                                newStart=periods[i].data.start_time;
+                            if(newEnd>periods[i].data.end_time)
+                                newEnd=periods[i].data.end_time;
+                            videojs("observation_session_video").setValueSlider(newStart, newEnd);
+                            break;
+                        }
+                    }
+                }
+            });
+            {% if object.video.name %}
+                changeVideoSource('{{ object.video_url_mp4 }}');
+            {% elif behavioral_events|length %}
+                selectSingleEvent(1, {{ behavioral_events.0.0.start_time }}, '{{ behavioral_events.0.0.video_url_mp4 }}');
+            {% endif %}
+        </script>
     </div>
                 
     <script type="text/html" id="behavioral_event-template">
