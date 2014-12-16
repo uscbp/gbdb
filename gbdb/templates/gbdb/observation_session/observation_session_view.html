@@ -158,9 +158,9 @@
 
             {% for behavioral_event in behavioral_events %}
                 var period =  {
-                    id:'{{behavioral_event.id}}',
+                    id:'{{behavioral_event.0.id}}',
                     data: {
-                        id:'{{behavioral_event.id}}',
+                        id:{{behavioral_event.0.id}},
                         idx: {{ forloop.counter }},
                         label: '{{ forloop.counter }}',
                         start_time: {{behavioral_event.0.start_time}},
