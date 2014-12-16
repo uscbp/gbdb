@@ -324,11 +324,20 @@
         function createBehavioralSubEvent(parent_id, parentIdx, parentStartTimeSeconds, parentEndTimeSeconds, parentVideoSource)
         {
             selectSingleEvent(parentIdx, parentStartTimeSeconds, parentVideoSource);
+            var newSubeventStart=parentStartTimeSeconds;
+            var newSubeventEnd=parentEndTimeSeconds;
+            var count = $(document.getElementById('sub_behavioral_events_list-'+parentIdx)).children("[id^=sub_behavioral_event]").length;
+            if(count>0)
+            {
+                var lastSubevent=$(document.getElementById('sub_behavioral_events_list-'+parentIdx)).children("[id^=sub_behavioral_event]")[count-1];
+                var lastSubeventStart=parseFloat(lastSubevent.getElementsByClassName('sub_behavioral_event-start_time')[0].textContent);
+                var lastSubeventDuration=parseFloat(lastSubevent.getElementsByClassName('sub_behavioral_event-duration')[0].textContent);
+                newSubeventStart=lastSubeventStart+lastSubeventDuration;
+                newSubeventEnd=lastSubeventStart+2*lastSubeventDuration;
+            }
             videojs("observation_session_video").showSlider();
-            {% if object.video.name %}
-                videojs("observation_session_video").setValueSlider(parentStartTimeSeconds, parentEndTimeSeconds);
-            {% endif %}
-            $('#context_data').load('/gbdb/behavioral_event/new/?observation_session={{ object.id }}&parent_event='+parent_id);
+            videojs("observation_session_video").setValueSlider(newSubeventStart,newSubeventEnd);
+            $('#context_data').load('/gbdb/behavioral_event/new/?observation_session={{ object.id }}&parent_event='+parent_id+'&start_time='+newSubeventStart+'&duration='+(newSubeventEnd-newSubeventStart));
             creatingBehavioralSubEvent=true;
             behavioralEventEditIdx=parentIdx;
             behavioralSubEventEditIdx=-1;
@@ -572,12 +581,26 @@
 
             creatingBehavioralEvent=true;
             behavioralEventEditIdx=-1;
+
+            var newEventStart=0;
+            var newEventEnd=0;
             {% if object.video.name %}
+                newEventEnd={{ object.duration_seconds }};
+                var count = $(document.getElementById('behavioral_events')).children("[id^=behavioral_event]").length;
+                if(count>0)
+                {
+                    var lastEvent=$(document.getElementById('behavioral_events')).children("[id^=behavioral_event]")[count-1];
+                    var lastEventStart=parseFloat(lastEvent.getElementsByClassName('behavioral_event-start_time')[0].textContent);
+                    var lastEventDuration=parseFloat(lastEvent.getElementsByClassName('behavioral_event-duration')[0].textContent);
+                    newEventStart=lastEventStart+lastEventDuration;
+                    newEventEnd=lastEventStart+2*lastEventDuration;
+                }
                 videojs("observation_session_video").showSlider();
+                videojs("observation_session_video").setValueSlider(newEventStart,newEventEnd);
             {% else %}
                 videojs("observation_session_video").hideSlider();
             {% endif %}
-            $('#context_data').load('/gbdb/behavioral_event/new/?observation_session={{ object.id }}');
+            $('#context_data').load('/gbdb/behavioral_event/new/?observation_session={{ object.id }}&start_time='+newEventStart+'&duration='+(newEventEnd-newEventStart));
             return false;
         }
 
@@ -975,6 +998,7 @@
         <div id="behavioral_event-<%= idx %>" name="behavioral_event" class="behavioral_event parent_<%= getTRTag(idx-1) %>" style="border: 5px solid transparent">
             <div id="behavioral_event-<%= idx %>-idx" class="behavioral_event-idx" style="display: none;"><%= idx %></div>
             <div id="behavioral_event-<%= idx %>-start_time" class="behavioral_event-start_time" style="display: none;"><%= start_time %></div>
+            <div id="behavioral_event-<%= idx %>-duration" class="behavioral_event-duration" style="display: none;"><%= duration %></div>
             <table class="tab_panel">
                 <tr class="parent_<%= getTRTag(idx-1) %>">
                     <td width=30%>
@@ -1016,6 +1040,7 @@
             <div id="sub_behavioral_event-<%= parentIdx %>.<%= idx %>-parentIdx" class="sub_behavioral_event-parentIdx" style="display: none;"><%= parentIdx %></div>
             <div id="sub_behavioral_event-<%= parentIdx %>.<%= idx %>-idx" class="sub_behavioral_event-idx" style="display: none;"><%= idx %></div>
             <div id="sub_behavioral_event-<%= parentIdx %>.<%= idx %>-start_time" class="sub_behavioral_event-start_time" style="display: none;"><%= start_time %></div>
+            <div id="sub_behavioral_event-<%= parentIdx %>.<%= idx %>-duration" class="sub_behavioral_event-duration" style="display: none;"><%= duration %></div>
             <table class="_sub_tab_panel">
                 <tr class="<%= getTRTag(idx-1) %>">
                     <td width=30%>
