@@ -68,7 +68,7 @@ class EditBehavioralEventMixin(object):
                     if self.object.end_time()>self.object.observation_session.duration_seconds():
                         data['errors']['duration']=['Event exceeds observation session duration']
                     for other_event in BehavioralEvent.objects.filter(observation_session=self.object.observation_session,parent__isnull=True).exclude(id=self.object.id):
-                        if other_event.start_time <= self.object.end_time() and other_event.start_time <= self.object.end_time():
+                        if other_event.start_time <= self.object.end_time() and self.object.start_time <=other_event.end_time():
                             data['errors']['start_time']=['Event overlaps other events']
             else:
                 if self.object.end_time()>self.object.parent.end_time():
@@ -76,7 +76,7 @@ class EditBehavioralEventMixin(object):
                 if self.object.start_time<self.object.parent.start_time:
                     data['errors']['start_time']=['Subevent starts before parent event']
                 for other_event in BehavioralEvent.objects.filter(parent=self.object.parent).exclude(id=self.object.id):
-                    if other_event.start_time <= self.object.end_time() and other_event.start_time <= self.object.end_time():
+                    if other_event.start_time <= self.object.end_time() and self.object.start_time <=other_event.end_time():
                         data['errors']['start_time']=['Subevent overlaps other subevents']
 
         if len(data['errors'].keys()):
@@ -205,6 +205,10 @@ class CreateBehavioralEventView(EditBehavioralEventMixin, CreateView):
         initial['observation_session']=ObservationSession.objects.get(id=self.request.GET.get('observation_session'))
         if 'parent_event' in self.request.GET:
             initial['parent']=BehavioralEvent.objects.get(id=self.request.GET.get('parent_event'))
+        if 'start_time' in self.request.GET:
+            initial['start_time']=float(self.request.GET.get('start_time'))
+        if 'duration' in self.request.GET:
+            initial['duration']=float(self.request.GET.get('duration'))
         initial['type']='generic'
         return initial
 
