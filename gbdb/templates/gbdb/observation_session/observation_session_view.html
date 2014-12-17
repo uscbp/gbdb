@@ -883,7 +883,7 @@
         <div class='video_panel'>
             <div id='video_frame' {% if not object.video.name and not behavioral_events.0.0.video.name %}style="display:none;"{% endif %}>
                 <video id="observation_session_video" class="video-js vjs-default-skin" controls preload="preload"
-                       width="600" height="400" data-setup='{}'>
+                       width="600" height="400" data-setup='{}' autoplay="true">
                     {% if object.video.name %}
                         <source id="observation_session_video_source" src="{{ object.video_url_mp4 }}" type="video/mp4">
                     {% else %}

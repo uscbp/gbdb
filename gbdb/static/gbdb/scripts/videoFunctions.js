@@ -61,17 +61,6 @@ function changeVideoSource(source)
         $(".vjs-big-play-button").hide();
         $(".vjs-control-bar").show();
         $("#div_video_html5_api").show();
-        // With flash - have to play the clip for rangeslider to work - play for 0 sec and reset to beginning
-        function init(){
-            videojs("observation_session_video").on("pause",reset);
-            function reset(){
-                videojs("observation_session_video").off('pause',reset);
-                videojs("observation_session_video").currentTime(0);
-            }
-            playClip(0,0);
-        }
-        videojs("observation_session_video").on("loadedmetadata",init);
-
     });
     return false;
 }
