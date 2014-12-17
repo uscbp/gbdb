@@ -1,29 +1,4 @@
 /**
- * Play a clip from the video
- * @param start_time - clip start time
- * @param end_time - clip end time
- * @return {Boolean}
- */
-function playClip(start_time, end_time)
-{
-    // Jump to start time
-    videojs("observation_session_video").currentTime(start_time);
-    // Stop video at end of clip
-    function stopClip(){
-        if(this.currentTime()>=end_time)
-        {
-            this.off('timeupdate',stopClip);
-            this.pause();
-        }
-    }
-    // Check if we need to stop at every time update
-    videojs("observation_session_video").on("timeupdate",stopClip);
-    // Play clip
-    videojs("observation_session_video").play();
-    return false;
-}
-
-/**
  * Jump video to start of clip
  * @param start_time - start time of clip
  * @return {Boolean}
