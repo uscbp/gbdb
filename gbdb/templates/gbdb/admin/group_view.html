@@ -1,0 +1,86 @@
+{% extends "base_generic.html" %}
+{% block extrahead %}
+    <title>GBDB - View {{ name }} Group</title>
+    <script type="text/javascript">
+        {% if action == 'add' %}
+            opener.addGroup({{ group.id }},'{{ group.name }}');
+        {% elif action == 'edit' %}
+            opener.updateGroup({{ group.id }},'{{ group.name }}');
+        {% endif %}
+        animatedcollapse.addDiv('permissionsData', 'fade=1');
+
+        function deleteGroup()
+        {
+            if(confirm('Do you really want to delete this group?'))
+            {
+                var data = { 'id': {{ id }}, 'csrfmiddlewaretoken': '{{ csrf_token }}'};
+                var args = { type: "POST", url: "/gbdb/group/{{ id }}/delete/", data: data, complete: doneDeleteGroup };
+                $.ajax(args)
+                return false;
+            }
+            return false;
+        }
+
+        function doneDeleteGroup(res, status)
+        {
+            var txt = res.responseText;
+            if (status=="success")
+            {
+                var data = eval('('+txt+')');
+                opener.document.getElementById('group-'+data.id).style.display='none';
+                self.close();
+            }
+            else
+                alert(txt);
+        }
+    </script>
+{% endblock %}
+{% block content %}
+{% load gbdb_extras %}
+    <div id="detail">
+
+        <div id="userDiv" style="display:block">
+                <table class="tab_panel">
+                    <tr class="section_subheader">
+                        <td colspan="4">Members</td>
+                    </tr>
+                    <tr class="col_header">
+                        <td style="width:250px">&nbsp;</td>
+                        <td style="width:50px">Administrator</td>
+                    </tr>
+                    <tr>
+                        <td colspan=4>
+                            <div id="users">
+                                {% for u in members %}
+                                    <div id="user-{{ u.id }}">
+                                        <table class="tab_panel">
+                                            <tr class="{%cycle 'odd_row' 'even_row'%}" valign=top>
+                                                <td style="width:250px">
+                                                    {{ u.username }} ({{ u.first_name }} {{ u.last_name }})
+                                                </td>
+                                                
+                                                <td style="width:50px">
+                                                    <input type=checkbox onclick="return false" name="user-{{ u.id }}_admin" id="user-{{ u.id }}_admin" value="{{ u.id }}" {% if user_admin_permissions|lookup:u %}checked=True{% endif %}/>
+                                                </td>
+                                                
+                                            </tr>
+                                        </table>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            
+        {% if isadmin %}
+        <input class="btn" type="button" value="Edit" onclick="document.location.href='/gbdb/group/{{id}}/edit/{% if ispopup %}?_popup=1{% endif %}';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+        {% endif %}
+        {% if ispopup %}
+            <input class="btn" type="button" value="Close" onclick="self.close();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+        {% endif %}
+        {% if isadmin %}
+        <input class="btn" type="button" value="Delete" onclick="deleteGroup()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+   		{% endif %}
+    </div>
+{% endblock %}

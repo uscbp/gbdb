@@ -5,6 +5,7 @@ from gbdb.views.main import IndexView
 from gbdb.views.observation_session import CreateObservationSessionView, ObservationSessionDetailView, DeleteObservationSessionView, UpdateObservationSessionView, SearchObservationSessionView, ManageObservationSessionPermissionsView
 from gbdb.views.primate import CreatePrimateView, PrimateDetailView, DeletePrimateView, UpdatePrimateView, SearchPrimateView
 from gbdb.views.gesture import CreateGestureView, GestureDetailView, DeleteGestureView, UpdateGestureView, SearchGestureView
+from gbdb.views.admin import AdminDetailView, CreateGroupView, UpdateGroupView, DeleteGroupView, GroupDetailView
 
 import autocomplete_light
 autocomplete_light.autodiscover()
@@ -40,6 +41,12 @@ urlpatterns = patterns('',
 
     url(r'^saved_location/$', SavedLocationDetailView.as_view(), {}, 'saved_location_view'),
     url(r'^saved_location/new/$', CreateSavedLocationView.as_view(), {}, 'saved_location_add'),
+     
+    url(r'^admin/$', AdminDetailView.as_view(), {}, 'admin'),
+    url(r'^group/new/$', CreateGroupView.as_view(), {}, 'group_add'),
+    url(r'^group/(?P<pk>\d+)/edit/$', UpdateGroupView.as_view(), {}, 'group_edit'),
+    url(r'^group/(?P<pk>\d+)/delete/$', DeleteGroupView.as_view(), {}, 'group_delete'),
+    url(r'^group/(?P<pk>\d+)/$', GroupDetailView.as_view(), {}, 'group_view'),
 
     url(r'', IndexView.as_view(), {}, 'index'),
 )

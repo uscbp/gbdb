@@ -4,7 +4,7 @@ from django.forms.models import inlineformset_factory
 from django.forms.extras import SelectDateWidget
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django import forms
-from gbdb.models import ObservationSession, BehavioralEvent, Primate, Context, Ethogram, Species, Gesture, BodyPart, GesturalEvent, SavedLocation, Goal
+from gbdb.models import ObservationSession, BehavioralEvent, Primate, Context, Ethogram, Species, Gesture, BodyPart, GesturalEvent, SavedLocation, Goal, CoWoGroup
 from geoposition.forms import GeopositionField
 from registration.forms import RegistrationForm
 from registration.models import User
@@ -266,3 +266,12 @@ class GestureSearchForm(forms.Form):
         queryset=BodyPart.objects.all(), required=False)
     audible = forms.ChoiceField(choices=YESNO_CHOICES, widget=forms.Select(), required=False)
     search_options = forms.ChoiceField(choices=SEARCH_CHOICES, help_text='Search options', required=False)
+    
+    
+class GroupForm(forms.ModelForm):
+    
+    members = forms.ModelMultipleChoiceField(queryset=User.objects.all(),
+        widget=autocomplete_light.MultipleChoiceWidget('UserAutocomplete'), required=False)
+    
+    class Meta:
+        model = CoWoGroup

@@ -68,6 +68,14 @@
                             {% endif %}
                         </ul>
                     </tr>
+                    <tr>
+                        <h2>Admin</h2>
+                        <ul>
+                            {% if user.is_authenticated and not user.is_anonymous %}
+                                <li><a href="/gbdb/admin/">Groups</a></li>
+                            {% endif %}
+                        </ul>
+                    </tr>
                </table>
                <div style="background:#ffffff;border:0">
                     <b class="b4f"></b><b class="b3f"></b><b class="b2f"></b><b class="b1f"></b>

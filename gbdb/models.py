@@ -9,6 +9,7 @@ from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from registration.models import User
 from uscbp import settings
+from guardian.shortcuts import assign_perm, remove_perm, get_perms
 
 from django.utils.encoding import force_unicode
 import os.path
@@ -51,11 +52,15 @@ def convert_to_mp4(mp4_filename, orig_filename, start_time=None, duration=None):
 
 class CoWoGroup(models.Model):
     name = models.CharField(max_length=100)
-    administrators = models.ManyToManyField(User, related_name = "administrators")
-    members = models.ManyToManyField(User, related_name = "members")
+    members = models.ManyToManyField(User, related_name = "members", null = True, blank = True)
     
     class Meta:
         app_label='gbdb'
+        
+        permissions=(
+            ('admin_cowogroup', 'Administrator permissions'),
+        )
+        
         
 
 class Species(models.Model):
@@ -137,10 +142,10 @@ class ObservationSession(models.Model):
         app_label='gbdb'
         
         permissions=(
-            ('manage', 'Manage permissions'),
-            ('edit', 'Edit permissions'),
-            ('delete', 'Delete permissions'),
-            ('view', 'View permissions')
+            ('manage_observationsession', 'Manage permissions'),
+            ('edit_observationsession', 'Edit permissions'),
+            #('delete_observationsession', 'Delete permissions'),
+            ('view_observationsession', 'View permissions')
         )
 
     def duration_seconds(self):

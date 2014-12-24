@@ -1,0 +1,138 @@
+{% extends "base_generic.html" %}
+{% block extrahead %}
+    <title>GBDB - {% if form.instance.id%}Edit {{ form.instance.name }}{% else %}Add{% endif %} Group</title>
+    <script type="text/javascript">
+
+        animatedcollapse.addDiv('permissionsData', 'fade=1');
+
+        function save()
+        {
+            document.getElementById('groupForm').submit();
+        }
+
+        {% if form.instance.id%}
+            function deleteGroup()
+            {
+                if(confirm('Do you really want to delete this group?'))
+                {
+                    var data = { 'id': {{ form.instance.id }}, 'csrfmiddlewaretoken': '{{ csrf_token }}'};
+                    var args = { type: "POST", url: "/gbdb/group/{{ group.id }}/delete/", data: data, complete: doneDeleteGroup };
+                    $.ajax(args);
+                    return false;
+                }
+                return false;
+            }
+
+            function doneDeleteGroup(res, status)
+            {
+                var txt = res.responseText;
+                if (status=="success")
+                {
+                    var data = eval('('+txt+')');
+                    opener.document.getElementById('group-'+data.id).style.display='none';
+                    self.close();
+                }
+                else
+                    alert(txt);
+            }
+        {% endif %}
+        
+        //this needs to be called when a user is added with autocompletelight
+        function addUser(group_id, name){
+	        var tmplMarkup = $('#group-permissions-template').html();
+	        var compiledTmpl = _.template(tmplMarkup, { id : group_id, name: name });
+	        //$('#groups').append(compiledTmpl);
+	        //$('textarea:not(.processed)').TextAreaResizer();
+	        return false;
+	    }
+    </script>
+{% endblock %}
+{% block content %}
+{% load gbdb_extras %}
+    <div id="detail">
+        <h2>{% if form.instance.id%}Edit{% else %}Add{% endif %} Group</h2>
+        <form id="groupForm" method="post" action="">
+            {% csrf_token %}
+            <table class="tab_panel">
+                <tr valign=top>
+                    <td style="width:20%">{{ form.name.label_tag }}*</td>
+                    <td>{{ form.name }}</td>
+                    {% if form.name.errors %}<td class="myerrors">{{ form.name.errors }}</td>{% endif %}
+                </tr>
+                <tr valign=top>
+                    <td valign=top>{{ form.members.label_tag }}*</td>
+                    <td>{{ form.members }}</td>
+                    <td class="myerrors"><div id="id_members_errors" class="error_label">{{ form.members.errors }}</div></td>
+                </tr>
+                
+                
+            </table>
+            <div class="myerrors">
+                {{ form.errors }}
+            </div>
+            <br>
+            
+            <div id="userDiv" style="display:block">
+                <table class="tab_panel">
+                    <tr class="section_subheader">
+                        <td colspan="4">Members</td>
+                    </tr>
+                    <tr class="col_header">
+                        <td style="width:250px">&nbsp;</td>
+                        <td style="width:50px">Administrator</td>
+                    </tr>
+                    <tr>
+                        <td colspan=4>
+                            <div id="users">
+                                {% for u in members %}
+                                    <div id="user-{{ u.id }}">
+                                        <table class="tab_panel">
+                                            <tr class="{%cycle 'odd_row' 'even_row'%}" valign=top>
+                                                <td style="width:250px">
+                                                    {{ u.username }} ({{ u.first_name }} {{ u.last_name }})
+                                                </td>
+                                                
+                                                <td style="width:50px">
+                                                    <input type=checkbox name="user-{{ u.id }}_admin" id="user-{{ u.id }}_admin" value="{{ u.id }}" {% if user_admin_permissions|lookup:u %}checked=True{% endif %}/>
+                                                </td>
+                                                
+                                            </tr>
+                                        </table>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            
+            <br>
+            <input class="btn" type="button" value="Save" onclick="save()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+            {% if ispopup %}
+                <input class="btn" type="button" value="Close" onclick="self.close();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+            {% endif %}
+            {% if form.instance.id %}
+                {% if not ispopup %}
+                    <input class="btn" type="button" value="Cancel" onclick="document.location.href='/gbdb/group/{{ form.instance.id }}/';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+                {% endif %}
+                <input class="btn" type="button" value="Delete" onclick="deleteGroup()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+            {% endif %}
+        </form>
+    </div>
+    
+<script type="text/html" id="group-permissions-template">
+    <div id="group-<%= id %>">
+        <table class="tab_panel">
+            <tr class="even_row" valign=top>
+                <td style="width:100px">
+                    <a href="/gbdb/group/<%= id %>/edit/" onclick="return showPopup('edit_group_<%= id %>', 700, 550, '/gbdb/group/<%= id %>/edit/');">Edit</a>&nbsp;&nbsp;
+                    <a href="" onclick="return deleteGroup('<%= id %>')">Delete</a>
+                </td>
+                <td>
+                    <a href="/gbdb/group/<%= id %>/" onclick="return showPopup('view_group_<%= id %>', 700, 550, '/gbdb/group/<%= id %>/');"><%= name %></a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</script>
+{% endblock %}

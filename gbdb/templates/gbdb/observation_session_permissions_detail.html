@@ -5,7 +5,7 @@
         function save()
         {
             data=$('#permForm').serialize();
-            var args = { type: "POST", url: '/gbdb/observation_session/{{ document.id }}/permissions/', data: data, complete: doneSave };
+            var args = { type: "POST", url: '/gbdb/observation_session/{{ observation_session.id }}/permissions/', data: data, complete: doneSave };
             $.ajax(args)
             return false;
         }
@@ -75,6 +75,7 @@
                     </tr>
                     <tr class="col_header">
                         <td style="width:250px">&nbsp;</td>
+                        <td style="width:50px">View</td>
                         <td style="width:50px">Edit</td>
                         <td style="width:50px">Delete</td>
                         <td style="width:50px">Manage</td>
@@ -88,6 +89,9 @@
                                             <tr class="{%cycle 'odd_row' 'even_row'%}" valign=top>
                                                 <td style="width:250px">
                                                     {{ u.username }} ({{ u.first_name }} {{ u.last_name }})
+                                                </td>
+                                                <td style="width:50px">
+                                                    <input type=checkbox name="user-{{ u.id }}_view" id="user-{{ u.id }}_view" value="{{ u.id }}" {% if user_view_permissions|lookup:u %}checked=True{% endif %}/>
                                                 </td>
                                                 <td style="width:50px">
                                                     <input type=checkbox name="user-{{ u.id }}_edit" id="user-{{ u.id }}_edit" value="{{ u.id }}" {% if user_edit_permissions|lookup:u %}checked=True{% endif %}/>
