@@ -3,8 +3,6 @@
     <title>GBDB - {% if form.instance.id%}Edit {{ form.instance.name }}{% else %}Add{% endif %} Group</title>
     <script type="text/javascript">
 
-        animatedcollapse.addDiv('permissionsData', 'fade=1');
-
         function save()
         {
             document.getElementById('groupForm').submit();
@@ -38,13 +36,37 @@
         {% endif %}
         
         //this needs to be called when a user is added with autocompletelight
-        function addUser(group_id, name){
-	        var tmplMarkup = $('#group-permissions-template').html();
-	        var compiledTmpl = _.template(tmplMarkup, { id : group_id, name: name });
-	        //$('#groups').append(compiledTmpl);
-	        //$('textarea:not(.processed)').TextAreaResizer();
+        function addUser(id, username, first_name, last_name, admin)
+        {
+            var count = $(document.getElementById('users')).children("[id^=user]").length;
+	        var tmplMarkup = $('#group-user-template').html();
+	        var compiledTmpl = _.template(tmplMarkup, { idx: count, id : id, username: username, first_name: first_name,
+                last_name: last_name, admin: admin });
+	        $('#users').append(compiledTmpl);
 	        return false;
 	    }
+
+        users={
+        {% for user in users %}
+            '{{ user.username }}': {
+                id: {{ user.id }},
+                first_name: '{{ user.first_name }}',
+                last_name: '{{ user.last_name }}',
+                admin: {% if users_admin|lookup:user.username %}true{% else %}false{% endif %}
+            },
+        {% endfor %}
+        };
+
+        $(document).ready(function()
+        {
+            widget=$('#id_members-wrapper').yourlabsWidget();
+            widget.input.bind('selectChoice', function(e, choice) {
+                var username=choice.html();
+                addUser(users[username].id, username, users[username].first_name, users[username].last_name,
+                        users[username].admin);
+                $(this).focus();
+            });
+        });
     </script>
 {% endblock %}
 {% block content %}
@@ -64,8 +86,6 @@
                     <td>{{ form.members }}</td>
                     <td class="myerrors"><div id="id_members_errors" class="error_label">{{ form.members.errors }}</div></td>
                 </tr>
-                
-                
             </table>
             <div class="myerrors">
                 {{ form.errors }}
@@ -75,14 +95,14 @@
             <div id="userDiv" style="display:block">
                 <table class="tab_panel">
                     <tr class="section_subheader">
-                        <td colspan="4">Members</td>
+                        <td colspan="2">Members</td>
                     </tr>
                     <tr class="col_header">
                         <td style="width:250px">&nbsp;</td>
-                        <td style="width:50px">Administrator</td>
+                        <td>Administrator</td>
                     </tr>
                     <tr>
-                        <td colspan=4>
+                        <td colspan=2>
                             <div id="users">
                                 {% for u in members %}
                                     <div id="user-{{ u.id }}">
@@ -92,8 +112,8 @@
                                                     {{ u.username }} ({{ u.first_name }} {{ u.last_name }})
                                                 </td>
                                                 
-                                                <td style="width:50px">
-                                                    <input type=checkbox name="user-{{ u.id }}_admin" id="user-{{ u.id }}_admin" value="{{ u.id }}" {% if user_admin_permissions|lookup:u %}checked=True{% endif %}/>
+                                                <td>
+                                                    <input type=checkbox name="user_admin" id="user-{{ u.id }}_admin" value="{{ u.id }}" {% if user_admin_permissions|lookup:u %}checked=True{% endif %}/>
                                                 </td>
                                                 
                                             </tr>
@@ -120,19 +140,19 @@
         </form>
     </div>
     
-<script type="text/html" id="group-permissions-template">
-    <div id="group-<%= id %>">
-        <table class="tab_panel">
-            <tr class="even_row" valign=top>
-                <td style="width:100px">
-                    <a href="/gbdb/group/<%= id %>/edit/" onclick="return showPopup('edit_group_<%= id %>', 700, 550, '/gbdb/group/<%= id %>/edit/');">Edit</a>&nbsp;&nbsp;
-                    <a href="" onclick="return deleteGroup('<%= id %>')">Delete</a>
-                </td>
-                <td>
-                    <a href="/gbdb/group/<%= id %>/" onclick="return showPopup('view_group_<%= id %>', 700, 550, '/gbdb/group/<%= id %>/');"><%= name %></a>
-                </td>
-            </tr>
-        </table>
-    </div>
-</script>
+    <script type="text/html" id="group-user-template">
+        <div id="user-<%= id %>">
+            <table class="tab_panel">
+                <tr class="<%= getTRTag(idx-1) %>" valign=top>
+                    <td style="width:250px">
+                        <%= username %> (<%= first_name %> <%= last_name %>)
+                    </td>
+
+                    <td>
+                        <input type=checkbox name="user_admin" id="user-<%= id %>_admin" value="<%= id %>" <% if(admin){ %>checked=True<% } %>/>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </script>
 {% endblock %}
