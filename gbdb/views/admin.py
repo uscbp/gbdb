@@ -72,92 +72,65 @@ class AdminDetailView(ListView):
 
         return context
 
-        
-class CreateGroupView(CreateView):
+
+class EditGroupMixin:
     model = CoWoGroup
     form_class = GroupForm
     template_name = 'gbdb/admin/group_detail.html'
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+
+        group=form.save()
+
+        assign_perm('gbdb.admin_cowogroup', self.request.user, group)
+
+        for user in group.members.all():
+            if 'user_admin' in self.request.POST and str(user.id) in self.request.POST.getlist('user_admin'):
+                assign_perm('gbdb.admin_cowogroup', user, self.object)
+            else:
+                remove_perm('gbdb.admin_cowogroup', user, self.object)
+        redirect_url='%s?action=%s' % (reverse('group_view', kwargs={'pk': group.id}),context['action'])
+        if context['ispopup']:
+            redirect_url+='&_popup=1'
+        return redirect(redirect_url)
+
+
+class CreateGroupView(EditGroupMixin, CreateView):
+
+    def get_initial(self):
+        initial=super(CreateGroupView,self).get_initial()
+        initial['members']=[self.request.user]
+        return initial
 
     def get_context_data(self, **kwargs):
         context = super(CreateGroupView,self).get_context_data(**kwargs)
-        
-        context['user_admin_permissions']={}
         context['members']=[self.request.user]
-        for user in context['members']:
-            context['user_admin_permissions'][user]=False
-            if self.request.POST:
-                context['user_admin_permissions'][user]=('user-%d_admin' % user.id) in self.request.POST
-            else:
-                context['user_admin_permissions'][user]=user.has_perm('gbdb.admin_cowogroup',self.object)
-                
+        context['user_admin_permissions']={}
+        context['user_admin_permissions'][self.request.user]=self.request.user.has_perm('gbdb.admin_cowogroup',self.object)
+        context['users']=User.objects.all()
+        context['users_admin']={}
+        for user in User.objects.all():
+            context['users_admin'][user.username]=user.has_perm('gbdb.admin_cowogroup',self.object)
         context['ispopup']=('_popup' in self.request.GET)
+        context['action']='add'
         return context
 
-    def form_valid(self, form):
-        context = self.get_context_data()
 
-        group=form.save()
-        
-        assign_perm('gbdb.admin_cowogroup', self.request.user, group)
-
-#         for permission in gbdb_permissions:
-#             if context[permission]:
-#                 assign_perm(permission, group)
-#             else:
-#                 remove_perm(permission, group)
-
-        redirect_url='%s?action=add' % reverse('group_view', kwargs={'pk': group.id})
-        if context['ispopup']:
-            redirect_url+='&_popup=1'
-        return redirect(redirect_url)
-
-
-class UpdateGroupView(UpdateView):
-    model = CoWoGroup
-    form_class = GroupForm
-    template_name = 'gbdb/admin/group_detail.html'
-
+class UpdateGroupView(EditGroupMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(UpdateGroupView,self).get_context_data(**kwargs)
-#         if self.request.POST:
-#             for permission in gbdb_permissions:
-#                 context[permission]=permission in self.request.POST
-#         else:
-#             for permission in gbdb_permissions:
-#                 context[permission]=self.object.permissions.filter(id=Permission.objects.get(codename=permission).id)
-        context['ispopup']=('_popup' in self.request.GET)
-        
         context['user_admin_permissions']={}
         context['members']=self.object.members.all()
         for user in context['members']:
-            context['user_admin_permissions'][user]=False
-            if self.request.POST:
-                context['user_admin_permissions'][user]=('user-%d_admin' % user.id) in self.request.POST
-            else:
-                context['user_admin_permissions'][user]=user.has_perm('gbdb.admin_cowogroup',self.object)
+            context['user_admin_permissions'][user]=user.has_perm('gbdb.admin_cowogroup',self.object)
+        context['users']=User.objects.all()
+        context['users_admin']={}
+        for user in User.objects.all():
+            context['users_admin'][user.username]=user.has_perm('gbdb.admin_cowogroup',self.object)
+        context['ispopup']=('_popup' in self.request.GET)
+        context['action']='edit'
         return context
-
-    def form_valid(self, form):
-        context = self.get_context_data()
-
-        group=form.save()
-        
-        for user in context['members']:
-            if context['user_admin_permissions'][user]:
-                assign_perm('admin_cowogroup', user, self.object)
-            else:
-                remove_perm('admin_cowogroup', user, self.object)
-
-#         for permission in gbdb_permissions:
-#             if context[permission]:
-#                 assign_perm(permission, group)
-#             else:
-#                 remove_perm(permission, group)
-
-        redirect_url='%s?action=edit' % reverse('group_view', kwargs={'pk': group.id})
-        if context['ispopup']:
-            redirect_url+='&_popup=1'
-        return redirect(redirect_url)
 
 
 class GroupDetailView(DetailView):
@@ -175,8 +148,8 @@ class GroupDetailView(DetailView):
             context['user_admin_permissions'][user]=user.has_perm('gbdb.admin_cowogroup',self.object)
         context['id']=self.object.id
         context['isadmin']= self.request.user.has_perm('gbdb.admin_cowogroup',self.object)
-        #for permission in gbdb_permissions:
-        #    context[permission]=self.object.permissions.filter(id=Permission.objects.get(codename=permission).id)
+        if 'action' in self.request.GET:
+            context['action']=self.request.GET.get('action')
         return context
 
 
