@@ -32,22 +32,23 @@
             <div id="groupDiv" style="display:block">
                 <table class="tab_panel">
                     <tr class="section_subheader">
-                        <td colspan="4">Groups</td>
+                        <td colspan="5">Groups</td>
                     </tr>
                     <tr class="col_header">
-                        <td style="width:250px">&nbsp;</td>
+                        <td style="width:300px">&nbsp;</td>
                         <td style="width:50px">Edit</td>
                         <td style="width:50px">Delete</td>
                         <td style="width:50px">Manage</td>
+                        <td>&nbsp;</td>
                     </tr>
                     <tr>
-                        <td colspan=4>
+                        <td colspan=5>
                             <div id="groups">
                                 {% for group in groups %}
                                     <div id="group-{{ group.id }}">
                                         <table class="tab_panel">
                                             <tr class="{%cycle 'odd_row' 'even_row'%}" valign=top>
-                                                <td style="width:250px">
+                                                <td style="width:300px">
                                                     {{ group }}
                                                 </td>
                                                 <td style="width:50px">
@@ -59,6 +60,7 @@
                                                 <td style="width:50px">
                                                     <input type=checkbox name="group-{{ group.id }}_manage" id="group-{{ group.id }}_manage" value="{{ group.id }}" {% if group_manage_permissions|lookup:group %}checked=True{% endif %}/>
                                                 </td>
+                                                <td>&nbsp;</td>
                                             </tr>
                                         </table>
                                     </div>
@@ -71,23 +73,24 @@
             <div id="userDiv" style="display:block">
                 <table class="tab_panel">
                     <tr class="section_subheader">
-                        <td colspan="4">Users</td>
+                        <td colspan="6">Users</td>
                     </tr>
                     <tr class="col_header">
-                        <td style="width:250px">&nbsp;</td>
+                        <td style="width:300px">&nbsp;</td>
                         <td style="width:50px">View</td>
                         <td style="width:50px">Edit</td>
                         <td style="width:50px">Delete</td>
                         <td style="width:50px">Manage</td>
+                        <td>&nbsp;</td>
                     </tr>
                     <tr>
-                        <td colspan=4>
+                        <td colspan=6>
                             <div id="users">
                                 {% for u in users %}
                                     <div id="user-{{ u.id }}">
                                         <table class="tab_panel">
                                             <tr class="{%cycle 'odd_row' 'even_row'%}" valign=top>
-                                                <td style="width:250px">
+                                                <td style="width:300px">
                                                     {{ u.username }} ({{ u.first_name }} {{ u.last_name }})
                                                 </td>
                                                 <td style="width:50px">
@@ -102,6 +105,7 @@
                                                 <td style="width:50px">
                                                     <input type=checkbox name="user-{{ u.id }}_manage" id="user-{{ u.id }}_manage" value="{{ u.id }}" {% if user_manage_permissions|lookup:u %}checked=True{% endif %}/>
                                                 </td>
+                                                <td>&nbsp;</td>
                                             </tr>
                                         </table>
                                     </div>

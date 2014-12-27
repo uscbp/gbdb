@@ -117,7 +117,7 @@ class SearchObservationSessionView(FormView):
     
 
 class ManageObservationSessionPermissionsView(DetailView):
-    template_name = 'gbdb/observation_session_permissions_detail.html'
+    template_name = 'gbdb/observation_session/observation_session_permissions_detail.html'
 
     def post(self, request, *args, **kwargs):
         self.object=ObservationSession.objects.get(id=self.kwargs.get('pk',None))
