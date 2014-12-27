@@ -123,19 +123,19 @@ class ManageObservationSessionPermissionsView(DetailView):
         self.object=ObservationSession.objects.get(id=self.kwargs.get('pk',None))
         context = self.get_context_data(**kwargs)
         for user in context['users']:
-            if context['user_view_permissions'][user]:
+            if ('user-%d_view' % user.id) in request.POST:
                 assign_perm('view_observationsession', user, self.object)
             else:
                 remove_perm('view_observationsession', user, self.object)
-            if context['user_manage_permissions'][user]:
+            if ('user-%d_manage' % user.id) in request.POST:
                 assign_perm('manage_observationsession', user, self.object)
             else:
                 remove_perm('manage_observationsession', user, self.object)
-            if context['user_edit_permissions'][user]:
+            if ('user-%d_edit' % user.id) in request.POST:
                 assign_perm('edit_observationsession', user, self.object)
             else:
                 remove_perm('edit_observationsession', user, self.object)
-            if context['user_delete_permissions'][user]:
+            if ('user-%d_delete' % user.id) in request.POST:
                 assign_perm('delete_observationsession', user, self.object)
             else:
                 remove_perm('delete_observationsession', user, self.object)
