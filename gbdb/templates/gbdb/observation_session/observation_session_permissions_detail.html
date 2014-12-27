@@ -10,17 +10,33 @@
             return false;
         }
 
-    function doneSave(res, status)
-    {
-        var txt = res.responseText;
-        if (status!="success")
-            alert(res.responseText);
-        else
+        function doneSave(res, status)
         {
-            alert('Permissions saved');
-            window.close();
+            var txt = res.responseText;
+            if (status!="success")
+                alert(res.responseText);
+            else
+            {
+                alert('Permissions saved');
+                window.close();
+            }
         }
-    }
+
+        groupMembers={
+        {% for group_id in group_members %}
+            {{ group_id }}: [{{ group_members|lookup:group_id|join:',' }}],
+        {% endfor %}
+        };
+
+        function propagatePermissions(group_id, permission)
+        {
+            var checked=document.getElementById('group-'+group_id+'_'+permission).checked;
+            for(var i=0; i<groupMembers[group_id].length; i++)
+            {
+                if(document.getElementById('user-'+groupMembers[group_id][i]+'_'+permission)!=null)
+                    document.getElementById('user-'+groupMembers[group_id][i]+'_'+permission).checked=checked;
+            }
+        }
     </script>
 {% endblock %}
 {% block content %}
@@ -32,33 +48,37 @@
             <div id="groupDiv" style="display:block">
                 <table class="tab_panel">
                     <tr class="section_subheader">
-                        <td colspan="5">Groups</td>
+                        <td colspan="6">Groups</td>
                     </tr>
                     <tr class="col_header">
-                        <td style="width:300px">&nbsp;</td>
+                        <td style="width:450px">&nbsp;</td>
+                        <td style="width:50px">View</td>
                         <td style="width:50px">Edit</td>
                         <td style="width:50px">Delete</td>
                         <td style="width:50px">Manage</td>
                         <td>&nbsp;</td>
                     </tr>
                     <tr>
-                        <td colspan=5>
+                        <td colspan=6>
                             <div id="groups">
                                 {% for group in groups %}
                                     <div id="group-{{ group.id }}">
                                         <table class="tab_panel">
                                             <tr class="{%cycle 'odd_row' 'even_row'%}" valign=top>
-                                                <td style="width:300px">
-                                                    {{ group }}
+                                                <td style="width:450px">
+                                                    {{ group.name }}
                                                 </td>
                                                 <td style="width:50px">
-                                                    <input type=checkbox name="group-{{ group.id }}_edit" id="group-{{ group.id }}_edit" value="{{ group.id }}" {% if group_edit_permissions|lookup:group %}checked=True{% endif %}/>
+                                                    <input type=checkbox name="group-{{ group.id }}_view" id="group-{{ group.id }}_view" value="{{ group.id }}" {% if group_view_permissions|lookup:group %}checked=True{% endif %} onclick="propagatePermissions({{ group.id }},'view')"/>
                                                 </td>
                                                 <td style="width:50px">
-                                                    <input type=checkbox name="group-{{ group.id }}_delete" id="group-{{ group.id }}_delete" value="{{ group.id }}" {% if group_delete_permissions|lookup:group %}checked=True{% endif %}/>
+                                                    <input type=checkbox name="group-{{ group.id }}_edit" id="group-{{ group.id }}_edit" value="{{ group.id }}" {% if group_edit_permissions|lookup:group %}checked=True{% endif %} onclick="propagatePermissions({{ group.id }},'edit')"/>
                                                 </td>
                                                 <td style="width:50px">
-                                                    <input type=checkbox name="group-{{ group.id }}_manage" id="group-{{ group.id }}_manage" value="{{ group.id }}" {% if group_manage_permissions|lookup:group %}checked=True{% endif %}/>
+                                                    <input type=checkbox name="group-{{ group.id }}_delete" id="group-{{ group.id }}_delete" value="{{ group.id }}" {% if group_delete_permissions|lookup:group %}checked=True{% endif %} onclick="propagatePermissions({{ group.id }},'delete')"/>
+                                                </td>
+                                                <td style="width:50px">
+                                                    <input type=checkbox name="group-{{ group.id }}_manage" id="group-{{ group.id }}_manage" value="{{ group.id }}" {% if group_manage_permissions|lookup:group %}checked=True{% endif %} onclick="propagatePermissions({{ group.id }},'manage  ')"/>
                                                 </td>
                                                 <td>&nbsp;</td>
                                             </tr>
@@ -76,7 +96,7 @@
                         <td colspan="6">Users</td>
                     </tr>
                     <tr class="col_header">
-                        <td style="width:300px">&nbsp;</td>
+                        <td style="width:450px">&nbsp;</td>
                         <td style="width:50px">View</td>
                         <td style="width:50px">Edit</td>
                         <td style="width:50px">Delete</td>
@@ -90,7 +110,7 @@
                                     <div id="user-{{ u.id }}">
                                         <table class="tab_panel">
                                             <tr class="{%cycle 'odd_row' 'even_row'%}" valign=top>
-                                                <td style="width:300px">
+                                                <td style="width:450px">
                                                     {{ u.username }} ({{ u.first_name }} {{ u.last_name }})
                                                 </td>
                                                 <td style="width:50px">

@@ -6,7 +6,7 @@ from django.http import request
 from django.shortcuts import redirect
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView, FormView
 from gbdb.forms import ObservationSessionForm, ObservationSessionSearchForm
-from gbdb.models import ObservationSession, BehavioralEvent, GesturalEvent
+from gbdb.models import ObservationSession, BehavioralEvent, GesturalEvent, CoWoGroup
 from gbdb.search import runObservationSessionSearch
 from guardian.shortcuts import assign_perm, remove_perm, get_perms
 import json
@@ -139,23 +139,6 @@ class ManageObservationSessionPermissionsView(DetailView):
                 assign_perm('delete_observationsession', user, self.object)
             else:
                 remove_perm('delete_observationsession', user, self.object)
-        for group in context['groups']:
-            if context['group_view_permissions'][group]:
-                assign_perm('view_observationsession', group, self.object)
-            else:
-                remove_perm('view_observationsession', group, self.object)
-            if context['group_manage_permissions'][group]:
-                assign_perm('manage_observationsession', group, self.object)
-            else:
-                remove_perm('manage_observationsession', group, self.object)
-            if context['group_edit_permissions'][group]:
-                assign_perm('edit_observationsession', group, self.object)
-            else:
-                remove_perm('edit_observationsession', group, self.object)
-            if context['group_delete_permissions'][group]:
-                assign_perm('delete_observationsession', group, self.object)
-            else:
-                remove_perm('delete_observationsession', group, self.object)
 
         redirect_url='/gbdb/observation_session/%d/permissions/' % self.object.id
         if context['ispopup']:
@@ -171,7 +154,7 @@ class ManageObservationSessionPermissionsView(DetailView):
         context['observation_session']=self.object
         context['helpPage']='permissions.html#individual-entry-permissions'
         context['users']=User.objects.all().exclude(id=self.request.user.id)
-        context['groups']=Group.objects.filter(user__id=self.request.user.id)
+        context['groups']=CoWoGroup.objects.filter(members__id=self.request.user.id)
         context['ispopup']=('_popup' in self.request.GET)
         context['user_view_permissions']={}
         context['user_manage_permissions']={}
@@ -182,33 +165,28 @@ class ManageObservationSessionPermissionsView(DetailView):
         context['group_edit_permissions']={}
         context['group_delete_permissions']={}
         for user in context['users']:
-            context['user_view_permissions'][user]=False
-            context['user_manage_permissions'][user]=False
-            context['user_edit_permissions'][user]=False
-            context['user_delete_permissions'][user]=False
-            if self.request.POST:
-                context['user_view_permissions'][user]=('user-%d_view' % user.id) in self.request.POST
-                context['user_manage_permissions'][user]=('user-%d_manage' % user.id) in self.request.POST
-                context['user_edit_permissions'][user]=('user-%d_edit' % user.id) in self.request.POST
-                context['user_delete_permissions'][user]=('user-%d_delete' % user.id) in self.request.POST
-            else:
-                context['user_view_permissions'][user]=user.has_perm('view_observationsession',self.object)
-                context['user_manage_permissions'][user]=user.has_perm('manage_observationsession',self.object)
-                context['user_edit_permissions'][user]=user.has_perm('edit_observationsession',self.object)
-                context['user_delete_permissions'][user]=user.has_perm('delete_observationsession',self.object)
+            context['user_view_permissions'][user]=user.has_perm('view_observationsession',self.object)
+            context['user_manage_permissions'][user]=user.has_perm('manage_observationsession',self.object)
+            context['user_edit_permissions'][user]=user.has_perm('edit_observationsession',self.object)
+            context['user_delete_permissions'][user]=user.has_perm('delete_observationsession',self.object)
         for group in context['groups']:
-            context['group_view_permissions'][group]=False
-            context['group_manage_permissions'][group]=False
-            context['group_edit_permissions'][group]=False
-            context['group_delete_permissions'][group]=False
-            if self.request.POST:
-                context['group_view_permissions'][group]=('group-%d_view' % group.id) in self.request.POST
-                context['group_manage_permissions'][group]=('group-%d_manage' % group.id) in self.request.POST
-                context['group_edit_permissions'][group]=('group-%d_edit' % group.id) in self.request.POST
-                context['group_delete_permissions'][group]=('group-%d_delete' % group.id) in self.request.POST
-            else:
-                context['group_view_permissions'][group]='view_observationsession' in get_perms(group,self.object)
-                context['group_manage_permissions'][group]='manage_observationsession' in get_perms(group,self.object)
-                context['group_edit_permissions'][group]='edit_observationsession' in get_perms(group,self.object)
-                context['group_delete_permissions'][group]='delete_observationsession' in get_perms(group,self.object)
+            context['group_view_permissions'][group]=True
+            context['group_manage_permissions'][group]=True
+            context['group_edit_permissions'][group]=True
+            context['group_delete_permissions'][group]=True
+            for user in group.members.all():
+                if not user.has_perm('view_observationsession',self.object):
+                    context['group_view_permissions'][group]=False
+                if not user.has_perm('manage_observationsession',self.object):
+                    context['group_manage_permissions'][group]=False
+                if not user.has_perm('edit_observationsession',self.object):
+                    context['group_edit_permissions'][group]=False
+                if not user.has_perm('delete_observationsession',self.object):
+                    context['group_delete_permissions'][group]=False
+        context['group_members']={}
+        for group in context['groups']:
+            group_members=[]
+            for user in group.members.all():
+                group_members.append(user.id)
+            context['group_members'][group.id]=group_members
         return context
