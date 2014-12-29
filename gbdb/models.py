@@ -214,8 +214,8 @@ class ObservationSession(models.Model):
 
         assign_perm('view_observationsession',self.collator,self)
         assign_perm('change_observationsession',self.collator,self)
-        assign_perm('change_observationsession',self.collator,self)
         assign_perm('delete_observationsession',self.collator,self)
+        assign_perm('manage_observationsession',self.collator,self)
 
         if self.video.name:
             orig_filename=os.path.join(settings.MEDIA_ROOT,self.video.name)
