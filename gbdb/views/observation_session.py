@@ -98,7 +98,7 @@ class ObservationSessionDetailView(PermissionRequiredMixin, DetailView):
         #context['has_delete_perms'] = self.request.user.has_perm('delete', self.object)
         
         context['has_delete_perms'] = self.request.user.has_perm('gbdb.delete_observationsession', self.object)
-        context['has_edit_perms'] = self.request.user.has_perm('gbdb.edit_observationsession', self.object)
+        context['has_edit_perms'] = self.request.user.has_perm('gbdb.change_observationsession', self.object)
         
         return context
 
@@ -132,9 +132,9 @@ class ManageObservationSessionPermissionsView(DetailView):
             else:
                 remove_perm('manage_observationsession', user, self.object)
             if ('user-%d_edit' % user.id) in request.POST:
-                assign_perm('edit_observationsession', user, self.object)
+                assign_perm('change_observationsession', user, self.object)
             else:
-                remove_perm('edit_observationsession', user, self.object)
+                remove_perm('change_observationsession', user, self.object)
             if ('user-%d_delete' % user.id) in request.POST:
                 assign_perm('delete_observationsession', user, self.object)
             else:
@@ -167,7 +167,7 @@ class ManageObservationSessionPermissionsView(DetailView):
         for user in context['users']:
             context['user_view_permissions'][user]=user.has_perm('view_observationsession',self.object)
             context['user_manage_permissions'][user]=user.has_perm('manage_observationsession',self.object)
-            context['user_edit_permissions'][user]=user.has_perm('edit_observationsession',self.object)
+            context['user_edit_permissions'][user]=user.has_perm('change_observationsession',self.object)
             context['user_delete_permissions'][user]=user.has_perm('delete_observationsession',self.object)
         for group in context['groups']:
             context['group_view_permissions'][group]=True
@@ -179,7 +179,7 @@ class ManageObservationSessionPermissionsView(DetailView):
                     context['group_view_permissions'][group]=False
                 if not user.has_perm('manage_observationsession',self.object):
                     context['group_manage_permissions'][group]=False
-                if not user.has_perm('edit_observationsession',self.object):
+                if not user.has_perm('change_observationsession',self.object):
                     context['group_edit_permissions'][group]=False
                 if not user.has_perm('delete_observationsession',self.object):
                     context['group_delete_permissions'][group]=False

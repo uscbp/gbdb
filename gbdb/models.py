@@ -143,8 +143,6 @@ class ObservationSession(models.Model):
         
         permissions=(
             ('manage_observationsession', 'Manage permissions'),
-            ('edit_observationsession', 'Edit permissions'),
-            #('delete_observationsession', 'Delete permissions'),
             ('view_observationsession', 'View permissions')
         )
 
@@ -213,6 +211,11 @@ class ObservationSession(models.Model):
 
         super(ObservationSession,self).save(force_insert=force_insert, force_update=force_update, using=using,
             update_fields=update_fields)
+
+        assign_perm('view_observationsession',self.collator,self)
+        assign_perm('change_observationsession',self.collator,self)
+        assign_perm('change_observationsession',self.collator,self)
+        assign_perm('delete_observationsession',self.collator,self)
 
         if self.video.name:
             orig_filename=os.path.join(settings.MEDIA_ROOT,self.video.name)
