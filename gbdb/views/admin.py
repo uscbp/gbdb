@@ -110,7 +110,7 @@ class CreateGroupView(EditGroupMixin, CreateView):
         context = super(CreateGroupView,self).get_context_data(**kwargs)
         context['members']=[self.request.user]
         context['user_admin_permissions']={}
-        context['user_admin_permissions'][self.request.user]=self.request.user.has_perm('gbdb.admin_cowogroup',self.object)
+        context['user_admin_permissions'][self.request.user]=True
         context['users']=User.objects.all()
         context['users_admin']={}
         for user in User.objects.all():
