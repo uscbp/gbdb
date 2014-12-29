@@ -47,6 +47,9 @@ class GbdbRegistrationView(RegistrationView):
         new_user.first_name=request.POST['first_name']
         new_user.last_name=request.POST['last_name']
         new_user.save()
+
+        assign_perm('gbdb.view_observationsession', new_user)
+
         success_url = self.get_success_url(request, new_user)
 
         # success_url may be a simple string, or a tuple providing the
