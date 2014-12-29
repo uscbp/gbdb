@@ -66,6 +66,9 @@
                         users[username].admin);
                 $(this).focus();
             });
+            {% for u in members %}
+                addUser({{ u.id }}, '{{ u.username }}', '{{ u.first_name }}', '{{ u.last_name }}', {% if user_admin_permissions|lookup:u %}true{% else %}false{% endif %});
+            {% endfor %}
         });
     </script>
 {% endblock %}
@@ -104,22 +107,6 @@
                     <tr>
                         <td colspan=2>
                             <div id="users">
-                                {% for u in members %}
-                                    <div id="user-{{ u.id }}">
-                                        <table class="tab_panel">
-                                            <tr class="{%cycle 'odd_row' 'even_row'%}" valign=top>
-                                                <td style="width:250px">
-                                                    {{ u.username }} ({{ u.first_name }} {{ u.last_name }})
-                                                </td>
-                                                
-                                                <td>
-                                                    <input type=checkbox name="user_admin" id="user-{{ u.id }}_admin" value="{{ u.id }}" {% if user_admin_permissions|lookup:u %}checked=True{% endif %}/>
-                                                </td>
-                                                
-                                            </tr>
-                                        </table>
-                                    </div>
-                                {% endfor %}
                             </div>
                         </td>
                     </tr>
