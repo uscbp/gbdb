@@ -6,6 +6,13 @@ function deleteInlineForm(prefix, idx){
     return false;
 }
 
+function clearSpan(doc, spanId)
+{
+    if(doc.getElementById(spanId)!=null)
+        doc.getElementById(spanId).innerHTML='';
+    return false;
+}
+
 function showPopup(windowName, width, height, href)
 {
     if (href.indexOf('?') == -1)
