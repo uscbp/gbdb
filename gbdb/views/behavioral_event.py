@@ -65,18 +65,18 @@ class EditBehavioralEventMixin(object):
         if not 'start_time' in data['errors'] and not 'duration' in data['errors']:
             if self.object.parent is None:
                 if self.object.observation_session.video.name:
-                    if self.object.end_time()>self.object.observation_session.duration_seconds():
+                    if round(self.object.end_time(),2) > round(self.object.observation_session.duration_seconds(),2):
                         data['errors']['duration']=['Event exceeds observation session duration']
                     for other_event in BehavioralEvent.objects.filter(observation_session=self.object.observation_session,parent__isnull=True).exclude(id=self.object.id):
-                        if other_event.start_time <= self.object.end_time() and self.object.start_time <=other_event.end_time():
+                        if round(other_event.start_time,2) <= round(self.object.end_time(),2) and round(self.object.start_time,2) < round(other_event.end_time(),2):
                             data['errors']['start_time']=['Event overlaps other events']
             else:
-                if self.object.end_time()>self.object.parent.end_time():
+                if round(self.object.end_time(),2)>round(self.object.parent.end_time(),2):
                     data['errors']['duration']=['Subevent exceeds parent event duration']
-                if self.object.start_time<self.object.parent.start_time:
+                if round(self.object.start_time,2)<round(self.object.parent.start_time,2):
                     data['errors']['start_time']=['Subevent starts before parent event']
                 for other_event in BehavioralEvent.objects.filter(parent=self.object.parent).exclude(id=self.object.id):
-                    if other_event.start_time <= self.object.end_time() and self.object.start_time <=other_event.end_time():
+                    if round(other_event.start_time,2) <= round(self.object.end_time(),2) and round(self.object.start_time,2) < round(other_event.end_time(),2):
                         data['errors']['start_time']=['Subevent overlaps other subevents']
 
         if len(data['errors'].keys()):
