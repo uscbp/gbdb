@@ -1,4 +1,5 @@
 {% extends "base_generic.html" %}
+{% load gbdb_extras %}
 {% block extrahead %}
     <title>GBDB - Manage Observation Session Permissions</title>
     <script type="text/javascript">
@@ -40,7 +41,6 @@
     </script>
 {% endblock %}
 {% block content %}
-    {% load gbdb_extras %}
     <div id="detail">
         <h2>Observation Session Permissions</h2>
         <form id="permForm" method="post" action="">
