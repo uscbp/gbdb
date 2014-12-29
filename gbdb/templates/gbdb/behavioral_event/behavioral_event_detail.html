@@ -10,6 +10,7 @@
             primateElem.selected='selected';
             var selectElem=document.getElementById(targetElem);
             selectElem.appendChild(primateElem);
+            $(selectElem).scrollTop($(primateElem).offset().top);
         }
 
         function updateBehavioralEventOptions(sedType)
