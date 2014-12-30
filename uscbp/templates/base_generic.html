@@ -38,18 +38,18 @@
                     <tr>
                         <h2>Observation Sessions</h2>
                         <ul>
-                            {% if user.is_authenticated and not user.is_anonymous %}
+                             {% if user.is_authenticated and not user.is_anonymous %}
                                 <li><a href="/gbdb/observation_session/new/">Insert</a></li>
+                             {% endif %}
                                 <li><a href="/gbdb/observation_session/search/">Search</a></li>
-                            {% endif %}
+                            
                         </ul>
                     </tr>
                     <tr>
                         <h2>Behavioral Events</h2>
                         <ul>
-                            {% if user.is_authenticated and not user.is_anonymous %}
                                 <li><a href="/gbdb/behavioral_event/search/">Search</a></li>
-                            {% endif %}
+                           
                         </ul>
                     </tr>
                     <tr>
@@ -57,8 +57,9 @@
                         <ul>
                             {% if user.is_authenticated and not user.is_anonymous %}
                                 <li><a href="/gbdb/primate/new/">Insert</a></li>
-                                <li><a href="/gbdb/primate/search/">Search</a></li>
                             {% endif %}
+                                <li><a href="/gbdb/primate/search/">Search</a></li>
+                            
                         </ul>
                     </tr>
                     <tr>
@@ -66,17 +67,20 @@
                         <ul>
                             {% if user.is_authenticated and not user.is_anonymous %}
                                 <li><a href="/gbdb/gesture/new/">Insert</a></li>
-                                <li><a href="/gbdb/gesture/search/">Search</a></li>
                             {% endif %}
+                                <li><a href="/gbdb/gesture/search/">Search</a></li>
+                            
                         </ul>
                     </tr>
                     <tr>
+                    	{% if user.is_authenticated and not user.is_anonymous %}
                         <h2>Admin</h2>
                         <ul>
-                            {% if user.is_authenticated and not user.is_anonymous %}
+                            
                                 <li><a href="/gbdb/admin/">Groups</a></li>
-                            {% endif %}
+                           
                         </ul>
+                         {% endif %}
                     </tr>
                </table>
                <div style="background:#ffffff;border:0">

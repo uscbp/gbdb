@@ -6,6 +6,7 @@
         function save()
         {
             data=$('#permForm').serialize();
+            console.log(data);
             var args = { type: "POST", url: '/gbdb/observation_session/{{ observation_session.id }}/permissions/', data: data, complete: doneSave };
             $.ajax(args)
             return false;
@@ -135,6 +136,12 @@
                     </tr>
                 </table>
             </div>
+           
+          <br>
+            <input type=checkbox name="user-{{ anon_user.id }}_view" id="user-{{ anon_user.id }}_view" value="{{ anon_user.id }}" {% if user_view_permissions|lookup:anon_user %}checked=True{% endif %}/> public
+          <br>
+          <br>
+          
             <input class="btn" type="button" value="Save" onclick="return save();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
             <input class="btn" type="button" value="Cancel" onclick="window.close();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
         </form>

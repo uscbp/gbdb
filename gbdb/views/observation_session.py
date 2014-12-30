@@ -14,6 +14,7 @@ from django.http import HttpResponse
 from guardian.mixins import PermissionRequiredMixin
 from registration.models import User
 from django.contrib.auth.models import Group
+from uscbp import settings
 
 class EditObservationSessionMixin():
     model=ObservationSession
@@ -139,6 +140,13 @@ class ManageObservationSessionPermissionsView(DetailView):
                 assign_perm('delete_observationsession', user, self.object)
             else:
                 remove_perm('delete_observationsession', user, self.object)
+                
+        anon_user = User.objects.get(id = settings.ANONYMOUS_USER_ID)
+        
+        if ('user-%d_view' % anon_user.id) in request.POST:
+            assign_perm('view_observationsession', anon_user, self.object)
+        else:
+            remove_perm('view_observationsession', anon_user, self.object)
 
         redirect_url='/gbdb/observation_session/%d/permissions/' % self.object.id
         if context['ispopup']:
@@ -153,7 +161,7 @@ class ManageObservationSessionPermissionsView(DetailView):
         context=super(DetailView,self).get_context_data(**kwargs)
         context['observation_session']=self.object
         context['helpPage']='permissions.html#individual-entry-permissions'
-        context['users']=User.objects.all().exclude(id=self.request.user.id)
+        context['users']=User.objects.all().exclude(id__in=[self.request.user.id, settings.ANONYMOUS_USER_ID])
         context['groups']=CoWoGroup.objects.filter(members__id=self.request.user.id)
         context['ispopup']=('_popup' in self.request.GET)
         context['user_view_permissions']={}
@@ -189,4 +197,7 @@ class ManageObservationSessionPermissionsView(DetailView):
             for user in group.members.all():
                 group_members.append(user.id)
             context['group_members'][group.id]=group_members
+        anon_user = User.objects.get(id = settings.ANONYMOUS_USER_ID)
+        context['anon_user'] = anon_user
+        context['user_view_permissions'][anon_user]=anon_user.has_perm('view_observationsession',self.object)
         return context
