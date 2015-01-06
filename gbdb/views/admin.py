@@ -12,6 +12,8 @@ from gbdb.forms import GroupForm
 from uscbp.views import JSONResponseMixin
 from django.views.generic.edit import BaseUpdateView
 from guardian.shortcuts import assign_perm, remove_perm, get_perms
+from django.contrib.auth.decorators import user_passes_test
+from guardian.mixins import PermissionRequiredMixin
 
 @login_required
 def logout_view(request):
@@ -69,9 +71,12 @@ class AdminDetailView(ListView):
     def get_context_data(self, **kwargs):
         context = super(AdminDetailView,self).get_context_data(**kwargs)
         context['user_admin_permissions']={}
-        context['groups']=CoWoGroup.objects.filter(members__id = self.request.user.id).order_by('name')
+        if self.request.user.is_superuser:
+            context['groups']=CoWoGroup.objects.all().order_by('name')
+        else:
+            context['groups']=CoWoGroup.objects.filter(members__id = self.request.user.id).order_by('name')
         for group in context['groups']:
-            context['user_admin_permissions'][group]=self.request.user.has_perm('gbdb.admin_cowogroup', group)
+            context['user_admin_permissions'][group]=self.request.user.has_perm('gbdb.admin_cowogroup', group) or self.request.user.is_superuser
 
         return context
 
@@ -85,14 +90,17 @@ class EditGroupMixin:
         context = self.get_context_data()
 
         group=form.save()
+        
+        if self.request.user.has_perm('gbdb.admin_cowogroup', group) or self.request.user.is_superuser:
 
-        assign_perm('gbdb.admin_cowogroup', self.request.user, group)
-
-        for user in group.members.all():
-            if 'user_admin' in self.request.POST and str(user.id) in self.request.POST.getlist('user_admin'):
-                assign_perm('gbdb.admin_cowogroup', user, self.object)
-            else:
-                remove_perm('gbdb.admin_cowogroup', user, self.object)
+            assign_perm('gbdb.admin_cowogroup', self.request.user, group)
+    
+            for user in group.members.all():
+                if 'user_admin' in self.request.POST and str(user.id) in self.request.POST.getlist('user_admin'):
+                    assign_perm('gbdb.admin_cowogroup', user, self.object)
+                else:
+                    remove_perm('gbdb.admin_cowogroup', user, self.object)
+                    
         redirect_url='%s?action=%s' % (reverse('group_view', kwargs={'pk': group.id}),context['action'])
         if context['ispopup']:
             redirect_url+='&_popup=1'
@@ -120,7 +128,11 @@ class CreateGroupView(EditGroupMixin, CreateView):
         return context
 
 
-class UpdateGroupView(EditGroupMixin, UpdateView):
+class UpdateGroupView(PermissionRequiredMixin, EditGroupMixin, UpdateView):
+    
+    permission_required = 'gbdb.admin_cowogroup'
+    raise_exception = True
+    
     def get_context_data(self, **kwargs):
         context = super(UpdateGroupView,self).get_context_data(**kwargs)
         context['user_admin_permissions']={}
@@ -156,14 +168,17 @@ class GroupDetailView(DetailView):
         return context
 
 
-class DeleteGroupView(JSONResponseMixin,BaseUpdateView):
+class DeleteGroupView(PermissionRequiredMixin, JSONResponseMixin,BaseUpdateView):
     model = CoWoGroup
+    permission_required = 'gbdb.admin_cowogroup'
+    raise_exception = True
 
     def get_context_data(self, **kwargs):
         context={'msg':u'No POST data sent.' }
-        if self.request.is_ajax():
-            # load group
-            group=CoWoGroup.objects.get(id=self.kwargs.get('pk', None))
+        # load group
+        group=CoWoGroup.objects.get(id=self.kwargs.get('pk', None))
+            
+        if self.request.is_ajax() and (self.request.user.has_perm('gbdb.admin_cowogroup', group) or self.request.user.is_superuser):
 
             # remove users
             related_users=User.objects.filter(groups__id=self.request.POST['id'])

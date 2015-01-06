@@ -39,9 +39,9 @@
 
     $(document).ready(function()
     {
-        {% for group in groups %}
-            addGroup({{ group.id }},'{{ group.name }}');
-        {% endfor %}
+        //{% for group in groups %}
+        //    addGroup({{ group.id }},'{{ group.name }}');
+        //{% endfor %}
     });
 </script>
 <div id="groupDiv" >
@@ -59,6 +59,29 @@
         <tr>
             <td colspan=2>
                 <div id="groups">
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan=2>
+                <div id="groups">
+                    {% for group in groups %}
+                        <div id="group-{{ group.id }}">
+                             <table class="tab_panel">
+                                 <tr class="{%cycle 'odd_row' 'even_row'%}" valign=top>
+                                     <td style="width:100px">
+                                     	{% if user_admin_permissions|lookup:group %}
+                                         <a href="/gbdb/group/{{ group.id }}/edit/" onclick="return showPopup('edit_group_{{ group.id }}', 700, 550, '/gbdb/group/{{ group.id }}/edit/');">Edit</a>&nbsp;&nbsp;
+                                         <a href="" onclick="return deleteGroup('{{ group.id }}')">Delete</a>
+                                         {% endif %}
+                                     </td>
+                                     <td>
+                                         <a href="/gbdb/group/{{ group.id }}/" onclick="return showPopup('view_group_{{ group.id }}', 700, 550, '/gbdb/group/{{ group.id }}/');">{{ group.name }}</a>
+                                     </td>
+                                 </tr>
+                             </table>
+                         </div>
+                    {% endfor %}
                 </div>
             </td>
         </tr>

@@ -229,15 +229,17 @@ def runBehavioralEventSearch(search_data, userId):
         user=User.objects.get(id=userId)
     else:
         user=User.get_anonymous()
+        
+    obs = get_objects_for_user(user=user,  perms=['view_observationsession'], klass=ObservationSession)
 
     q = reduce(op,filters)
 
     converted_results=[]
     # get results
     if q and len(q):
-        results = BehavioralEvent.objects.filter(q).select_related().distinct()
+        results = BehavioralEvent.objects.filter(observation_session__in=obs).filter(q).select_related().distinct()
     else:
-        results = BehavioralEvent.objects.all().select_related()
+        results = BehavioralEvent.objects.filter(observation_session__in=obs).select_related()
 
     for r in results:
         if r.type=='gestural':

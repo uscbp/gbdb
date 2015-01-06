@@ -15,6 +15,7 @@ from guardian.mixins import PermissionRequiredMixin
 from registration.models import User
 from django.contrib.auth.models import Group
 from uscbp import settings
+from django.http import Http404
 
 class EditObservationSessionMixin():
     model=ObservationSession
@@ -51,26 +52,29 @@ class EditObservationSessionMixin():
             return redirect(url)
 
 
-#assign permissions to collator
 class CreateObservationSessionView(EditObservationSessionMixin, CreateView):
-
+    
     def get_context_data(self, **kwargs):
         context = super(CreateObservationSessionView,self).get_context_data(**kwargs)
         context['template_ext'] = 'base_generic.html'
         return context
 
 
-class UpdateObservationSessionView(EditObservationSessionMixin,UpdateView):
+class UpdateObservationSessionView(PermissionRequiredMixin, EditObservationSessionMixin,UpdateView):
+    permission_required = 'gbdb.change_observationsession'
+    raise_exception = True
 
     def get_context_data(self, **kwargs):
         context = super(UpdateObservationSessionView,self).get_context_data(**kwargs)
         context['template_ext'] = 'empty_base.html'
         return context
+    
 
-
-class DeleteObservationSessionView(DeleteView):
+class DeleteObservationSessionView(PermissionRequiredMixin, DeleteView):
     model=ObservationSession
     success_url = '/gbdb/index.html'
+    permission_required = 'gbdb.delete_observationsession'
+    raise_exception = True
 
 
 class ObservationSessionDetailView(PermissionRequiredMixin, DetailView):
@@ -117,8 +121,11 @@ class SearchObservationSessionView(FormView):
         return self.render_to_response(context)
     
 
-class ManageObservationSessionPermissionsView(DetailView):
+class ManageObservationSessionPermissionsView(PermissionRequiredMixin, DetailView):
     template_name = 'gbdb/observation_session/observation_session_permissions_detail.html'
+    model = ObservationSession
+    permission_required = 'gbdb.manage_observationsession'
+    raise_exception = True
 
     def post(self, request, *args, **kwargs):
         self.object=ObservationSession.objects.get(id=self.kwargs.get('pk',None))
@@ -173,10 +180,10 @@ class ManageObservationSessionPermissionsView(DetailView):
         context['group_edit_permissions']={}
         context['group_delete_permissions']={}
         for user in context['users']:
-            context['user_view_permissions'][user]=user.has_perm('view_observationsession',self.object)
-            context['user_manage_permissions'][user]=user.has_perm('manage_observationsession',self.object)
-            context['user_edit_permissions'][user]=user.has_perm('change_observationsession',self.object)
-            context['user_delete_permissions'][user]=user.has_perm('delete_observationsession',self.object)
+            context['user_view_permissions'][user]=user.has_perm('view_observationsession',self.object) or user.is_superuser
+            context['user_manage_permissions'][user]=user.has_perm('manage_observationsession',self.object) or user.is_superuser
+            context['user_edit_permissions'][user]=user.has_perm('change_observationsession',self.object) or user.is_superuser
+            context['user_delete_permissions'][user]=user.has_perm('delete_observationsession',self.object) or user.is_superuser
         for group in context['groups']:
             context['group_view_permissions'][group]=True
             context['group_manage_permissions'][group]=True
