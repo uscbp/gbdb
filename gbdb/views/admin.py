@@ -81,26 +81,26 @@ class AdminDetailView(ListView):
         return context
 
 
-class EditGroupMixin:
+class EditGroupMixin(PermissionRequiredMixin):
     model = CoWoGroup
     form_class = GroupForm
     template_name = 'gbdb/admin/group_detail.html'
+    permission_required = 'gbdb.admin_cowogroup'
+    raise_exception = True
 
     def form_valid(self, form):
         context = self.get_context_data()
 
         group=form.save()
-        
-        if self.request.user.has_perm('gbdb.admin_cowogroup', group) or self.request.user.is_superuser:
 
-            assign_perm('gbdb.admin_cowogroup', self.request.user, group)
-    
-            for user in group.members.all():
-                if 'user_admin' in self.request.POST and str(user.id) in self.request.POST.getlist('user_admin'):
-                    assign_perm('gbdb.admin_cowogroup', user, self.object)
-                else:
-                    remove_perm('gbdb.admin_cowogroup', user, self.object)
-                    
+        assign_perm('gbdb.admin_cowogroup', self.request.user, group)
+
+        for user in group.members.all():
+            if 'user_admin' in self.request.POST and str(user.id) in self.request.POST.getlist('user_admin'):
+                assign_perm('gbdb.admin_cowogroup', user, self.object)
+            else:
+                remove_perm('gbdb.admin_cowogroup', user, self.object)
+
         redirect_url='%s?action=%s' % (reverse('group_view', kwargs={'pk': group.id}),context['action'])
         if context['ispopup']:
             redirect_url+='&_popup=1'
@@ -108,6 +108,9 @@ class EditGroupMixin:
 
 
 class CreateGroupView(EditGroupMixin, CreateView):
+
+    def get_object(self, queryset=None):
+        return None
 
     def get_initial(self):
         initial=super(CreateGroupView,self).get_initial()
@@ -128,11 +131,8 @@ class CreateGroupView(EditGroupMixin, CreateView):
         return context
 
 
-class UpdateGroupView(PermissionRequiredMixin, EditGroupMixin, UpdateView):
-    
-    permission_required = 'gbdb.admin_cowogroup'
-    raise_exception = True
-    
+class UpdateGroupView(EditGroupMixin, UpdateView):
+
     def get_context_data(self, **kwargs):
         context = super(UpdateGroupView,self).get_context_data(**kwargs)
         context['user_admin_permissions']={}
