@@ -198,6 +198,7 @@
             {% endfor %}
         });
 
+        var editingObservationSession=false;
         var creatingBehavioralSubEvent=false;
         var creatingBehavioralEvent=false;
         var behavioralEventEditIdx=-1;
@@ -742,6 +743,7 @@
          */
         function editObservationSession(href)
         {
+            editingObservationSession=true;
             unhighlightAllEvents();
             unhighlightAllSubEvents();
             videojs("observation_session_video").hideSlider();
@@ -784,6 +786,8 @@
             // Remove saving message
             document.getElementById('savingMsg').style.display = 'none';
             document.getElementById('savingOver').style.display = 'none';
+
+            editingObservationSession=false;
 
             // Parse data
             var txt = res.responseText;
@@ -938,7 +942,7 @@
                     }
                 });
                 videojs("observation_session_video").on("timeupdate", function(){
-                    if(behavioralEventEditIdx<0 && !creatingBehavioralEvent)
+                    if(behavioralEventEditIdx<0 && !creatingBehavioralEvent && !editingObservationSession)
                     {
                         var time = videojs("observation_session_video").currentTime();
                         var active_data = [];
