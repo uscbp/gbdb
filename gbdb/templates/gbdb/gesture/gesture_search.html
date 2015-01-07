@@ -8,7 +8,7 @@
     <h2>Search Gestures</h2>
     <form id="gestureSearchForm" method="post" action="">
         {% csrf_token %}
-        <table class="tab_panel">
+        <table>
             <tr>
                 <td colspan="8">
                     <strong>Any field:</strong>&nbsp;{{ form.keywords }}&nbsp;
@@ -32,12 +32,12 @@
             </tr>
             <tr>
                 <td colspan="8">
-                    <strong>Signaller body parts:</strong>&nbsp;{{ form.signaller_body_parts }}&nbsp;<strong>Phrase combination:</strong>&nbsp;{{ form.signaller_body_parts_options }}
+                    <strong>Signaller body parts:</strong>&nbsp;{{ form.signaller_body_parts }}
                 </td>
             </tr>
             <tr>
                 <td colspan="8">
-                    <strong>Recipient body parts:</strong>&nbsp;{{ form.recipient_body_parts }}&nbsp;<strong>Phrase combination:</strong>&nbsp;{{ form.recipient_body_parts_options }}
+                    <strong>Recipient body parts:</strong>&nbsp;{{ form.recipient_body_parts }}
                 </td>
             </tr>
             <tr>
