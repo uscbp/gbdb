@@ -17,10 +17,11 @@ from django.contrib.auth.models import Group
 from uscbp import settings
 from django.http import Http404
 
-class EditObservationSessionMixin():
+class EditObservationSessionMixin(PermissionRequiredMixin):
     model=ObservationSession
     form_class=ObservationSessionForm
     template_name='gbdb/observation_session/observation_session_detail.html'
+    raise_exception = True
     
     def render_to_json_response(self, context, **response_kwargs):
         data = json.dumps(context)
@@ -53,16 +54,19 @@ class EditObservationSessionMixin():
 
 
 class CreateObservationSessionView(EditObservationSessionMixin, CreateView):
-    
+    permission_required = 'gbdb.add_observationsession'
+
+    def get_object(self, queryset=None):
+        return None
+
     def get_context_data(self, **kwargs):
         context = super(CreateObservationSessionView,self).get_context_data(**kwargs)
         context['template_ext'] = 'base_generic.html'
         return context
 
 
-class UpdateObservationSessionView(PermissionRequiredMixin, EditObservationSessionMixin,UpdateView):
+class UpdateObservationSessionView(EditObservationSessionMixin,UpdateView):
     permission_required = 'gbdb.change_observationsession'
-    raise_exception = True
 
     def get_context_data(self, **kwargs):
         context = super(UpdateObservationSessionView,self).get_context_data(**kwargs)
