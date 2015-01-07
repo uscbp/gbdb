@@ -1,30 +1,30 @@
 <div id="behavioral_events">
     <table class="tab_panel">
-        <tr class="col_header">
-            <td width=25px>&nbsp;</td>
-            <td width=200px>Type</td>
-            <td width=200px>Collator</td>
-            <td width=200px>Date</td>
-            <td width=200px>Location</td>
-            <td width=200px>Primates</td>
-            <td width=200px>Contexts</td>
-            <td width=200px>Ethograms</td>
-            <td>Notes</td>
-            <td width=100px>&nbsp;</td>
-        </tr>
-        {% for behavioral_event in behavioral_events %}
-            <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
-                <td width=25px><a href="/gbdb/observation_session/{{ behavioral_event.observation_session.id }}/">{{ forloop.counter }}</a></td>
-                <td width=200px>{{ behavioral_event.type }}</td>
-                <td width=200px>{{ behavioral_event.observation_session.get_collator_str }}</td>
-                <td width=200px>{{ behavioral_event.observation_session.date }}</td>
-                <td width=200px>{{ behavioral_event.observation_session.location_name }}</td>
-                <td width=200px>{% for primate in behavioral_event.primates.all %}{% if forloop.counter0 > 0%}, {% endif %}<a href="/gbdb/primate/{{ primate.id }}/">{{ primate.name }}</a>{% endfor %}</td>
-                <td width=200px>{% for context in behavioral_event.contexts.all %}{% if forloop.counter0 > 0%}, {% endif %}{{ context.name }}{% endfor %}</td>
-                <td width=200px>{% for ethogram in behavioral_event.ethograms.all %}{% if forloop.counter0 > 0%}, {% endif %}{{ ethogram.name }}{% endfor %}</td>
-                <td>{{ behavioral_event.notes }}</td>
-                <td>&nbsp;</td>
+        {% regroup behavioral_events by observation_session as observation_session_list %}
+        {% for behavioral_event_list in observation_session_list %}
+            <tr class="col_header">
+                <td colspan="7">Observation Session: <a href="/gbdb/observation_session/{{ behavioral_event_list.grouper.id }}/">{{ forloop.counter }}</a> ({{ behavioral_event_list.grouper.get_collator_str }}), {{ behavioral_event_list.grouper.location_name }} ({{ behavioral_event_list.grouper.date }})</td>
             </tr>
+            <tr class="col_header">
+                <td width=25px>&nbsp;</td>
+                <td width=200px>Type</td>
+                <td width=200px>Primates</td>
+                <td width=200px>Contexts</td>
+                <td width=200px>Ethograms</td>
+                <td>Notes</td>
+                <td width=100px>&nbsp;</td>
+            </tr>
+            {% for behavioral_event in behavioral_event_list.list %}
+                <tr class="{% cycle 'even_row' 'odd_row' %}" valign=top>
+                    <td width=25px><a href="/gbdb/observation_session/{{ behavioral_event.observation_session.id }}/">{{ forloop.counter }}</a></td>
+                    <td width=200px>{{ behavioral_event.type }}</td>
+                    <td width=200px>{% for primate in behavioral_event.primates.all %}{% if forloop.counter0 > 0%}, {% endif %}<a href="/gbdb/primate/{{ primate.id }}/">{{ primate.name }}</a>{% endfor %}</td>
+                    <td width=200px>{% for context in behavioral_event.contexts.all %}{% if forloop.counter0 > 0%}, {% endif %}{{ context.name }}{% endfor %}</td>
+                    <td width=200px>{% for ethogram in behavioral_event.ethograms.all %}{% if forloop.counter0 > 0%}, {% endif %}{{ ethogram.name }}{% endfor %}</td>
+                    <td>{{ behavioral_event.notes }}</td>
+                    <td>&nbsp;</td>
+                </tr>
+            {% endfor %}
         {% endfor %}
     </table>
 </div>
