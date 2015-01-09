@@ -237,9 +237,9 @@ def runBehavioralEventSearch(search_data, userId):
     converted_results=[]
     # get results
     if q and len(q):
-        results = BehavioralEvent.objects.filter(observation_session__in=obs).filter(q).select_related().distinct()
+        results = BehavioralEvent.objects.filter(observation_session__in=obs).filter(q).select_related().distinct().order_by('observation_session')
     else:
-        results = BehavioralEvent.objects.filter(observation_session__in=obs).select_related()
+        results = BehavioralEvent.objects.filter(observation_session__in=obs).select_related().order_by('observation_session')
 
     for r in results:
         if r.type=='gestural':

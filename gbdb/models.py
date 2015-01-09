@@ -334,6 +334,17 @@ class BehavioralEvent(MPTTModel):
         d['text'] = ""
         d['asset'] = {'media': "", 'credit': "", 'caption': "" }
         return d
+
+    def get_label(self):
+        if self.parent is None:
+            other_events=BehavioralEvent.objects.filter(parent__isnull=True,observation_session=self.observation_session).order_by('start_time')
+            index=list(other_events.values_list('id', flat=True)).index(self.id)
+            return str(index+1)
+        else:
+            parent_idx=self.parent.get_label()
+            other_events=BehavioralEvent.objects.filter(parent=self.parent).order_by('start_time')
+            index=list(other_events.values_list('id', flat=True)).index(self.id)
+            return '%s.%d' % (parent_idx,(index+1))
         
 class BodyPart(models.Model):
     name = models.CharField(max_length=100)
