@@ -877,7 +877,7 @@
             {% endif %}
 
             <br>
-            <h3>Behavioral Events{% if user == object.collator %} <a href="#" onclick="return createBehavioralEvent();">Add new</a>{% endif %}</h3>
+            <h3>Behavioral Events{% if user == object.collator or has_edit_perms %} <a href="#" onclick="return createBehavioralEvent();">Add new</a>{% endif %}</h3>
             <div id="behavioral_events">
             </div>
 

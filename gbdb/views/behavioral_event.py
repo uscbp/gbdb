@@ -11,8 +11,9 @@ from gbdb.search import runBehavioralEventSearch
 import json
 from django.http import HttpResponse
 from uscbp.views import JSONResponseMixin
+from gbdb.views.security import BehavioralEventPermissionRequiredMixin
 
-class EditBehavioralEventMixin(object):
+class EditBehavioralEventMixin(BehavioralEventPermissionRequiredMixin):
     model=BehavioralEvent
     form_class=BehavioralEventForm
     template_name='gbdb/behavioral_event/behavioral_event_detail.html'

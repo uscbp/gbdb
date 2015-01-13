@@ -1,4 +1,5 @@
 from guardian.mixins import PermissionRequiredMixin
+from gbdb.models import ObservationSession
 
 class PermissionRequiredPublicMixin(PermissionRequiredMixin):
 
@@ -16,3 +17,26 @@ class PermissionRequiredPublicMixin(PermissionRequiredMixin):
                 break
         if not view_only or not obj.public:
             return super(PermissionRequiredPublicMixin,self).check_permissions(request)
+        
+
+class BehavioralEventPermissionRequiredMixin(PermissionRequiredMixin):
+
+    def check_permissions(self, request):
+        
+        obs_id = self.request.GET.get('observation_session')
+        obs = None
+        
+        print obs_id
+
+        if obs_id == None:
+            be = (hasattr(self, 'get_object') and self.get_object() or getattr(self, 'object', None))
+            obs = be.observation_session
+        else:
+            obs = ObservationSession.objects.get(id=self.request.GET.get('observation_session'))
+
+        edit =  self.request.user.has_perm('gbdb.change_observationsession', obs)
+
+        return not edit
+
+        
+        
