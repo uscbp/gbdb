@@ -133,6 +133,8 @@ class ObservationSession(models.Model):
     location_name = models.CharField(max_length=100) #this should be some kind of geo model
     location = GeopositionField()
     notes = models.TextField()
+    
+    public = models.BooleanField(default = False)
 
     RENAME_FILES = {
         'video': {'dest': 'videos/observation_session', 'keep_ext': True}

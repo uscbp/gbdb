@@ -118,7 +118,7 @@ def runObservationSessionSearch(search_data, userId):
     else:
         user=User.get_anonymous()
         
-    objects = get_objects_for_user(user=user, perms=['view_observationsession'], klass=ObservationSession)
+    objects = get_objects_for_user(user=user, perms=['view_observationsession'], klass=ObservationSession) | ObservationSession.objects.filter(public=True)
     
     if q and len(q):
         results = objects.filter(q).select_related().distinct().order_by('date')
@@ -230,7 +230,7 @@ def runBehavioralEventSearch(search_data, userId):
     else:
         user=User.get_anonymous()
         
-    obs = get_objects_for_user(user=user,  perms=['view_observationsession'], klass=ObservationSession)
+    obs = get_objects_for_user(user=user, perms=['view_observationsession'], klass=ObservationSession) | ObservationSession.objects.filter(public=True)
 
     q = reduce(op,filters)
 

@@ -16,6 +16,7 @@ from registration.models import User
 from django.contrib.auth.models import Group
 from uscbp import settings
 from django.http import Http404
+from gbdb.views.security import PermissionRequiredPublicMixin
 
 class EditObservationSessionMixin(PermissionRequiredMixin):
     model=ObservationSession
@@ -81,7 +82,7 @@ class DeleteObservationSessionView(PermissionRequiredMixin, DeleteView):
     raise_exception = True
 
 
-class ObservationSessionDetailView(PermissionRequiredMixin, DetailView):
+class ObservationSessionDetailView(PermissionRequiredPublicMixin, DetailView):
     model = ObservationSession
     template_name = 'gbdb/observation_session/observation_session_view.html'
     permission_required = 'gbdb.view_observationsession'
@@ -156,8 +157,12 @@ class ManageObservationSessionPermissionsView(PermissionRequiredMixin, DetailVie
         
         if ('user-%d_view' % anon_user.id) in request.POST:
             assign_perm('view_observationsession', anon_user, self.object)
+            self.object.public = True
+            self.object.save()
         else:
             remove_perm('view_observationsession', anon_user, self.object)
+            self.object.public = False
+            self.object.save()
 
         redirect_url='/gbdb/observation_session/%d/permissions/' % self.object.id
         if context['ispopup']:
