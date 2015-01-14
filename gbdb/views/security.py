@@ -24,15 +24,12 @@ class BehavioralEventPermissionRequiredMixin(PermissionRequiredMixin):
     def check_permissions(self, request):
         
         obs_id = self.request.GET.get('observation_session')
-        obs = None
-        
-        print obs_id
 
-        if obs_id == None:
+        if obs_id is None:
             be = (hasattr(self, 'get_object') and self.get_object() or getattr(self, 'object', None))
             obs = be.observation_session
         else:
-            obs = ObservationSession.objects.get(id=self.request.GET.get('observation_session'))
+            obs = ObservationSession.objects.get(id=self.request.GET.get('observation_session',None))
 
         edit =  self.request.user.has_perm('gbdb.change_observationsession', obs)
 

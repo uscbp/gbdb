@@ -104,9 +104,6 @@ class ObservationSessionDetailView(PermissionRequiredPublicMixin, DetailView):
         context['site_url']='http://%s' % get_current_site(self.request)
         context['timeline']=self.object
         
-        #context['has_edit_perms'] = self.request.user.has_perm('gbdb.edit', self.object)
-        #context['has_delete_perms'] = self.request.user.has_perm('delete', self.object)
-        
         context['has_delete_perms'] = self.request.user.has_perm('gbdb.delete_observationsession', self.object)
         context['has_edit_perms'] = self.request.user.has_perm('gbdb.change_observationsession', self.object)
         
