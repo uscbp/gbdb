@@ -404,6 +404,18 @@
         }
 
         /**
+         * Cancel editing or creatingn a subevent
+         */
+        function cancelBehavioralSubEventEdit()
+        {
+            document.getElementById('context_data').innerHTML='';
+            creatingBehavioralSubEvent=false;
+            behavioralEventEditIdx=-1;
+            behavioralSubEventEditIdx=-1;
+            videojs("observation_session_video").hideSlider();
+        }
+
+        /**
          * Delete a subevent
          * @param id - ID of subevent to delete
          * @param idx - index of subevent to delete
@@ -655,6 +667,17 @@
             // Remove saving msg
             document.getElementById('savingMsg').style.display = 'none';
             document.getElementById('savingOver').style.display = 'none';
+        }
+
+        /**
+         * Cancel creating or editing an event
+         */
+        function cancelBehavioralEventEdit()
+        {
+            document.getElementById('context_data').innerHTML='';
+            creatingBehavioralEvent=false;
+            behavioralEventEditIdx=-1
+            videojs("observation_session_video").hideSlider();
         }
 
         /**

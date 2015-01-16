@@ -163,10 +163,10 @@
             {{ form.collator }}
             {% if form.instance.id %}
             	<input class="btn" type="button" value="Save" onclick="{% if form.parent.value %}submitBehavioralSubEventForm('/gbdb/behavioral_event/{{ object.id }}/edit/');{% else %}submitBehavioralEventForm('/gbdb/behavioral_event/{{ object.id }}/edit/');{% endif %}"/>&nbsp;
-                <input class="btn" type="button" value="Cancel" onclick="document.getElementById('context_data').innerHTML='';"/>&nbsp;
             {% else %}
             	<input class="btn" type="button" value="Save" onclick="{% if form.parent.value %}submitBehavioralSubEventForm('/gbdb/behavioral_event/new/?observation_session={{ form.initial.observation_session.id }}');{% else %}submitBehavioralEventForm('/gbdb/behavioral_event/new/?observation_session={{ form.initial.observation_session.id }}');{% endif %}"/>&nbsp;
             {% endif %}
+            <input class="btn" type="button" value="Cancel" onclick="{% if form.parent.value %}cancelBehavioralSubEventEdit();{% else %}cancelBehavioralEventEdit();{% endif %}"/>&nbsp;
         </form>
     </div>
 {% endblock %}
