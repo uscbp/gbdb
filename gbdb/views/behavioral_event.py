@@ -77,7 +77,7 @@ class EditBehavioralEventMixin(BehavioralEventPermissionRequiredMixin):
                 if round(self.object.start_time,2)<round(self.object.parent.start_time,2):
                     data['errors']['start_time']=['Subevent starts before parent event']
                 for other_event in BehavioralEvent.objects.filter(parent=self.object.parent).exclude(id=self.object.id):
-                    if round(other_event.start_time,2) <= round(self.object.end_time(),2) and round(self.object.start_time,2) < round(other_event.end_time(),2):
+                    if round(other_event.start_time,2) < round(self.object.end_time(),2) and round(self.object.start_time,2) < round(other_event.end_time(),2):
                         data['errors']['start_time']=['Subevent overlaps other subevents']
 
         if len(data['errors'].keys()):
