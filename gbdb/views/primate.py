@@ -20,12 +20,15 @@ class EditPrimateMixin():
         url=self.get_success_url()
         if '_popup' in self.request.GET:
             url+='?_popup=1'
+        if 'target' in self.request.GET:
+            url+='&target='+self.request.GET['target']
         return redirect(url)
 
 class CreatePrimateView(EditPrimateMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(CreatePrimateView,self).get_context_data(**kwargs)
+        context['ispopup']='_popup' in self.request.GET
         return context
 
 
@@ -33,6 +36,7 @@ class UpdatePrimateView(EditPrimateMixin,UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(UpdatePrimateView,self).get_context_data(**kwargs)
+        context['ispopup']='_popup' in self.request.GET
         return context
 
 
@@ -48,6 +52,8 @@ class PrimateDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(PrimateDetailView, self).get_context_data(**kwargs)
         context['ispopup']='_popup' in self.request.GET
+        if context['ispopup'] and 'target' in self.request.GET:
+            context['target']=self.request.GET['target']
         return context
 
 

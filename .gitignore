@@ -4,3 +4,6 @@
 .pydevproject
 uscbp/settings.py
 uscbp/media/
+gbdb/docs/_build
+gbdb/docs/_static
+gbdb/docs/*.rst~

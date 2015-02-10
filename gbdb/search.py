@@ -5,6 +5,7 @@ from django.utils.encoding import force_text
 from gbdb.models import ObservationSession, BehavioralEvent, GesturalEvent, Primate, Gesture
 from geoposition.models import compute_distance
 from registration.models import User
+from guardian.shortcuts import get_objects_for_user
 
 def split_strip(input, delimiter=','):
     """
@@ -111,10 +112,18 @@ def runObservationSessionSearch(search_data, userId):
     q = reduce(op,filters)
 
     # get results
-    if q and len(q):
-        results = ObservationSession.objects.filter(q).select_related().distinct().order_by('date')
+    user = None
+    if User.objects.filter(id=userId):
+        user=User.objects.get(id=userId)
     else:
-        results = ObservationSession.objects.all().select_related().order_by('date')
+        user=User.get_anonymous()
+        
+    objects = get_objects_for_user(user=user, perms=['view_observationsession'], klass=ObservationSession) | ObservationSession.objects.filter(public=True)
+    
+    if q and len(q):
+        results = objects.filter(q).select_related().distinct().order_by('date')
+    else:
+        results = objects.all().select_related().order_by('date')
 
     filtered_results=[]
     for result in results:
@@ -220,15 +229,17 @@ def runBehavioralEventSearch(search_data, userId):
         user=User.objects.get(id=userId)
     else:
         user=User.get_anonymous()
+        
+    obs = get_objects_for_user(user=user, perms=['view_observationsession'], klass=ObservationSession) | ObservationSession.objects.filter(public=True)
 
     q = reduce(op,filters)
 
     converted_results=[]
     # get results
     if q and len(q):
-        results = BehavioralEvent.objects.filter(q).select_related().distinct()
+        results = BehavioralEvent.objects.filter(observation_session__in=obs).filter(q).select_related().distinct().order_by('observation_session')
     else:
-        results = BehavioralEvent.objects.all().select_related()
+        results = BehavioralEvent.objects.filter(observation_session__in=obs).select_related().order_by('observation_session')
 
     for r in results:
         if r.type=='gestural':

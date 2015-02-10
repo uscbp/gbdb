@@ -6,6 +6,13 @@ function deleteInlineForm(prefix, idx){
     return false;
 }
 
+function clearSpan(doc, spanId)
+{
+    if(doc.getElementById(spanId)!=null)
+        doc.getElementById(spanId).innerHTML='';
+    return false;
+}
+
 function showPopup(windowName, width, height, href)
 {
     if (href.indexOf('?') == -1)
@@ -89,6 +96,26 @@ function doneCreateSavedLocation(res, status)
         selectElem.appendChild(locElem);
     }
     return false;
+}
+
+function handleErrors(data)
+{
+    // Reset error labels
+    $('.error_label').each(function(index, element){
+        $( this ).html('');
+    });
+    // Set error labels
+    for(var property in data.errors)
+    {
+        var error_str='';
+        for(var i=0; i<data.errors[property].length; i++)
+        {
+            if(i>0)
+                error_str+='<br>';
+            error_str+=data.errors[property][i];
+        }
+        $('#id_'+property+'_errors').html(error_str);
+    }
 }
 
 jQuery.fn.scrollTo = function(elem) {

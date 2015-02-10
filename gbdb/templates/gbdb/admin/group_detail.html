@@ -1,0 +1,145 @@
+{% extends "base_generic.html" %}
+{% block extrahead %}
+    <title>GBDB - {% if form.instance.id%}Edit {{ form.instance.name }}{% else %}Add{% endif %} Group</title>
+    <script type="text/javascript">
+
+        function save()
+        {
+            document.getElementById('groupForm').submit();
+        }
+
+        {% if form.instance.id%}
+            function deleteGroup()
+            {
+                if(confirm('Do you really want to delete this group?'))
+                {
+                    var data = { 'id': {{ form.instance.id }}, 'csrfmiddlewaretoken': '{{ csrf_token }}'};
+                    var args = { type: "POST", url: "/gbdb/group/{{ group.id }}/delete/", data: data, complete: doneDeleteGroup };
+                    $.ajax(args);
+                    return false;
+                }
+                return false;
+            }
+
+            function doneDeleteGroup(res, status)
+            {
+                var txt = res.responseText;
+                if (status=="success")
+                {
+                    var data = eval('('+txt+')');
+                    opener.document.getElementById('group-'+data.id).style.display='none';
+                    self.close();
+                }
+                else
+                    alert(txt);
+            }
+        {% endif %}
+        
+        //this needs to be called when a user is added with autocompletelight
+        function addUser(id, username, first_name, last_name, admin)
+        {
+            var count = $(document.getElementById('users')).children("[id^=user]").length;
+	        var tmplMarkup = $('#group-user-template').html();
+	        var compiledTmpl = _.template(tmplMarkup, { idx: count, id : id, username: username, first_name: first_name,
+                last_name: last_name, admin: admin });
+	        $('#users').append(compiledTmpl);
+	        return false;
+	    }
+
+        users={
+        {% for user in users %}
+            '{{ user.username }}': {
+                id: {{ user.id }},
+                first_name: '{{ user.first_name }}',
+                last_name: '{{ user.last_name }}',
+                admin: {% if users_admin|lookup:user.username %}true{% else %}false{% endif %}
+            },
+        {% endfor %}
+        };
+
+        $(document).ready(function()
+        {
+            widget=$('#id_members-wrapper').yourlabsWidget();
+            widget.input.bind('selectChoice', function(e, choice) {
+                var username=choice.html();
+                addUser(users[username].id, username, users[username].first_name, users[username].last_name,
+                        users[username].admin);
+                $(this).focus();
+            });
+            {% for u in members %}
+                addUser({{ u.id }}, '{{ u.username }}', '{{ u.first_name }}', '{{ u.last_name }}', {% if user_admin_permissions|lookup:u %}true{% else %}false{% endif %});
+            {% endfor %}
+        });
+    </script>
+{% endblock %}
+{% block content %}
+{% load gbdb_extras %}
+    <div id="detail">
+        <h2>{% if form.instance.id%}Edit{% else %}Add{% endif %} Group</h2>
+        <form id="groupForm" method="post" action="">
+            {% csrf_token %}
+            <table class="tab_panel">
+                <tr valign=top>
+                    <td style="width:20%">{{ form.name.label_tag }}*</td>
+                    <td>{{ form.name }}</td>
+                    {% if form.name.errors %}<td class="myerrors">{{ form.name.errors }}</td>{% endif %}
+                </tr>
+                <tr valign=top>
+                    <td valign=top>{{ form.members.label_tag }}*</td>
+                    <td>{{ form.members }}</td>
+                    <td class="myerrors"><div id="id_members_errors" class="error_label">{{ form.members.errors }}</div></td>
+                </tr>
+            </table>
+            <div class="myerrors">
+                {{ form.errors }}
+            </div>
+            <br>
+            
+            <div id="userDiv" style="display:block">
+                <table class="tab_panel">
+                    <tr class="section_subheader">
+                        <td colspan="2">Members</td>
+                    </tr>
+                    <tr class="col_header">
+                        <td style="width:250px">&nbsp;</td>
+                        <td>Administrator</td>
+                    </tr>
+                    <tr>
+                        <td colspan=2>
+                            <div id="users">
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            
+            <br>
+            <input class="btn" type="button" value="Save" onclick="save()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+            {% if ispopup %}
+                <input class="btn" type="button" value="Close" onclick="self.close();" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+            {% endif %}
+            {% if form.instance.id %}
+                {% if not ispopup %}
+                    <input class="btn" type="button" value="Cancel" onclick="document.location.href='/gbdb/group/{{ form.instance.id }}/';" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>&nbsp;
+                {% endif %}
+                <input class="btn" type="button" value="Delete" onclick="deleteGroup()" onmouseover="this.className='btn btnhov'" onmouseout="this.className='btn'"/>
+            {% endif %}
+        </form>
+    </div>
+    
+    <script type="text/html" id="group-user-template">
+        <div id="user-<%= id %>">
+            <table class="tab_panel">
+                <tr class="<%= getTRTag(idx-1) %>" valign=top>
+                    <td style="width:250px">
+                        <%= username %> (<%= first_name %> <%= last_name %>)
+                    </td>
+
+                    <td>
+                        <input type=checkbox name="user_admin" id="user-<%= id %>_admin" value="<%= id %>" <% if(admin){ %>checked=True<% } %>/>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </script>
+{% endblock %}
