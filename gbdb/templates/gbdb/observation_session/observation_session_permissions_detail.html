@@ -118,7 +118,7 @@
                                                     <input type=checkbox name="group-{{ group.id }}_delete" id="group-{{ group.id }}_delete" value="{{ group.id }}" {% if group_delete_permissions|lookup:group %}checked=True{% endif %} onclick="propagatePermissions({{ group.id }},'delete')"/>
                                                 </td>
                                                 <td style="width:50px">
-                                                    <input type=checkbox name="group-{{ group.id }}_manage" id="group-{{ group.id }}_manage" value="{{ group.id }}" {% if group_manage_permissions|lookup:group %}checked=True{% endif %} onclick="propagatePermissions({{ group.id }},'manage  ')"/>
+                                                    <input type=checkbox name="group-{{ group.id }}_manage" id="group-{{ group.id }}_manage" value="{{ group.id }}" {% if group_manage_permissions|lookup:group %}checked=True{% endif %} onclick="propagatePermissions({{ group.id }},'manage')"/>
                                                 </td>
                                                 <td>&nbsp;</td>
                                             </tr>
