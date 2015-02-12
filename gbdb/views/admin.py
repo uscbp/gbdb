@@ -51,6 +51,8 @@ class GbdbRegistrationView(RegistrationView):
         new_user.save()
 
         assign_perm('gbdb.view_observationsession', new_user)
+        assign_perm('gbdb.add_observationsession', new_user)
+        assign_perm('gbdb.add_cowogroup', new_user)
 
         success_url = self.get_success_url(request, new_user)
 
@@ -85,7 +87,6 @@ class EditGroupMixin(PermissionRequiredMixin):
     model = CoWoGroup
     form_class = GroupForm
     template_name = 'gbdb/admin/group_detail.html'
-    permission_required = 'gbdb.admin_cowogroup'
     raise_exception = True
 
     def form_valid(self, form):
@@ -108,6 +109,7 @@ class EditGroupMixin(PermissionRequiredMixin):
 
 
 class CreateGroupView(EditGroupMixin, CreateView):
+    permission_required = 'gbdb.add_cowogroup'
 
     def get_object(self, queryset=None):
         return None
@@ -132,6 +134,7 @@ class CreateGroupView(EditGroupMixin, CreateView):
 
 
 class UpdateGroupView(EditGroupMixin, UpdateView):
+    permission_required = 'gbdb.admin_cowogroup'
 
     def get_context_data(self, **kwargs):
         context = super(UpdateGroupView,self).get_context_data(**kwargs)

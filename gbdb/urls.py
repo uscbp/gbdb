@@ -11,6 +11,8 @@ import autocomplete_light
 autocomplete_light.autodiscover()
 
 urlpatterns = patterns('',
+    
+    url(r'^docs/', include('documentation.urls')),
                        
     url(r'^autocomplete/', include('autocomplete_light.urls')),
     url(r'^timeline/', include('timelinejs.urls')),
