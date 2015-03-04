@@ -13,6 +13,13 @@ function clearSpan(doc, spanId)
     return false;
 }
 
+function openHelp(helpPage)
+{
+    window.open('/gbdb/docs/'+helpPage, 'GBDB Help', 'width=800,height=400,resizable=1,scrollbars=1');
+    return false;
+}
+
+
 function showPopup(windowName, width, height, href)
 {
     if (href.indexOf('?') == -1)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# BODB documentation build configuration file, created by
+# GBDB documentation build configuration file, created by
 # sphinx-quickstart on Tue Mar  4 15:36:01 2014.
 #
 # This file is execfile()d with the current directory set to its
@@ -52,7 +52,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'BODB'
+project = u'GBDB'
 copyright = u'2014, USC Brain Project'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -185,7 +185,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'BODBdoc'
+htmlhelp_basename = 'GBDBdoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -205,7 +205,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'BODB.tex', u'BODB Documentation',
+  ('index', 'GBDB.tex', u'GBDB Documentation',
    u'USC Brain Project', 'manual'),
 ]
 
@@ -235,7 +235,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'bodb', u'BODB Documentation',
+    ('index', 'gbdb', u'GBDB Documentation',
      [u'USC Brain Project'], 1)
 ]
 
@@ -249,8 +249,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'BODB', u'BODB Documentation',
-   u'USC Brain Project', 'BODB', 'One line description of project.',
+  ('index', 'GBDB', u'GBDB Documentation',
+   u'USC Brain Project', 'GBDB', 'One line description of project.',
    'Miscellaneous'),
 ]
 
@@ -270,13 +270,13 @@ texinfo_documents = [
 # -- Options for Epub output ----------------------------------------------
 
 # Bibliographic Dublin Core info.
-epub_title = u'BODB'
+epub_title = u'GBDB'
 epub_author = u'USC Brain Project'
 epub_publisher = u'USC Brain Project'
 epub_copyright = u'2014, USC Brain Project'
 
 # The basename for the epub file. It defaults to the project name.
-#epub_basename = u'BODB'
+#epub_basename = u'GBDB'
 
 # The HTML theme for the epub output. Since the default themes are not optimized
 # for small screen space, using the same theme for HTML and epub output is
