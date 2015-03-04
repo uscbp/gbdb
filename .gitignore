@@ -7,3 +7,4 @@ uscbp/media/
 gbdb/docs/_build
 gbdb/docs/_static
 gbdb/docs/*.rst~
+gbdb/docs/*.py~
