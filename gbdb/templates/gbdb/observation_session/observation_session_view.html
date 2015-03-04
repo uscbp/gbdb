@@ -736,7 +736,10 @@
             videojs("observation_session_video").showSlider();
             videojs("observation_session_video").setValueSlider(newEventStart,newEventEnd);
         {% else %}
-            videojs("observation_session_video").hideSlider();
+            try{
+                videojs("observation_session_video").hideSlider();
+            }catch(err)
+            {}
         {% endif %}
             $('#context_data').load('/gbdb/behavioral_event/new/?observation_session={{ object.id }}&start_time='+newEventStart+'&duration='+(newEventEnd-newEventStart));
             return false;
@@ -881,7 +884,10 @@
                 creatingBehavioralSubEvent=false;
                 behavioralSubEventEditIdx=-1;
 
-                videojs("observation_session_video").hideSlider();
+                try{
+                    videojs("observation_session_video").hideSlider();
+                }catch(err)
+                {}
             }
             // Process errors
             else
