@@ -5,6 +5,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from gbdb.forms import GbdbRegistrationForm
 from gbdb.views.admin import GbdbRegistrationView
+from registration.views import gRecaptchaVerify
 from uscbp import settings
 
 admin.autodiscover()
@@ -18,6 +19,7 @@ urlpatterns = patterns('',
 
     (r'^accounts/logout/$', 'gbdb.views.admin.logout_view', ),
     (r'^accounts/register/$', GbdbRegistrationView.as_view(form_class=GbdbRegistrationForm), {}, 'registration_register'),
+    (r'^accounts/verify/$', gRecaptchaVerify.as_view(), {}, 'grecaptcha_verify'),
     (r'^accounts/', include('registration.backends.default.urls')),
     (r'^accounts/username_available/$', 'gbdb.views.admin.username_available', ),
 
